@@ -58,6 +58,25 @@ Plug 'editorconfig/editorconfig-vim', { 'do': function('InstallEditorConfig') }
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
 call plug#end()
 
+colorscheme cobalt
+"colorscheme PaperColor
+"colorscheme lucius
+"let g:airline_theme='lucius'
+"colorscheme OceanicNext
+"let g:airline_theme='oceanicnext'
+"let g:enable_bold_font = 1
+"colorscheme hybrid_material
+"let g:airline_theme = 'hybrid'
+
+set t_Co=256   " This is may or may not needed.
+
+" air-line
+let g:airline_powerline_fonts = 1
+
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+
 " open new split panes to right and below
 set splitright
 set splitbelow
