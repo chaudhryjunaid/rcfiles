@@ -1,0 +1,31 @@
+[includeIf "gitdir:work/"]
+  path = .gitconfig-work
+[includeIf "gitdir:projects/"]
+  path = .gitconfig-projects
+[user]
+  name = Chaudhry Junaid Anwar
+[core]
+  excludesfile = ~/.gitexcludes
+  pager = delta
+[interactive]
+  diffFilter = delta --color-only
+[delta]
+  navigate = true
+[diff]
+  colorMoved = default
+  tool = vscode
+[difftool "vscode"]
+  cmd = code --wait --diff $LOCAL $REMOTE
+[log]
+  abbrevCommit = true
+[color]
+  ui = auto
+[color "branch"]
+  upstream = cyan
+#[pull]
+#  rebase = true
+[push]
+  default = simple
+[merge]
+  conflictstyle = diff3
+
