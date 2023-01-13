@@ -22,18 +22,41 @@ scriptencoding utf-8
 " Helps force plugins to load correctly when it is turned back on below
 filetype off
 
-" Turn on syntax highlighting
-filetype plugin indent on
-syntax on
-
 " color schemes
 if (has("termguicolors"))
   set termguicolors
 endif
 
-colorscheme slate
+function! InstallEditorConfig(info)
+  if a:info.status == 'installed' || a:info.force
+    !brew install editorconfig
+  endif
+endfunction
+function! InstallSilverSearcher(info)
+  if a:info.status == 'installed' || a:info.force
+    !brew install the_silver_searcher
+  endif
+endfunction
 
-syntax enable
+call plug#begin()
+" Make sure you use single quotes
+
+" On-demand loading
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'mileszs/ack.vim', { 'do': function('InstallSilverSearcher') }
+Plug 'vim-airline/vim-airline'
+Plug 'flazz/vim-colorschemes'
+Plug 'elzr/vim-json'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'jiangmiao/auto-pairs' "Insert or delete brackets, parens, quotes in pair
+Plug 'airblade/vim-gitgutter'
+Plug 'editorconfig/editorconfig-vim', { 'do': function('InstallEditorConfig') }
+
+" Initialize plugin system
+" - Automatically executes `filetype plugin indent on` and `syntax enable`.
+call plug#end()
 
 " open new split panes to right and below
 set splitright
