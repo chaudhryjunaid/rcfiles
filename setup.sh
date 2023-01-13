@@ -2,12 +2,14 @@
 
 mkdir -p ~/.config/nvim
 
-ln -sf $PWD/nvim/init.vim ~/.config/nvim/init.vim
+CURR_DIR = $PWD
 
-ln -sf $PWD/gitconfig ~/.gitconfig
+ln -s $CURR_DIR/nvim/init.vim ~/.config/nvim/init.vim
+
+ln -s $CURR_DIR/gitconfig ~/.gitconfig
 cp gitconfig-work ~/.gitconfig-work
-ln -sf $PWD/gitconfig-projects ~/.gitconfig-projects
-ln -sf $PWD/gitexcludes ~/.gitexcludes
+ln -s $CURR_DIR/gitconfig-projects ~/.gitconfig-projects
+ln -s $CURR_DIR/gitexcludes ~/.gitexcludes
 
-ln -sf $PWD/zshrc.custom ~/.zshrc.custom
+ln -s $CURR_DIR/zshrc.custom ~/.zshrc.custom
 
