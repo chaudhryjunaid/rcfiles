@@ -44,15 +44,15 @@ call plug#begin()
 " On-demand loading
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin'
-"Plug 'ctrlpvim/ctrlp.vim'
-"Plug 'mileszs/ack.vim', { 'do': function('InstallSilverSearcher') }
+Plug 'editorconfig/editorconfig-vim', { 'do': function('InstallEditorConfig') }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'flazz/vim-colorschemes'
 Plug 'elzr/vim-json'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'jiangmiao/auto-pairs' "Insert or delete brackets, parens, quotes in pair
 Plug 'airblade/vim-gitgutter'
-Plug 'editorconfig/editorconfig-vim', { 'do': function('InstallEditorConfig') }
 
 " Initialize plugin system
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
