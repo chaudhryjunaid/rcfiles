@@ -44,8 +44,8 @@ call plug#begin()
 " On-demand loading
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'mileszs/ack.vim', { 'do': function('InstallSilverSearcher') }
+"Plug 'ctrlpvim/ctrlp.vim'
+"Plug 'mileszs/ack.vim', { 'do': function('InstallSilverSearcher') }
 Plug 'vim-airline/vim-airline'
 Plug 'flazz/vim-colorschemes'
 Plug 'elzr/vim-json'
@@ -108,6 +108,8 @@ set laststatus=2
 " Last line
 set showmode
 set showcmd
+
+"set rtp+=/opt/homebrew/opt/fzf
 
 " autosave files when vim loses focus
 au FocusLost,WinLeave * :wa
