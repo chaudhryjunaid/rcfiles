@@ -1,9 +1,7 @@
 [includeIf "gitdir:work/"]
   path = .gitconfig-work
-[includeIf "gitdir:projects/"]
-  path = .gitconfig-projects
-[user]
-  name = Chaudhry Junaid Anwar
+[includeIf "gitdir:~/"]
+  path = .gitconfig-default
 [core]
   excludesfile = ~/.gitexcludes
   pager = delta

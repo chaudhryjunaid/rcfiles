@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# please use the ansible playbook at https://github.com/chaudhryjunaid/setup-macos to configure
+# this below, is a hack!
 mkdir -p ~/.config/nvim
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -9,7 +11,7 @@ ln -sf $SCRIPT_DIR/nvim/init.vim ~/.config/nvim/init.vim
 
 # link git configs
 ln -sf $SCRIPT_DIR/gitexcludes ~/.gitexcludes
-ln -sf $SCRIPT_DIR/gitconfig-projects ~/.gitconfig-projects
+ln -sf $SCRIPT_DIR/gitconfig-default ~/.gitconfig-default
 if [ -f ~/.gitconfig-work ];
 then
   echo ".gitconfig-work already present, omitting update.";
