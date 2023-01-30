@@ -1,7 +1,7 @@
-[includeIf "gitdir:work/"]
-  path = .gitconfig-work
 [includeIf "gitdir:~/"]
   path = .gitconfig-default
+[includeIf "gitdir:work/"]
+  path = .gitconfig-work
 [core]
   excludesfile = ~/.gitexcludes
   pager = delta
