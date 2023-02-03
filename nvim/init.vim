@@ -5,6 +5,7 @@ set hlsearch " highlight search
 set incsearch " incremental search
 set smartcase
 set autoindent " indent a new line the same amount as the line just typed
+set number
 set relativenumber " add line numbers
 set hidden
 set wildmode=longest,list " get bash-like tab completions
