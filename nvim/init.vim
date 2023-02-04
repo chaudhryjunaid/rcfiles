@@ -59,8 +59,9 @@ Plug 'airblade/vim-gitgutter'
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
 call plug#end()
 
-colorscheme cobalt
+"colorscheme cobalt
 "colorscheme PaperColor
+colorscheme luna
 "colorscheme lucius
 "let g:airline_theme='lucius'
 "colorscheme OceanicNext
