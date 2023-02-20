@@ -6,7 +6,7 @@ set incsearch " incremental search
 set smartcase
 set autoindent " indent a new line the same amount as the line just typed
 set number
-set relativenumber " add line numbers
+"set relativenumber " add line numbers
 set hidden
 set wildmode=longest,list " get bash-like tab completions
 set mouse=a " enable mouse click
@@ -54,6 +54,10 @@ Plug 'flazz/vim-colorschemes'
 Plug 'elzr/vim-json'
 Plug 'jiangmiao/auto-pairs' "Insert or delete brackets, parens, quotes in pair
 Plug 'airblade/vim-gitgutter'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-surround'
+Plug 'scrooloose/nerdcommenter'
 
 " Initialize plugin system
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
@@ -152,6 +156,13 @@ set matchtime=0
 
 " Make macros render faster (lazy draw)
 set lazyredraw
+
+nnoremap <SPACE> <Nop>
+let mapleader=" "
+
+nmap <leader>n <ESC>:bn<CR>
+map <leader>p <ESC>:bp<CR>
+
 
 syntax enable
 
