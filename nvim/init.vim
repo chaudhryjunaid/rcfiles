@@ -13,6 +13,7 @@ set mouse=a " enable mouse click
 set clipboard=unnamedplus " using system clipboard
 set cursorline " highlight current cursorline
 set ttyfast " Speed up scrolling in Vim
+"set spell spelllang=en_us
 
 " Baseline
 set encoding=utf-8
