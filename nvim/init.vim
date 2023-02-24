@@ -57,23 +57,16 @@ Plug 'jiangmiao/auto-pairs' "Insert or delete brackets, parens, quotes in pair
 Plug 'airblade/vim-gitgutter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'scrooloose/syntastic'
-Plug 'tpope/vim-surround'
+"Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdcommenter'
 
 " Initialize plugin system
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
 call plug#end()
 
-"colorscheme cobalt
-"colorscheme PaperColor
 colorscheme luna
-"colorscheme lucius
-"let g:airline_theme='lucius'
-"colorscheme OceanicNext
-"let g:airline_theme='oceanicnext'
-"let g:enable_bold_font = 1
-"colorscheme hybrid_material
-"let g:airline_theme = 'hybrid'
+let g:airline_theme = 'hybrid'
+let g:enable_bold_font = 1
 
 set t_Co=256   " This is may or may not needed.
 
@@ -103,10 +96,10 @@ set cpoptions+=$
 set wrap
 set textwidth=79
 set formatoptions=tcqrn1
-"set tabstop=2
-"set shiftwidth=2
-"set softtabstop=2
-"set expandtab
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
 set noshiftround
 
 " Status bar
@@ -150,10 +143,10 @@ au FocusGained,CursorHold,CursorHoldI * checktime
 set matchtime=0
 
 " Folding
-"set foldmethod=syntax
-"set foldnestmax=10
-"set nofoldenable
-"set foldlevel=1
+set foldmethod=syntax
+set foldnestmax=10
+set nofoldenable
+set foldlevel=1
 
 " Make macros render faster (lazy draw)
 set lazyredraw
