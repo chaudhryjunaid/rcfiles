@@ -57,13 +57,11 @@ setopt hist_ignore_all_dups
 # Example aliases
 alias vim=nvim
 
-if [[ -f /opt/homebrew/bin/brew ]]; then
-  eval $(/opt/homebrew/bin/brew shellenv);
+if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+  source /etc/profile.d/vte.sh
 fi
 
-if [ -f /opt/homebrew/share/liquidprompt ]; then
-  . /opt/homebrew/share/liquidprompt
-fi
+[[ $- = *i* ]] && source ~/.liquidprompt/liquidprompt
 
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
