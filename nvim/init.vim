@@ -64,7 +64,7 @@ Plug 'scrooloose/nerdcommenter'
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
 call plug#end()
 
-colorscheme darkZ
+colorscheme lucid
 let g:airline_theme = 'hybrid'
 let g:enable_bold_font = 1
 
