@@ -6,6 +6,9 @@ mkdir -p ~/.config/nvim
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+# link tmux config
+ln -sf $SCRIPT_DIR/tmux.conf ~/.tmux.conf
+
 # link nvim config
 ln -sf $SCRIPT_DIR/nvim/init.vim ~/.config/nvim/init.vim
 
