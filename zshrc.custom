@@ -55,10 +55,12 @@ setopt hist_ignore_all_dups
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-alias vim=nvim
+alias vi=nvim
 
 if [[ -f /opt/homebrew/bin/brew ]]; then
   eval $(/opt/homebrew/bin/brew shellenv);
+elif [[ -f /usr/local/bin/brew ]] ; then
+  eval $(/usr/local/bin/brew shellenv);
 fi
 
 if [ -f /opt/homebrew/share/liquidprompt ]; then
@@ -80,5 +82,3 @@ if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 set -o emacs
-
-
