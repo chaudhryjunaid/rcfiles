@@ -12,6 +12,9 @@ ln -sf $SCRIPT_DIR/tmux.conf ~/.tmux.conf
 # link nvim config
 ln -sf $SCRIPT_DIR/nvim/init.vim ~/.config/nvim/init.vim
 
+# link vim config
+ln -sf $SCRIPT_DIR/vimrc ~/.vimrc
+
 # link git configs
 ln -sf $SCRIPT_DIR/gitexcludes ~/.gitexcludes
 ln -sf $SCRIPT_DIR/gitconfig-default ~/.gitconfig-default
