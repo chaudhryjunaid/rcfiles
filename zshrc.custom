@@ -65,6 +65,8 @@ fi
 
 if [ -f /opt/homebrew/share/liquidprompt ]; then
   . /opt/homebrew/share/liquidprompt
+elif [[ -f /usr/local/share/liquidprompt ]] ; then
+  . /usr/local/share/liquidprompt
 fi
 
 [[ $- = *i* ]] && [[ -f ~/.liquidprompt/liquidprompt ]] && source ~/.liquidprompt/liquidprompt
