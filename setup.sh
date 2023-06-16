@@ -28,3 +28,6 @@ ln -sf $SCRIPT_DIR/gitconfig ~/.gitconfig
 
 # link zsh config
 ln -sf $SCRIPT_DIR/zshrc.custom ~/.zshrc.custom
+
+ln -sf $SCRIPT_DIR/liquidpromptrc ~/.liquidpromptrc
+

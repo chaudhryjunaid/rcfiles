@@ -64,6 +64,8 @@ elif [[ -f /usr/local/bin/brew ]] ; then
   eval $(/usr/local/bin/brew shellenv);
 fi
 
+export LP_CONF_FILE=~/.liquidpromptrc
+
 if [ -f /opt/homebrew/share/liquidprompt ]; then
   . /opt/homebrew/share/liquidprompt
 elif [[ -f /usr/local/share/liquidprompt ]] ; then
