@@ -87,3 +87,4 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 set -o emacs
+
