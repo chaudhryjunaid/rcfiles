@@ -132,5 +132,7 @@ set autoindent
 "map <C-k> <C-w>k
 "map <C-l> <C-w>l
 
+set rtp+=/opt/homebrew/opt/fzf
+
 syntax enable
 
