@@ -55,8 +55,6 @@ Plug 'flazz/vim-colorschemes'
 Plug 'elzr/vim-json'
 Plug 'jiangmiao/auto-pairs' "Insert or delete brackets, parens, quotes in pair
 Plug 'airblade/vim-gitgutter'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'scrooloose/syntastic'
 "Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-fugitive'
