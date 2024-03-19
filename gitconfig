@@ -28,6 +28,9 @@
   rebase = true
 [push]
   default = current
+[branch]
+	# Show most recently changed branches first.
+	sort = -committerdate
 [alias]
   # List available aliases
   aliases = !git config --get-regexp alias | sed -re 's/alias\\.(\\S*)\\s(.*)$/\\1 = \\2/g'

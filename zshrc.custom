@@ -82,4 +82,5 @@ set -o emacs
 
 # custom aliases
 alias ls=lsd
+alias localip="ipconfig getifaddr en0"
 
