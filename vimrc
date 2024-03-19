@@ -2,20 +2,15 @@
 set nocompatible
 
 " Baseline
-set encoding=utf-8
 scriptencoding utf-8
+set encoding=utf-8
 
 set term=xterm-256color
+"set t_Co=256   " This is may or may not needed.
 
 " Helps force plugins to load correctly when it is turned back on below
 filetype off
 
-" Turn on syntax highlighting
-filetype plugin indent on
-syntax on
-
-set t_Co=256   " This is may or may not needed.
-set background=dark
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 set timeoutlen=1000 ttimeoutlen=0
 
@@ -55,8 +50,8 @@ set expandtab
 set noshiftround
 
 " Move up/down editor lines
-nnoremap j gj
-nnoremap k gk
+"nnoremap j gj
+"nnoremap k gk
 
 " Allow hidden buffers
 set hidden
@@ -95,13 +90,13 @@ set noswapfile
 au FocusGained,CursorHold,CursorHoldI * checktime
 
 " Use the OS clipboard
-set clipboard=unnamedplus
+"set clipboard=unnamedplus
 
 " Show matching brackets/parenthesis
 set showmatch
 
 " Don't blink when matching
-set matchtime=0
+"set matchtime=0
 
 " Folding
 "set foldmethod=syntax
@@ -122,23 +117,22 @@ colorscheme sorbet
 set backspace=indent,eol,start
 
 " Enable mouse support in all modes
-set mouse=a
+set mouse=v
 
 " Set the command line height to 2 lines for more display space
-set cmdheight=2
+""set cmdheight=2
 
 set shortmess+=I
 
 "map <leader><space> :let @/=''<cr> " clear search
 
 " Remap help key.
-inoremap <F1> <ESC>:set invfullscreen<CR>a
-nnoremap <F1> :set invfullscreen<CR>
-vnoremap <F1> :set invfullscreen<CR>
+"inoremap <F1> <ESC>:set invfullscreen<CR>a
+"nnoremap <F1> :set invfullscreen<CR>
+"vnoremap <F1> :set invfullscreen<CR>
 
 " Formatting
 "map <leader>q gqip
-
 
 " Easy window navigation
 map <C-h> <C-w>h
@@ -154,6 +148,10 @@ nnoremap <C-s> :w<CR>
 inoremap <C-s> <Esc>:w<CR>a
 
 set rtp+=/opt/homebrew/opt/fzf
+
+" Turn on syntax highlighting
+filetype plugin indent on
+syntax on
 
 syntax enable
 
