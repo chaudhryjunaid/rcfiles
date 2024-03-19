@@ -4,6 +4,8 @@ set nocompatible
 " Baseline
 scriptencoding utf-8
 set encoding=utf-8
+set fileencodings=utf-8
+set termencoding=utf-8
 
 set term=xterm-256color
 "set t_Co=256   " This is may or may not needed.
@@ -56,7 +58,10 @@ set noshiftround
 " Allow hidden buffers
 set hidden
 
+" Enable command completion
 set wildmenu
+set  wildmode=full
+
 " Rendering
 set ttyfast
 
@@ -129,6 +134,9 @@ set mouse=v
 
 " Set the command line height to 2 lines for more display space
 ""set cmdheight=2
+
+" Set the spellcheck language
+set  spelllang=en_us
 
 set shortmess+=I
 
