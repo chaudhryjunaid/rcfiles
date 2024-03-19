@@ -128,6 +128,10 @@ colorscheme sorbet
 
 " Set the backspace key to behave more intuitively
 set backspace=indent,eol,start
+set scrolloff=3
+
+set matchpairs+=<:> " use % to jump between pairs
+runtime! macros/matchit.vim
 
 " Enable mouse support in all modes
 set mouse=v
@@ -155,6 +159,8 @@ map <C-h> <C-w>h
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
+
+map <C-p> :FZF<CR>
 
 " Map ':W' as a sudo write command (useful for editing system files)
 cnoremap W w !sudo tee % > /dev/null
