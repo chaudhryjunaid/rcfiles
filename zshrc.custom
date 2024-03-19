@@ -3,7 +3,7 @@ if [[ -n $SSH_CONNECTION ]]; then
   export VISUAL="vim"
   export EDITOR="$VISUAL"
 else
-  export VISUAL="nvim"
+  export VISUAL="vim"
   export EDITOR="$VISUAL"
 fi
 
