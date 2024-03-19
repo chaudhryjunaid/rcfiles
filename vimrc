@@ -116,7 +116,7 @@ set lazyredraw
 set autoindent
 
 "set background=dark
-colorscheme elflord
+colorscheme sorbet
 
 " Set the backspace key to behave more intuitively
 set backspace=indent,eol,start
