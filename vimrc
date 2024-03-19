@@ -90,6 +90,14 @@ au FocusGained,BufEnter * :silent! !
 " Disable backup and swap files
 set nobackup
 set noswapfile
+"set backupdir=~/.vim/backups
+"set directory=~/.vim/swaps
+
+silent !mkdir -p ~/.vim/undo
+set undodir=~/.vim/undo
+
+set undofile " Persistent Undo
+
 
 "set autoread
 au FocusGained,CursorHold,CursorHoldI * checktime
@@ -129,6 +137,11 @@ colorscheme sorbet
 " Set the backspace key to behave more intuitively
 set backspace=indent,eol,start
 set scrolloff=3
+set sidescrolloff=3 " Start scrolling three columns before vertical border of window
+
+
+set splitbelow " New window goes below
+set splitright " New windows goes right
 
 set matchpairs+=<:> " use % to jump between pairs
 runtime! macros/matchit.vim
