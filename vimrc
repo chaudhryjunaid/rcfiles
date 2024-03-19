@@ -98,6 +98,14 @@ set showmatch
 " Don't blink when matching
 "set matchtime=0
 
+"" Change cursor shape based on the mode vim is in!
+" Insert mode - I-beam cursor
+let &t_SI = "\e[5 q"
+" Replace mode - Underline cursor
+let &t_SR = "\e[3 q"
+" Normal mode - Block cursor
+let &t_EI = "\e[1 q"
+
 " Folding
 "set foldmethod=syntax
 "set foldnestmax=10
