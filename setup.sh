@@ -6,7 +6,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # link tmux config
-ln -sf $SCRIPT_DIR/tmux.conf ~/.tmux.conf
+#ln -sf $SCRIPT_DIR/tmux.conf ~/.tmux.conf
 
 # link vim config
 ln -sf $SCRIPT_DIR/vimrc ~/.vimrc
@@ -36,4 +36,7 @@ ln -sf $SCRIPT_DIR/zshrc.custom ~/.zshrc.custom
 
 # link liquidpromptrc
 ln -sf $SCRIPT_DIR/liquidpromptrc ~/.liquidpromptrc
+
+# link editorconfig
+ln -sf $SCRIPT_DIR/editorconfig ~/.editorconfig
 
