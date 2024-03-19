@@ -1,2 +1,10 @@
 # rcfiles
-current rcfiles for my unices (circa 2023)
+Collection of rcfiles configured according to my preferences
+
+## Configs provided
+- zsh
+- git
+- vim
+- liquidprompt
+- tmux
+

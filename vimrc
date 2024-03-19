@@ -19,19 +19,22 @@ set background=dark
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 set timeoutlen=1000 ttimeoutlen=0
 
-" TODO: Pick a leader key
+" Set leader key to space
+let mapleader = " "
+" Comment above and uncomment below if you want leader to be comma
 "let mapleader = ","
 "nnoremap ,, ,
 
 " map jk and kj to escape
-"imap jk <esc>
-"imap kj <esc>
+imap jk <esc>
+imap kj <esc>
 
 " Security
 set modelines=0
 
 " Show line numbers
 set number
+set relativenumber
 
 " Show file stats
 set ruler
@@ -52,8 +55,8 @@ set expandtab
 set noshiftround
 
 " Move up/down editor lines
-"nnoremap j gj
-"nnoremap k gk
+nnoremap j gj
+nnoremap k gk
 
 " Allow hidden buffers
 set hidden
@@ -63,7 +66,7 @@ set wildmenu
 set ttyfast
 
 " Status bar
-"set laststatus=2
+set laststatus=2
 
 " Last line
 set showmode
@@ -89,10 +92,10 @@ set nobackup
 set noswapfile
 
 "set autoread
-"au FocusGained,CursorHold,CursorHoldI * checktime
+au FocusGained,CursorHold,CursorHoldI * checktime
 
 " Use the OS clipboard
-"set clipboard=unnamed
+set clipboard=unnamedplus
 
 " Show matching brackets/parenthesis
 set showmatch
@@ -109,28 +112,43 @@ set matchtime=0
 " Make macros render faster (lazy draw)
 set lazyredraw
 
-
 " autoindent
 set autoindent
 
-"set shortmess+=I
+" Set the backspace key to behave more intuitively
+set backspace=indent,eol,start
+
+" Enable mouse support in all modes
+set mouse=a
+
+" Set the command line height to 2 lines for more display space
+set cmdheight=2
+
+set shortmess+=I
 
 "map <leader><space> :let @/=''<cr> " clear search
 
 " Remap help key.
-"inoremap <F1> <ESC>:set invfullscreen<CR>a
-"nnoremap <F1> :set invfullscreen<CR>
-"vnoremap <F1> :set invfullscreen<CR>
+inoremap <F1> <ESC>:set invfullscreen<CR>a
+nnoremap <F1> :set invfullscreen<CR>
+vnoremap <F1> :set invfullscreen<CR>
 
 " Formatting
 "map <leader>q gqip
 
 
 " Easy window navigation
-"map <C-h> <C-w>h
-"map <C-j> <C-w>j
-"map <C-k> <C-w>k
-"map <C-l> <C-w>l
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+
+" Map ':W' as a sudo write command (useful for editing system files)
+cnoremap W w !sudo tee % > /dev/null
+
+" Quick saving with Ctrl+S
+nnoremap <C-s> :w<CR>
+inoremap <C-s> <Esc>:w<CR>a
 
 set rtp+=/opt/homebrew/opt/fzf
 
