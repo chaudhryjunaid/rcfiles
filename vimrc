@@ -60,7 +60,7 @@ set hidden
 
 " Enable command completion
 set wildmenu
-set  wildmode=full
+set wildmode=full
 
 " Rendering
 set ttyfast
@@ -88,16 +88,14 @@ au FocusLost,WinLeave * :wa
 au FocusGained,BufEnter * :silent! !
 
 " Disable backup and swap files
-set nobackup
-set noswapfile
 "set backupdir=~/.vim/backups
 "set directory=~/.vim/swaps
 
-silent !mkdir -p ~/.vim/undo
 set undodir=~/.vim/undo
 
 set undofile " Persistent Undo
-
+set nobackup
+set noswapfile
 
 "set autoread
 au FocusGained,CursorHold,CursorHoldI * checktime
@@ -147,7 +145,7 @@ set matchpairs+=<:> " use % to jump between pairs
 runtime! macros/matchit.vim
 
 " Enable mouse support in all modes
-set mouse=v
+set mouse=a
 
 " Set the command line height to 2 lines for more display space
 ""set cmdheight=2
