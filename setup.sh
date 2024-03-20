@@ -9,6 +9,9 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 #ln -sf $SCRIPT_DIR/tmux.conf ~/.tmux.conf
 
 # link vim config
+mkdir -p ~/.vim/backups
+mkdir -p ~/.vim/swaps
+mkdir -p ~/.vim/undo
 ln -sf $SCRIPT_DIR/vimrc ~/.vimrc
 
 # link git configs
