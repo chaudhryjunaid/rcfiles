@@ -1,11 +1,6 @@
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export VISUAL="vim"
-  export EDITOR="$VISUAL"
-else
-  export VISUAL="vim"
-  export EDITOR="$VISUAL"
-fi
+export VISUAL="vim"
+export EDITOR="$VISUAL"
 
 # Prefer US English and use UTF-8.
 export LANG='en_US.UTF-8';
@@ -82,5 +77,4 @@ set -o emacs
 
 # custom aliases
 alias ls=lsd
-alias localip="ipconfig getifaddr en0"
 
