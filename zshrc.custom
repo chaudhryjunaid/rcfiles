@@ -71,7 +71,7 @@ if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
 if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
 # Set up fzf key bindings and fuzzy completion
-eval "$(fzf --zsh)"
+source <(fzf --zsh)
 
 set -o emacs
 
