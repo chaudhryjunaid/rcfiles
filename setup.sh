@@ -34,9 +34,5 @@ ln -sf $SCRIPT_DIR/gitconfig ~/.gitconfig
 # link zsh config
 ln -sf $SCRIPT_DIR/zshrc.custom ~/.zshrc.custom
 
-# link liquidpromptrc
-ln -sf $SCRIPT_DIR/liquidpromptrc ~/.liquidpromptrc
-
 # link editorconfig
 ln -sf $SCRIPT_DIR/editorconfig ~/.editorconfig
-

@@ -5,6 +5,3 @@ Collection of rcfiles configured according to my preferences
 - zsh
 - git
 - vim
-- liquidprompt
-- tmux
-
