@@ -25,7 +25,7 @@
 [fetch]
   prune = true
 [pull]
-  rebase = true
+#  rebase = true
 [push]
   default = current
 [branch]
