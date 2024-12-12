@@ -8,5 +8,9 @@ insert_final_newline = true
 
 # Matches multiple files with brace expansion notation
 # Set default charset
-[*.{sh,lua,py,js,jsx,html,css,es6,sass}]
+[*.{sh,lua,py,js,jsx,ts,tsx,html,css,es6,sass}]
 charset = utf-8
+trim_trailing_whitespace = true
+tab_width = 2
+indent_size = 2
+max_line_length = 120

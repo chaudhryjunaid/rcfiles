@@ -1,7 +1,6 @@
-[includeIf "gitdir:~/"]
-  path = .gitconfig-default
-[includeIf "gitdir:work/"]
-  path = .gitconfig-work
+[user]
+	name = Chaudhry Junaid Anwar
+	email = junaidanwar10@gmail.com
 [core]
   excludesfile = ~/.gitexcludes
   pager = delta
@@ -47,3 +46,9 @@
   uncommit = reset --soft HEAD~1
   # Remove file(s) from Git but not from disk
   untrack = rm --cache --
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+
