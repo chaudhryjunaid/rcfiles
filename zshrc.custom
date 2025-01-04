@@ -86,4 +86,4 @@ source <(fzf --zsh)
 set -o emacs
 
 # custom aliases
-alias ls=lsd
+#alias ls=lsd
