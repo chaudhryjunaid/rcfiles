@@ -10,9 +10,9 @@
   navigate = true
 [diff]
   colorMoved = default
-  tool = vscode
-[difftool "vscode"]
-  cmd = code --wait --diff $LOCAL $REMOTE
+  tool = subl
+[difftool "subl"]
+  cmd = subl -w --diff $LOCAL $REMOTE
 [log]
   abbrevCommit = true
 [color]
@@ -23,8 +23,6 @@
   conflictstyle = diff3
 [fetch]
   prune = true
-[pull]
-#  rebase = true
 [push]
   default = current
 [branch]
