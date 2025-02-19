@@ -1,6 +1,3 @@
-[user]
-	name = Chaudhry Junaid Anwar
-	email = junaidanwar10@gmail.com
 [core]
   excludesfile = ~/.gitexcludes
   pager = delta
