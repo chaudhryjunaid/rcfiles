@@ -36,3 +36,6 @@ ln -sf $SCRIPT_DIR/zshrc.custom ~/.zshrc.custom
 
 # link editorconfig
 ln -sf $SCRIPT_DIR/editorconfig ~/.editorconfig
+
+# link tmux.conf optimized for iterm integration
+ln -sf $SCRIPT_DIR/tmux.conf ~/.tmux.conf
