@@ -1,4 +1,5 @@
-# Preferred editor for local and remote sessions
+set -o emacs
+
 export VISUAL="vim"
 export EDITOR="$VISUAL"
 
@@ -6,85 +7,74 @@ export EDITOR="$VISUAL"
 export LANG='en_US.UTF-8';
 export LC_ALL='en_US.UTF-8';
 
-# Don’t clear the screen after quitting a manual page.
-export MANPAGER='less -X';
-
+export LESS="-FRX"
+export MANPAGER="less -R --use-color -Dd+r -Du+b"
 export PAGER='less'
+#export MANPAGER="bat --paging=always"
+#export PAGER="bat"
 
-# Enable color in grep
-alias grep='grep --color=auto'
-
-# Avoid issues with `gpg` as installed via Homebrew.
-# https://stackoverflow.com/a/42265848/96656
-export GPG_TTY=$(tty);
-
-# Enable persistent REPL history for `node`.
 export NODE_REPL_HISTORY=~/.node_history;
-# Allow 32³ entries; the default is 1000.
 export NODE_REPL_HISTORY_SIZE='32768';
-# Use sloppy mode by default, matching web browsers.
 export NODE_REPL_MODE='sloppy';
 
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
 export PYTHONIOENCODING='UTF-8';
 
+# 50ms for key sequences
+#KEYTIMEOUT=5
 
-# 10ms for key sequences
-KEYTIMEOUT=1
+# History settings
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+setopt appendhistory # Append to history file, don't overwrite
+setopt sharehistory # Share history across all Zsh sessions
+setopt hist_ignore_dups # Don't store duplicate commands
+setopt hist_ignore_space # Don't store commands starting with a space
+setopt hist_expire_dups_first # Expire older duplicates first
+setopt hist_verify          # Show command before executing from history
+setopt hist_reduce_blanks   # Remove extra blanks from commands
+setopt inc_append_history   # Add commands immediately, not at shell exit
 
-# import new commands from the history file also in other zsh-session
-setopt sharehistory
+# Liquidprompt setup
+if [[ -f /opt/homebrew/share/liquidprompt ]]; then
+  source /opt/homebrew/share/liquidprompt
+elif [[ -f /usr/local/share/liquidprompt ]]; then
+  source /usr/local/share/liquidprompt
+elif [[ $- == *i* ]] && [[ -f ~/.liquidprompt/liquidprompt ]]; then
+  source ~/.liquidprompt/liquidprompt
+fi
 
-# Remove blank lines from history
-setopt hist_reduce_blanks
-
-# Remove all duplicates from history
-setopt hist_ignore_all_dups
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-if [ "$(arch)" = "arm64" ]; then
-  if [[ -f /opt/homebrew/bin/brew ]]; then
-    eval $(/opt/homebrew/bin/brew shellenv);
-    if [[ -d /usr/local/bin && -d /usr/local/sbin ]]; then
-      export PATH="$PATH:/usr/local/bin:/usr/local/sbin";
-    fi
+# Terminal integration for Tilix/VTE
+if [[ -n "$TILIX_ID" ]] || [[ -n "$VTE_VERSION" ]]; then
+  if [[ -f /etc/profile.d/vte.sh ]]; then
+    source /etc/profile.d/vte.sh
   fi
-else
-  if [[ -f /usr/local/bin/brew ]]; then
-    eval $(/usr/local/bin/brew shellenv);
-    if [[ -d /opt/homebrew/bin && -d /opt/homebrew/sbin ]]; then
-      export PATH="$PATH:/opt/homebrew/bin:/opt/homebrew/sbin";
-    fi
+fi
+
+# GPG configuration (only if GPG is installed and we're interactive)
+if command -v gpg >/dev/null 2>&1 && [[ -t 0 ]]; then
+  export GPG_TTY=$(tty)
+fi
+
+# Pyenv setup (only if installed)
+if command -v pyenv >/dev/null 2>&1; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+  
+  # Pyenv virtualenv (only if available)
+  if command -v pyenv-virtualenv-init >/dev/null 2>&1; then
+    eval "$(pyenv virtualenv-init -)"
   fi
 fi
 
-export LP_CONF_FILE=~/.liquidpromptrc
-
-if [ -f /opt/homebrew/share/liquidprompt ]; then
-  . /opt/homebrew/share/liquidprompt
-elif [[ -f /usr/local/share/liquidprompt ]] ; then
-  . /usr/local/share/liquidprompt
+# fzf integration (only if installed)
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
 fi
-
-[[ $- = *i* ]] && [[ -f ~/.liquidprompt/liquidprompt ]] && source ~/.liquidprompt/liquidprompt
-
-if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
-  source /etc/profile.d/vte.sh
-fi
-
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-
-if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
-if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
-
-# Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
-
-set -o emacs
 
 # custom aliases
 alias mux=tmuxinator
-
+#alias grep='grep --color=auto'
+alias grep='rg'
