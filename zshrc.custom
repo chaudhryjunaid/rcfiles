@@ -36,6 +36,9 @@ setopt hist_verify          # Show command before executing from history
 setopt hist_reduce_blanks   # Remove extra blanks from commands
 setopt inc_append_history   # Add commands immediately, not at shell exit
 
+# enable homebrew on apple silicon
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Liquidprompt setup
 if [[ -f /opt/homebrew/share/liquidprompt ]]; then
   source /opt/homebrew/share/liquidprompt

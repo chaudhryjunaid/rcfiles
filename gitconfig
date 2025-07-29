@@ -25,8 +25,6 @@
 [push]
   default = current
   autoSetupRemote = true  # Auto-create remote branch on first push
-[merge]
-  conflictstyle = zdiff3
 [rebase]
   autoStash = true              # Auto-stash/unstash during rebase
   updateRefs = true             # Update dependent branches
@@ -50,8 +48,9 @@
 [difftool "vim"]
   cmd = vim -d $LOCAL $REMOTE
 [difftool "bc"]
-	path = /Applications/Beyond Compare.app/Contents/MacOS/bcomp
+  path = /Applications/Beyond Compare.app/Contents/MacOS/bcomp
 [merge]
+  conflictstyle = zdiff3
   tool = cursor
 [mergetool "vscode"]
   cmd = code --wait $MERGED
@@ -60,7 +59,7 @@
 [mergetool "vim"]
   cmd = vim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 [mergetool "bc"]
-	path = /Applications/Beyond Compare.app/Contents/MacOS/bcomp
+  path = /Applications/Beyond Compare.app/Contents/MacOS/bcomp
 # alias settings
 [alias]
   # diff/merge tool aliases
