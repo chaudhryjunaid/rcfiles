@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Configuration setup script
 # Links dotfiles from this directory to home directory
@@ -13,7 +13,7 @@ mkdir -p ~/.vim/undo
 # Link configuration files
 ln -sf $SCRIPT_DIR/vimrc ~/.vimrc
 ln -sf $SCRIPT_DIR/gitexcludes ~/.gitexcludes
-ln -sf $SCRIPT_DIR/gitconfig ~/.gitconfig
+cp $SCRIPT_DIR/gitconfig ~/.gitconfig
 ln -sf $SCRIPT_DIR/editorconfig ~/.editorconfig
 ln -sf $SCRIPT_DIR/tmux.conf ~/.tmux.conf
 ln -sf $SCRIPT_DIR/zprofile ~/.zprofile
