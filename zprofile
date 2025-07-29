@@ -1,6 +1,3 @@
-PATH="/Applications/PyCharm.app/Contents/MacOS:${PATH}"
-export PATH
-
 # configure homebrew
 if [ "$(arch)" = "arm64" ]; then
   eval $(/opt/homebrew/bin/brew shellenv);
