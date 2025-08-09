@@ -80,4 +80,5 @@ fi
 # custom aliases
 alias mux=tmuxinator
 #alias grep='grep --color=auto'
-alias grep='rg'
+#alias grep='rg' # this interferres with AI which uses grep -E
+
