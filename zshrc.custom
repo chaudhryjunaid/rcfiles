@@ -21,7 +21,7 @@ export NODE_REPL_MODE='sloppy';
 export PYTHONIOENCODING='UTF-8';
 
 # 50ms for key sequences
-#KEYTIMEOUT=5
+KEYTIMEOUT=15
 
 # History settings
 HISTFILE=~/.zsh_history
