@@ -40,20 +40,16 @@ setopt inc_append_history   # Add commands immediately, not at shell exit
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Liquidprompt setup
-if [[ -f /opt/homebrew/share/liquidprompt ]]; then
-  source /opt/homebrew/share/liquidprompt
-elif [[ -f /usr/local/share/liquidprompt ]]; then
-  source /usr/local/share/liquidprompt
-elif [[ $- == *i* ]] && [[ -f ~/.liquidprompt/liquidprompt ]]; then
-  source ~/.liquidprompt/liquidprompt
-fi
+#if [[ -f /opt/homebrew/share/liquidprompt ]]; then
+#  source /opt/homebrew/share/liquidprompt
+#elif [[ -f /usr/local/share/liquidprompt ]]; then
+#  source /usr/local/share/liquidprompt
+#elif [[ $- == *i* ]] && [[ -f ~/.liquidprompt/liquidprompt ]]; then
+#  source ~/.liquidprompt/liquidprompt
+#fi
 
-# Terminal integration for Tilix/VTE
-if [[ -n "$TILIX_ID" ]] || [[ -n "$VTE_VERSION" ]]; then
-  if [[ -f /etc/profile.d/vte.sh ]]; then
-    source /etc/profile.d/vte.sh
-  fi
-fi
+# enable the starship prompt on zsh
+eval "$(starship init zsh)"
 
 # GPG configuration (only if GPG is installed and we're interactive)
 if command -v gpg >/dev/null 2>&1 && [[ -t 0 ]]; then
