@@ -13,6 +13,9 @@ export PAGER='less'
 #export MANPAGER="bat --paging=always"
 #export PAGER="bat"
 
+# disable annoying docker menu at the bottom
+export COMPOSE_MENU=false
+
 export NODE_REPL_HISTORY=~/.node_history;
 export NODE_REPL_HISTORY_SIZE='32768';
 export NODE_REPL_MODE='sloppy';
@@ -40,16 +43,11 @@ setopt inc_append_history   # Add commands immediately, not at shell exit
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Liquidprompt setup
-#if [[ -f /opt/homebrew/share/liquidprompt ]]; then
-#  source /opt/homebrew/share/liquidprompt
-#elif [[ -f /usr/local/share/liquidprompt ]]; then
-#  source /usr/local/share/liquidprompt
-#elif [[ $- == *i* ]] && [[ -f ~/.liquidprompt/liquidprompt ]]; then
-#  source ~/.liquidprompt/liquidprompt
-#fi
-
-# enable the starship prompt on zsh
-eval "$(starship init zsh)"
+if [[ -f /opt/homebrew/share/liquidprompt ]]; then
+  source /opt/homebrew/share/liquidprompt
+elif [[ $- == *i* ]] && [[ -f ~/.liquidprompt/liquidprompt ]]; then
+  source ~/.liquidprompt/liquidprompt
+fi
 
 # GPG configuration (only if GPG is installed and we're interactive)
 if command -v gpg >/dev/null 2>&1 && [[ -t 0 ]]; then
