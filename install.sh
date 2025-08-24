@@ -16,4 +16,5 @@ ln -sf $SCRIPT_DIR/gitignore_global ~/.gitignore_global
 ln -sf $SCRIPT_DIR/gitconfig ~/.gitconfig
 ln -sf $SCRIPT_DIR/editorconfig ~/.editorconfig
 ln -sf $SCRIPT_DIR/tmux.conf ~/.tmux.conf
+ln -sf $SCRIPT_DIR/zshrc ~/.zshrc
 ln -sf $SCRIPT_DIR/zshrc.local ~/.zshrc.local
