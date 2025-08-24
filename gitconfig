@@ -82,3 +82,6 @@
   unstage = reset HEAD --          # Unstage files
   # Remove file(s) from Git but not from disk
   untrack = rm --cache --
+[user]
+	name = Chaudhry Junaid Anwar
+	email = junaidanwar10@gmail.com

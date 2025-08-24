@@ -45,25 +45,6 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # Liquidprompt setup
 if [[ -f /opt/homebrew/share/liquidprompt ]]; then
   source /opt/homebrew/share/liquidprompt
-elif [[ $- == *i* ]] && [[ -f ~/.liquidprompt/liquidprompt ]]; then
-  source ~/.liquidprompt/liquidprompt
-fi
-
-# GPG configuration (only if GPG is installed and we're interactive)
-if command -v gpg >/dev/null 2>&1 && [[ -t 0 ]]; then
-  export GPG_TTY=$(tty)
-fi
-
-# Pyenv setup (only if installed)
-if command -v pyenv >/dev/null 2>&1; then
-  export PYENV_ROOT="$HOME/.pyenv"
-  export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init -)"
-  
-  # Pyenv virtualenv (only if available)
-  if command -v pyenv-virtualenv-init >/dev/null 2>&1; then
-    eval "$(pyenv virtualenv-init -)"
-  fi
 fi
 
 # fzf integration (only if installed)
@@ -71,8 +52,11 @@ if command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh)
 fi
 
+eval "$(fnm env --use-on-cd --shell zsh)"
+
 # custom aliases
 alias mux=tmuxinator
-#alias grep='grep --color=auto'
+alias grep='grep --color=auto'
 #alias grep='rg' # this interferres with AI which uses grep -E
+alias rm='rm -i'
 
