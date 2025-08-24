@@ -1,27 +1,21 @@
 [core]
-  editor = cursor --wait
-  excludesfile = ~/.gitexcludes
+  editor = zed --wait
+  excludesfile = ~/.gitignore_global
   pager = delta
 [init]
-  defaultBranch = main
+  defaultBranch = production
 [interactive]
   diffFilter = delta --color-only
 [delta]
   navigate = true
   line-numbers = true
-  syntax-theme = "Dracula"
   side-by-side = true
-  features = decorations
-[delta "decorations"]
-  commit-decoration-style = bold yellow box ul
-  file-decoration-style = none
-  file-style = bold yellow ul
 [log]
   abbrevCommit = true
 [fetch]
   prune = true
 [pull]
-  rebase = true                 # Avoid merge commits on pull
+  #rebase = true                 # Avoid merge commits on pull
 [push]
   default = current
   autoSetupRemote = true  # Auto-create remote branch on first push
@@ -39,38 +33,30 @@
 [mergetool]
   prompt = false
   keepBackup = false
-[difftool "subl"]
-  cmd = subl -w --diff $LOCAL $REMOTE
 [difftool "vscode"]
   cmd = code --wait --diff $LOCAL $REMOTE
 [difftool "cursor"]
   cmd = cursor --wait --diff $LOCAL $REMOTE
 [difftool "vim"]
   cmd = vim -d $LOCAL $REMOTE
-[difftool "bc"]
-  path = /Applications/Beyond Compare.app/Contents/MacOS/bcomp
 [merge]
   conflictstyle = zdiff3
-  tool = cursor
+  tool = vscode
 [mergetool "vscode"]
   cmd = code --wait $MERGED
 [mergetool "cursor"]
   cmd = cursor --wait $MERGED
 [mergetool "vim"]
   cmd = vim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
-[mergetool "bc"]
-  path = /Applications/Beyond Compare.app/Contents/MacOS/bcomp
 # alias settings
 [alias]
   # diff/merge tool aliases
   diffv = difftool --tool=vscode
   diffc = difftool --tool=cursor
   diffvi = difftool --tool=vim
-  diffbc = difftool --tool=bc
   mergev = mergetool --tool=vscode
   mergec = mergetool --tool=cursor
   mergevi = mergetool --tool=vim
-  mergebc = mergetool --tool=bc
   # Quick status
   s = status --short --branch
   # Branch management
@@ -96,3 +82,4 @@
   unstage = reset HEAD --          # Unstage files
   # Remove file(s) from Git but not from disk
   untrack = rm --cache --
+
