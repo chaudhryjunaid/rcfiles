@@ -39,20 +39,32 @@ setopt hist_verify          # Show command before executing from history
 setopt hist_reduce_blanks   # Remove extra blanks from commands
 setopt inc_append_history   # Add commands immediately, not at shell exit
 
-# enable homebrew on apple silicon
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# Liquidprompt setup
-if [[ -f /opt/homebrew/share/liquidprompt ]]; then
-  source /opt/homebrew/share/liquidprompt
+# fnm
+FNM_PATH="/home/cjunaid/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "`fnm env`"
 fi
 
-# fzf integration (only if installed)
-if command -v fzf >/dev/null 2>&1; then
-  source <(fzf --zsh)
-fi
+echo $- | grep -q i 2>/dev/null && . /usr/share/liquidprompt/liquidprompt
+source /usr/share/doc/fzf/examples/key-bindings.zsh
+source /usr/share/doc/fzf/examples/completion.zsh
 
-eval "$(fnm env --use-on-cd --shell zsh)"
+
+# Default command (use fd if installed, falls back to find)
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+
+# Default options
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --info=inline'
+
+# Ctrl+T behavior (file search)
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always {} 2>/dev/null || cat {}'"
+
+# Alt+C behavior (directory search)
+export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -50'"
+
 
 # custom aliases
 alias mux=tmuxinator

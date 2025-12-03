@@ -1,9 +1,9 @@
 [core]
-  editor = zed --wait
+  editor = nvim 
   excludesfile = ~/.gitignore_global
   pager = delta
 [init]
-  defaultBranch = production
+  defaultBranch = main
 [interactive]
   diffFilter = delta --color-only
 [delta]
@@ -15,7 +15,7 @@
 [fetch]
   prune = true
 [pull]
-  #rebase = true                 # Avoid merge commits on pull
+  rebase = true                 # Avoid merge commits on pull
 [push]
   default = current
   autoSetupRemote = true  # Auto-create remote branch on first push
@@ -27,7 +27,7 @@
 # difftool/mergetool settings
 [diff]
   # colorMoved = default
-  tool = cursor
+  tool = vscode
 [difftool]
   prompt = false
 [mergetool]
@@ -35,8 +35,6 @@
   keepBackup = false
 [difftool "vscode"]
   cmd = code --wait --diff $LOCAL $REMOTE
-[difftool "cursor"]
-  cmd = cursor --wait --diff $LOCAL $REMOTE
 [difftool "vim"]
   cmd = vim -d $LOCAL $REMOTE
 [merge]
@@ -44,18 +42,14 @@
   tool = vscode
 [mergetool "vscode"]
   cmd = code --wait $MERGED
-[mergetool "cursor"]
-  cmd = cursor --wait $MERGED
 [mergetool "vim"]
   cmd = vim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 # alias settings
 [alias]
   # diff/merge tool aliases
   diffv = difftool --tool=vscode
-  diffc = difftool --tool=cursor
   diffvi = difftool --tool=vim
   mergev = mergetool --tool=vscode
-  mergec = mergetool --tool=cursor
   mergevi = mergetool --tool=vim
   # Quick status
   s = status --short --branch
