@@ -1,189 +1,94 @@
-" Don't try to be vi compatible
-set nocompatible
-
-" Baseline
-scriptencoding utf-8
+" ---- General ----
+set nocompatible              " Use Vim defaults, not vi
 set encoding=utf-8
-set fileencodings=utf-8
-set termencoding=utf-8
+set hidden                    " Allow switching buffers without saving
+set history=1000
+set undofile                  " Persistent undo across sessions
+set undodir=~/.vim/undo//
+set backupdir=~/.vim/backup//
+set directory=~/.vim/swap//
+set autoread                  " Reload files changed outside vim
+set mouse=a                   " Enable mouse in all modes
 
-set term=xterm-256color
-"set t_Co=256   " This is may or may not needed.
-
-" Helps force plugins to load correctly when it is turned back on below
-filetype off
-
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip
-set timeoutlen=1000 ttimeoutlen=0
-
-" Set leader key to space
-let mapleader = " "
-" Comment above and uncomment below if you want leader to be comma
-"let mapleader = ","
-"nnoremap ,, ,
-
-" map jk and kj to escape
-imap jk <esc>
-imap kj <esc>
-
-" Security
-set modelines=0
-
-" Show line numbers
-set number
-set relativenumber
-
-" Show file stats
-set ruler
-
-" Blink cursor on error instead of beeping (grr)
-"set visualbell
-
-set cpoptions+=$
-
-" Whitespace
-set wrap
-set textwidth=79
-set formatoptions=tcqrn1
-set tabstop=2
-set shiftwidth=2
-set softtabstop=2
-set expandtab
-set noshiftround
-
-" Move up/down editor lines
-"nnoremap j gj
-"nnoremap k gk
-
-" Allow hidden buffers
-set hidden
-
-" Enable command completion
-set wildmenu
-set wildmode=full
-
-" Rendering
-set ttyfast
-
-" Status bar
-set laststatus=2
-
-" Last line
-set showmode
-set showcmd
-
-set cursorline
-nmap <silent> <BS> :nohlsearch<CR>
-
-" Searching
-"nnoremap / /\v
-"vnoremap / /\v
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
-
-" autosave files when vim loses focus
-au FocusLost,WinLeave * :wa
-au FocusGained,BufEnter * :silent! !
-
-" Disable backup and swap files
-"set backupdir=~/.vim/backups
-"set directory=~/.vim/swaps
-
-set undodir=~/.vim/undo
-
-set undofile " Persistent Undo
-set nobackup
-set noswapfile
-
-"set autoread
-au FocusGained,CursorHold,CursorHoldI * checktime
-
-" Use the OS clipboard
-set clipboard=unnamed
-
-" Show matching brackets/parenthesis
-set showmatch
-
-" Don't blink when matching
-"set matchtime=0
-
-"" Change cursor shape based on the mode vim is in!
-" Insert mode - I-beam cursor
-let &t_SI = "\e[5 q"
-" Replace mode - Underline cursor
-let &t_SR = "\e[3 q"
-" Normal mode - Block cursor
-let &t_EI = "\e[1 q"
-
-" Folding
-"set foldmethod=syntax
-"set foldnestmax=10
-"set nofoldenable
-"set foldlevel=1
-
-" Make macros render faster (lazy draw)
-set lazyredraw
-
-" autoindent
-set autoindent
-
-"set background=dark
-colorscheme sorbet
-
-" Set the backspace key to behave more intuitively
-set backspace=indent,eol,start
-set scrolloff=3
-set sidescrolloff=3 " Start scrolling three columns before vertical border of window
-
-
-set splitbelow " New window goes below
-set splitright " New windows goes right
-
-set matchpairs+=<:> " use % to jump between pairs
-runtime! macros/matchit.vim
-
-" Enable mouse support in all modes
-set mouse=a
-
-" Set the command line height to 2 lines for more display space
-""set cmdheight=2
-
-" Set the spellcheck language
-set  spelllang=en_us
-
-set shortmess+=I
-
-"map <leader><space> :let @/=''<cr> " clear search
-
-" Remap help key.
-"inoremap <F1> <ESC>:set invfullscreen<CR>a
-"nnoremap <F1> :set invfullscreen<CR>
-"vnoremap <F1> :set invfullscreen<CR>
-
-" Formatting
-"map <leader>q gqip
-
-" Easy window navigation
-map <C-h> <C-w>h
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-l> <C-w>l
-
-map <C-p> :FZF<CR>
-
-" Map ':W' as a sudo write command (useful for editing system files)
-cnoremap W w !sudo tee % > /dev/null
-
-" Quick saving with Ctrl+S
-nnoremap <C-s> :w<CR>
-inoremap <C-s> <Esc>:w<CR>a
-
-set rtp+=/opt/homebrew/opt/fzf
-
-" Turn on syntax highlighting
-filetype plugin indent on
+" ---- UI ----
+set number                    " Line numbers
+set relativenumber            " Relative line numbers (great for motions)
+set ruler                     " Show cursor position
+set showcmd                   " Show partial commands
+set showmatch                 " Highlight matching brackets
+set laststatus=2              " Always show status line
+set wildmenu                  " Better command-line completion
+set wildmode=longest:full,full
+set scrolloff=8               " Keep 8 lines of context above/below cursor
+set sidescrolloff=8
+set signcolumn=yes            " Always show sign column (no jitter)
+set cursorline                " Highlight current line
+set termguicolors             " True color support
+set background=dark
 syntax on
+filetype plugin indent on
+colorscheme catppuccin
 
-syntax enable
+" ---- Search ----
+set ignorecase                " Case-insensitive search...
+set smartcase                 " ...unless you type a capital letter
+set incsearch                 " Show matches as you type
+set hlsearch                  " Highlight all matches
+
+" ---- Indentation ----
+set expandtab                 " Spaces, not tabs
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set autoindent
+set smartindent
+
+" ---- Splits ----
+set splitright                " Vertical splits open to the right
+set splitbelow                " Horizontal splits open below
+
+" ---- Performance / behavior ----
+set updatetime=300
+set timeoutlen=500
+set ttimeoutlen=10            " Faster escape from insert mode
+set lazyredraw                " Don't redraw during macros
+set backspace=indent,eol,start
+
+" ---- Disable focus event garbage in some terminals ----
+let &t_fe = ""
+let &t_fd = ""
+
+" ---- Keymaps ----
+let mapleader = " "
+
+" Clear search highlight
+nnoremap <silent> <leader>h :nohlsearch<CR>
+
+" Quick save / quit
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+
+" Move between splits with Ctrl-h/j/k/l
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Keep selection after indenting in visual mode
+vnoremap < <gv
+vnoremap > >gv
+
+" Center cursor when jumping
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+
+" ---- Filetype tweaks ----
+augroup filetype_settings
+  autocmd!
+  autocmd FileType yaml,json,html,css,javascript,typescript setlocal ts=2 sw=2 sts=2
+  autocmd FileType make setlocal noexpandtab
+  autocmd BufWritePre * :%s/\s\+$//e   " Strip trailing whitespace on save
+augroup END
+
