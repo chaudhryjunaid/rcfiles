@@ -83,10 +83,6 @@ set incsearch
 set ignorecase
 set smartcase
 
-" autosave files when vim loses focus
-au FocusLost,WinLeave * :wa
-au FocusGained,BufEnter * :silent! !
-
 " Disable backup and swap files
 "set backupdir=~/.vim/backups
 "set directory=~/.vim/swaps
@@ -97,8 +93,11 @@ set undofile " Persistent Undo
 set nobackup
 set noswapfile
 
-"set autoread
-au FocusGained,CursorHold,CursorHoldI * checktime
+set autoread
+augroup vimrc_checktime
+  autocmd!
+  autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * checktime
+augroup END
 
 " Use the OS clipboard
 set clipboard=unnamed

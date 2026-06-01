@@ -47,7 +47,7 @@ setopt hist_reduce_blanks   # Remove extra blanks from commands
 setopt inc_append_history   # Add commands immediately, not at shell exit
 
 # enable homebrew on apple silicon
-eval "$(/opt/homebrew/bin/brew shellenv)"
+[[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Liquidprompt setup
 if [[ -f /opt/homebrew/share/liquidprompt ]]; then
@@ -59,11 +59,10 @@ if command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh)
 fi
 
-eval "$(fnm env --use-on-cd --shell zsh)"
+command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell zsh)"
 
 # custom aliases
 alias mux=tmuxinator
 alias grep='grep --color=auto'
 #alias grep='rg' # this interferres with AI which uses grep -E
 alias rm='rm -i'
-
