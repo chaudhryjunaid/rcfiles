@@ -23,8 +23,8 @@ let mapleader = " "
 "nnoremap ,, ,
 
 " map jk and kj to escape
-imap jk <esc>
-imap kj <esc>
+inoremap jk <Esc>
+inoremap kj <Esc>
 
 " Security
 set modelines=0
@@ -73,7 +73,7 @@ set showmode
 set showcmd
 
 set cursorline
-nmap <silent> <BS> :nohlsearch<CR>
+nnoremap <silent> <BS> :nohlsearch<CR>
 
 " Searching
 "nnoremap / /\v
@@ -83,25 +83,43 @@ set incsearch
 set ignorecase
 set smartcase
 
-" autosave files when vim loses focus
-au FocusLost,WinLeave * :wa
-au FocusGained,BufEnter * :silent! !
-
 " Disable backup and swap files
 "set backupdir=~/.vim/backups
 "set directory=~/.vim/swaps
 
+if !isdirectory(expand('~/.vim/undo'))
+  call mkdir(expand('~/.vim/undo'), 'p')
+endif
 set undodir=~/.vim/undo
 
 set undofile " Persistent Undo
 set nobackup
 set noswapfile
 
-"set autoread
-au FocusGained,CursorHold,CursorHoldI * checktime
+set autoread
+augroup vimrc_checktime
+  autocmd!
+  autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * checktime
+augroup END
 
 " Use the OS clipboard
-set clipboard=unnamed
+if executable('wl-copy') && executable('wl-paste')
+  let g:clipboard = {
+        \ 'name': 'wl-clipboard',
+        \ 'copy': {
+        \   '+': 'wl-copy',
+        \   '*': 'wl-copy',
+        \ },
+        \ 'paste': {
+        \   '+': 'wl-paste --no-newline',
+        \   '*': 'wl-paste --no-newline',
+        \ },
+        \ 'cache_enabled': 1,
+        \ }
+  set clipboard=unnamedplus
+else
+  set clipboard=unnamed
+endif
 
 " Show matching brackets/parenthesis
 set showmatch
@@ -128,6 +146,17 @@ set lazyredraw
 
 " autoindent
 set autoindent
+set signcolumn=yes
+set list
+set listchars=tab:>-,trail:.,nbsp:+
+set colorcolumn=80,120
+set completeopt=menuone,noinsert,noselect
+set updatetime=300
+
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --smart-case\ --hidden
+  set grepformat=%f:%l:%c:%m
+endif
 
 "set background=dark
 colorscheme sorbet
@@ -166,12 +195,24 @@ set shortmess+=I
 "map <leader>q gqip
 
 " Easy window navigation
-map <C-h> <C-w>h
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-l> <C-w>l
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
-map <C-p> :FZF<CR>
+function! s:OpenFzf() abort
+  if exists(':FZF')
+    FZF
+  else
+    echoerr 'FZF command is not available'
+  endif
+endfunction
+
+nnoremap <silent> <C-p> :<C-u>call <SID>OpenFzf()<CR>
+nnoremap <leader>co :copen<CR>
+nnoremap <leader>cc :cclose<CR>
+nnoremap <leader>cn :cnext<CR>
+nnoremap <leader>cp :cprevious<CR>
 
 " Map ':W' as a sudo write command (useful for editing system files)
 cnoremap W w !sudo tee % > /dev/null
@@ -179,8 +220,6 @@ cnoremap W w !sudo tee % > /dev/null
 " Quick saving with Ctrl+S
 nnoremap <C-s> :w<CR>
 inoremap <C-s> <Esc>:w<CR>a
-
-set rtp+=/opt/homebrew/opt/fzf
 
 " Turn on syntax highlighting
 filetype plugin indent on
