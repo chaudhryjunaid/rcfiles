@@ -67,6 +67,9 @@ if [[ $- = *i* ]]; then
   zstyle ':completion:*' menu select
   zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
+  # Show only the current directory name in the prompt instead of the full path.
+  # Uncomment to enable (must be set before liquidprompt is sourced).
+  LP_PATH_METHOD="truncate_to_last_dir"
   [[ -r "$HOME/liquidprompt/liquidprompt" ]] && source "$HOME/liquidprompt/liquidprompt"
   [[ -r "$HOME/liquidprompt-powerline/powerline.theme" ]] && source "$HOME/liquidprompt-powerline/powerline.theme"
   command -v lp_theme >/dev/null 2>&1 && lp_theme powerline_full
