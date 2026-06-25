@@ -8,8 +8,12 @@ On a fresh Ubuntu (24.04+/26.x) system:
 ./configure.sh           # symlink the dotfiles into place
 ./setup-git-identity.sh  # set your git name/email
 ```
-On macOS, install the dependencies with Homebrew, then run `./configure.sh`
-and `./setup-git-identity.sh`.
+On macOS:
+```
+./setup-macos.sh         # install dependencies via Homebrew
+./configure.sh           # symlink the dotfiles into place
+./setup-git-identity.sh  # set your git name/email
+```
 
 # after setup
 Set your git identity in `~/.gitconfig.local` (created by `configure.sh`, untracked,
@@ -61,6 +65,7 @@ written.
 - `linux/`, `macos/` — platform-specific files (e.g. `zshrc.local`)
 - `configure.sh` — symlink the dotfiles into place (backs up existing files)
 - `setup-ubuntu.sh` — install dependencies on Ubuntu
+- `setup-macos.sh` — install dependencies on macOS via Homebrew
 - `setup-git-identity.sh` — write your git name/email to `~/.gitconfig.local`
 
 # Notes
