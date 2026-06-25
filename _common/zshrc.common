@@ -1,0 +1,68 @@
+# Platform-agnostic zsh settings.
+# Symlinked to ~/.zshrc.common and sourced by linux/zshrc.local and
+# macos/zshrc.local.
+# Only put things here that are identical and correct on BOTH platforms.
+
+# Default editor.
+export EDITOR='vim'
+export VISUAL='vim'
+
+# Prefer US English and use UTF-8.
+export LANG='en_US.UTF-8';
+
+export LESS="-FRX"
+export PAGER='less'
+
+# disable annoying docker menu at the bottom
+export COMPOSE_MENU=false
+
+export NODE_REPL_HISTORY=~/.node_history;
+export NODE_REPL_HISTORY_SIZE='32768';
+export NODE_REPL_MODE='sloppy';
+
+# Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
+export PYTHONIOENCODING='UTF-8';
+
+# Key sequence timeout (15 = 150ms).
+KEYTIMEOUT=15
+
+# History settings
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+setopt appendhistory # Append to history file, don't overwrite
+setopt sharehistory # Share history across all Zsh sessions
+setopt hist_ignore_dups # Don't store duplicate commands
+setopt hist_ignore_space # Don't store commands starting with a space
+setopt hist_expire_dups_first # Expire older duplicates first
+setopt hist_verify          # Show command before executing from history
+setopt hist_reduce_blanks   # Remove extra blanks from commands
+setopt inc_append_history   # Add commands immediately, not at shell exit
+setopt extended_history     # Save timestamps and durations
+setopt hist_find_no_dups    # Don't show duplicate history entries in search
+setopt hist_ignore_all_dups # Remove older duplicate entries
+setopt hist_save_no_dups    # Don't save duplicate entries
+
+# Directory navigation
+setopt auto_cd            # `foo/bar` alone cds into it
+setopt auto_pushd         # every cd pushes onto the dir stack (cd -<Tab>)
+setopt pushd_ignore_dups  # no duplicate stack entries
+setopt pushd_silent       # don't print the stack on every cd
+
+# Shell quality-of-life
+setopt interactive_comments  # allow `# comments` when typing commands
+setopt extended_glob         # ^, ~, # in globs (e.g. ls ^*.bak)
+setopt no_beep               # stop the terminal bell
+setopt numeric_glob_sort     # file9 before file10
+
+# Make Ctrl-W delete a single path component, not the whole path
+WORDCHARS=${WORDCHARS//[\/]}
+
+# custom aliases (shared)
+alias grep='grep --color=auto'
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'

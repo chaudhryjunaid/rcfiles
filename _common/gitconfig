@@ -1,3 +1,7 @@
+# Per-machine identity (user.name/email) lives here, untracked.
+# Created by install.sh from a template if missing.
+[include]
+  path = ~/.gitconfig.local
 [core]
   editor = vim
   excludesfile = ~/.gitignore_global
@@ -82,6 +86,3 @@
   unstage = reset HEAD --          # Unstage files
   # Remove file(s) from Git but not from disk
   untrack = rm --cached --
-[user]
-	name = Chaudhry Junaid Anwar
-	email = junaidanwar10@gmail.com

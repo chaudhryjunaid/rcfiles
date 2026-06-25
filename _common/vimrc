@@ -13,6 +13,76 @@ set term=xterm-256color
 " Helps force plugins to load correctly when it is turned back on below
 filetype off
 
+" ==========================
+" Plugins (vim-plug)
+" ==========================
+" Auto-install vim-plug on first launch, then install plugins.
+let s:plug_path = expand('~/.vim/autoload/plug.vim')
+if empty(glob(s:plug_path)) && executable('curl')
+  silent execute '!curl -fLo ' . shellescape(s:plug_path) . ' --create-dirs '
+        \ . 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+if filereadable(s:plug_path)
+  call plug#begin('~/.vim/plugged')
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+  Plug 'tpope/vim-sleuth'                       " auto-detect indentation per file
+  Plug 'tpope/vim-surround'                     " edit surrounding quotes/brackets/tags
+  Plug 'tpope/vim-repeat'                       " make . repeat plugin maps (e.g. surround)
+  Plug 'junegunn/fzf'                           " fzf vim plugin base (commands/runtimepath)
+  Plug 'junegunn/fzf.vim'                       " :Files, :Rg, :Buffers, :Lines, ...
+  Plug 'editorconfig/editorconfig-vim'          " honor .editorconfig settings
+  Plug 'reedes/vim-pencil'                      " prose-aware soft/hard wrap & motions
+  Plug 'godlygeek/tabular'                       " align text / :TableFormat (vim-markdown dep)
+  Plug 'preservim/vim-markdown'                 " rich Markdown: folding, :Toc, code fences
+  call plug#end()
+endif
+
+" ==========================
+" vim-airline status line
+" ==========================
+" Theme — swap for any in :AirlineTheme <Tab> (e.g. minimalist, tomorrow, dark)
+let g:airline_theme = 'papercolor'
+
+" Use powerline/Nerd Font glyphs for separators and symbols
+let g:airline_powerline_fonts = 1
+
+" Show open buffers along the top as a tab line
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#tabline#buffer_nr_show = 1
+
+" Trim the section that shows file encoding/format unless it's non-standard
+let g:airline#parts#ffenc#skip_expected_string = 'utf-8[unix]'
+
+" ==========================
+" Prose & git commit messages
+" ==========================
+" vim-pencil: prose-aware motions and soft/hard wrap per file.
+let g:pencil#wrapModeDefault = 'soft'
+let g:pencil#textwidth = 72
+
+" vim-markdown: show raw markup (no concealing), keep folds available but open.
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal_code_blocks = 0
+
+augroup filetype_prose
+  autocmd!
+  " Commit messages: spell on, pencil hard-wraps the body at 72, 50/72 guides.
+  " textwidth must be 0 before pencil#init so its hard mode sets 72 (else it
+  " reverts to the global textwidth); colorcolumn is set after, as pencil
+  " leaves it alone in hard mode.
+  autocmd FileType gitcommit setlocal spell textwidth=0
+  autocmd FileType gitcommit silent! call pencil#init({'wrap': 'hard', 'textwidth': 72})
+  autocmd FileType gitcommit setlocal colorcolumn=51,73
+  " Prose: spell on, pencil soft-wraps (no hard breaks, display-line motions).
+  autocmd FileType text,markdown setlocal spell
+  autocmd FileType text,markdown silent! call pencil#init({'wrap': 'soft'})
+  autocmd FileType markdown setlocal foldlevel=99
+augroup END
+
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 set timeoutlen=1000 ttimeoutlen=0
 
@@ -69,7 +139,7 @@ set ttyfast
 set laststatus=2
 
 " Last line
-set showmode
+set noshowmode " airline shows the current mode, so hide the default -- INSERT --
 set showcmd
 
 set cursorline
@@ -103,7 +173,9 @@ augroup vimrc_checktime
 augroup END
 
 " Use the OS clipboard
-if executable('wl-copy') && executable('wl-paste')
+if has('mac')
+  set clipboard=unnamed
+elseif executable('wl-copy') && executable('wl-paste')
   let g:clipboard = {
         \ 'name': 'wl-clipboard',
         \ 'copy': {
@@ -199,6 +271,11 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+
+" On macOS, fzf is installed via Homebrew and needs to be on the runtimepath.
+if has('mac') && isdirectory('/opt/homebrew/opt/fzf')
+  set rtp+=/opt/homebrew/opt/fzf
+endif
 
 function! s:OpenFzf() abort
   if exists(':FZF')

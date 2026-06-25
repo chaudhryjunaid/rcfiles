@@ -2,9 +2,11 @@
 Set of good enough system configuration/rc files for macOS/Linux.
 
 # after setup
+Set your git identity in `~/.gitconfig.local` (created by `install.sh`, untracked,
+included by the tracked `~/.gitconfig`):
 ```
-git config --global user.name "Your Name"
-git config --global user.email "your.email@example.com"
+git config -f ~/.gitconfig.local user.name "Your Name"
+git config -f ~/.gitconfig.local user.email "your.email@example.com"
 ```
 
 # Notes
