@@ -4,11 +4,15 @@ set nocompatible
 " Baseline
 scriptencoding utf-8
 set encoding=utf-8
-set fileencodings=utf-8
-set termencoding=utf-8
 
-set term=xterm-256color
-"set t_Co=256   " This is may or may not needed.
+" Don't set 'term' here: the terminal already exports the right TERM
+" (e.g. xterm-kitty). Forcing xterm-256color clobbers that terminfo, loses
+" true-color/cursor-shape capabilities, and misbehaves inside tmux.
+
+" Use 24-bit true color when the terminal supports it (kitty does).
+if has('termguicolors')
+  set termguicolors
+endif
 
 " Helps force plugins to load correctly when it is turned back on below
 filetype off
@@ -231,7 +235,7 @@ if executable('rg')
 endif
 
 "set background=dark
-colorscheme sorbet
+silent! colorscheme sorbet  " silent!: don't error out if the scheme is missing
 
 " Set the backspace key to behave more intuitively
 set backspace=indent,eol,start
@@ -243,7 +247,7 @@ set splitbelow " New window goes below
 set splitright " New windows goes right
 
 set matchpairs+=<:> " use % to jump between pairs
-runtime! macros/matchit.vim
+silent! packadd! matchit " Vim 8+ ships matchit as a package (extends % to if/endif, tags, ...)
 
 " Enable mouse support in all modes
 set mouse=a
@@ -252,7 +256,7 @@ set mouse=a
 ""set cmdheight=2
 
 " Set the spellcheck language
-set  spelllang=en_us
+set spelllang=en_us
 
 set shortmess+=I
 
@@ -298,8 +302,6 @@ cnoremap W w !sudo tee % > /dev/null
 nnoremap <C-s> :w<CR>
 inoremap <C-s> <Esc>:w<CR>a
 
-" Turn on syntax highlighting
+" Turn on filetype detection (plugins + indent) and syntax highlighting.
 filetype plugin indent on
-syntax on
-
 syntax enable
