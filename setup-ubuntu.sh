@@ -32,7 +32,7 @@ echo "==> Installing core packages"
 $SUDO apt-get install -y "${CORE_PKGS[@]}"
 
 # Optional packages — install each best-effort so a missing one doesn't abort.
-OPTIONAL_PKGS=(git-delta duf tmuxinator kitty)
+OPTIONAL_PKGS=(git-delta duf tmuxinator kitty zoxide eza)
 echo "==> Installing optional packages (best-effort)"
 for pkg in "${OPTIONAL_PKGS[@]}"; do
     if $SUDO apt-get install -y "$pkg" >/dev/null 2>&1; then
@@ -42,17 +42,8 @@ for pkg in "${OPTIONAL_PKGS[@]}"; do
     fi
 done
 
-# oh-my-zsh (don't run zsh, don't chsh, keep the existing ~/.zshrc).
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    echo "==> Installing oh-my-zsh"
-    RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-else
-    echo "==> oh-my-zsh already installed"
-fi
-
-# zsh plugins as oh-my-zsh custom plugins.
-ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+# zsh plugins (framework-free — sourced directly by our zshrc, no oh-my-zsh).
+ZSH_PLUGIN_DIR="${ZSH_PLUGIN_DIR:-$HOME/.zsh/plugins}"
 clone_plugin() {
     local repo="$1" dest="$2"
     if [ -d "$dest" ]; then
@@ -62,8 +53,10 @@ clone_plugin() {
     fi
 }
 echo "==> Installing zsh plugins"
-clone_plugin https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
-clone_plugin https://github.com/zsh-users/zsh-autosuggestions     "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+mkdir -p "$ZSH_PLUGIN_DIR"
+clone_plugin https://github.com/Aloxaf/fzf-tab                    "$ZSH_PLUGIN_DIR/fzf-tab"
+clone_plugin https://github.com/zsh-users/zsh-autosuggestions     "$ZSH_PLUGIN_DIR/zsh-autosuggestions"
+clone_plugin https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting"
 
 # fnm (Node version manager). --skip-shell: our rc files handle the env line.
 if ! command -v fnm >/dev/null 2>&1; then
@@ -115,11 +108,9 @@ fi
 cat <<'NOTE'
 
 Done installing dependencies. Next steps:
-  1. ./configure.sh            # symlink the dotfiles into place
+  1. ./configure.sh            # symlink the dotfiles into place (incl. ~/.zshrc)
   2. ./setup-git-identity.sh   # set your git name/email
-  3. Enable the zsh plugins in ~/.zshrc:
-        plugins=(... zsh-autosuggestions zsh-syntax-highlighting)
-  4. Log out/in (or restart your terminal) to pick up zsh and the new fonts.
+  3. Log out/in (or restart your terminal) to pick up zsh and the new fonts.
      Set your terminal font to a Nerd Font, e.g. "JetBrainsMono Nerd Font",
      "CaskaydiaCove Nerd Font" (Cascadia Code), or "MesloLGS Nerd Font".
 NOTE

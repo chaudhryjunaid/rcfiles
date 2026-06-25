@@ -58,6 +58,33 @@ setopt numeric_glob_sort     # file9 before file10
 # Make Ctrl-W delete a single path component, not the whole path
 WORDCHARS=${WORDCHARS//[\/]}
 
+# git aliases (a curated subset of the oh-my-zsh `git` plugin, vendored so we
+# don't need a framework just for these).
+alias g='git'
+alias gst='git status'
+alias gss='git status -s'
+alias ga='git add'
+alias gaa='git add --all'
+alias gc='git commit -v'
+alias gcm='git commit -m'
+alias gca='git commit -v -a'
+alias gco='git checkout'
+alias gcb='git checkout -b'
+alias gsw='git switch'
+alias gb='git branch'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gl='git pull'
+alias gp='git push'
+alias gf='git fetch'
+alias gcl='git clone'
+alias glog='git log --oneline --graph --decorate'
+alias glga='git log --oneline --graph --decorate --all'
+alias grh='git reset HEAD'
+alias grhh='git reset --hard'
+alias gstash='git stash'
+alias gstp='git stash pop'
+
 # custom aliases (shared)
 alias grep='grep --color=auto'
 alias rm='rm -i'
@@ -66,3 +93,34 @@ alias mv='mv -i'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
+
+# Load zsh plugins (framework-free). Call this LAST from the platform rc — after
+# compinit, fzf and the prompt are set up. Ordering matters:
+#   * fzf-tab must load after compinit but before the widget-wrapping plugins.
+#   * zsh-syntax-highlighting must be sourced last of all.
+zsh_load_plugins() {
+  [[ $- = *i* ]] || return                       # interactive shells only
+  local dir="${ZSH_PLUGIN_DIR:-$HOME/.zsh/plugins}"
+
+  # fzf-tab — replace zsh's completion menu with an fzf picker.
+  if [ -f "$dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
+    source "$dir/fzf-tab/fzf-tab.plugin.zsh"
+    # fzf-tab needs the native menu off so it can capture the completion list.
+    zstyle ':completion:*' menu no
+    zstyle ':completion:*:descriptions' format '[%d]'
+    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+    zstyle ':completion:*:git-checkout:*' sort false   # keep git's own order
+    zstyle ':fzf-tab:*' switch-group '<' '>'           # move between groups
+    # Preview directory contents when completing `cd`.
+    if command -v eza >/dev/null 2>&1; then
+      zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+    else
+      zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1 $realpath'
+    fi
+  fi
+
+  [ -f "$dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ] \
+    && source "$dir/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  [ -f "$dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] \
+    && source "$dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+}

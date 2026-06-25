@@ -49,13 +49,14 @@ brew_cask() {
     fi
 }
 
-# CLI tools (formulae). zsh ships with macOS; the two zsh plugins are installed
-# below as oh-my-zsh custom plugins.
+# CLI tools (formulae). zsh ships with macOS; the two zsh plugins are cloned
+# below into ~/.zsh/plugins and sourced directly (no framework).
 FORMULAE=(
     git vim
     git-delta fzf ripgrep bat
     tmux
     starship
+    zoxide eza
     fnm tmuxinator
 )
 echo "==> Installing formulae"
@@ -75,17 +76,8 @@ for c in "${CASKS[@]}"; do
     brew_cask "$c"
 done
 
-# oh-my-zsh (don't run zsh, don't chsh, keep the existing ~/.zshrc).
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    echo "==> Installing oh-my-zsh"
-    RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-else
-    echo "==> oh-my-zsh already installed"
-fi
-
-# zsh plugins as oh-my-zsh custom plugins.
-ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+# zsh plugins (framework-free — sourced directly by our zshrc, no oh-my-zsh).
+ZSH_PLUGIN_DIR="${ZSH_PLUGIN_DIR:-$HOME/.zsh/plugins}"
 clone_plugin() {
     local repo="$1" dest="$2"
     if [ -d "$dest" ]; then
@@ -95,17 +87,17 @@ clone_plugin() {
     fi
 }
 echo "==> Installing zsh plugins"
-clone_plugin https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
-clone_plugin https://github.com/zsh-users/zsh-autosuggestions     "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+mkdir -p "$ZSH_PLUGIN_DIR"
+clone_plugin https://github.com/Aloxaf/fzf-tab                    "$ZSH_PLUGIN_DIR/fzf-tab"
+clone_plugin https://github.com/zsh-users/zsh-autosuggestions     "$ZSH_PLUGIN_DIR/zsh-autosuggestions"
+clone_plugin https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting"
 
 cat <<'NOTE'
 
 Done installing dependencies. Next steps:
-  1. ./configure.sh            # symlink the dotfiles into place
+  1. ./configure.sh            # symlink the dotfiles into place (incl. ~/.zshrc)
   2. ./setup-git-identity.sh   # set your git name/email
-  3. Enable the zsh plugins in ~/.zshrc:
-        plugins=(... zsh-autosuggestions zsh-syntax-highlighting)
-  4. Restart your terminal and set your terminal/kitty font to a Nerd Font,
+  3. Restart your terminal and set your terminal/kitty font to a Nerd Font,
      e.g. "JetBrainsMono Nerd Font", "CaskaydiaCove Nerd Font", or
      "MesloLGS Nerd Font".
 NOTE

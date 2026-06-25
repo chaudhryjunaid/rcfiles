@@ -47,13 +47,11 @@ if [ -f "$SCRIPT_DIR/_common/kitty.conf" ]; then
     link_file "$SCRIPT_DIR/_common/kitty.conf" "$HOME/.config/kitty/kitty.conf"
 fi
 
-# Ensure ~/.zshrc sources ~/.zshrc.local (idempotent).
-# The symlinked ~/.zshrc.local does nothing unless ~/.zshrc sources it.
-SOURCE_LINE='[ -f ~/.zshrc.local ] && source ~/.zshrc.local'
-if ! grep -qF 'zshrc.local' "$HOME/.zshrc" 2>/dev/null; then
-    printf '\n%s\n' "$SOURCE_LINE" >> "$HOME/.zshrc"
-    echo "Added zshrc.local source line to ~/.zshrc"
-fi
+# The platform `zshrc` is linked straight to ~/.zshrc by the loop above (it is
+# the entry point and sources ~/.zshrc.common itself). Any prior real ~/.zshrc
+# (e.g. an oh-my-zsh one) is backed up by link_file. Remove a stale
+# ~/.zshrc.local symlink left over from the old two-file layout.
+[ -L "$HOME/.zshrc.local" ] && rm -f "$HOME/.zshrc.local"
 
 # Create the untracked per-machine git identity file (included by ~/.gitconfig).
 # Edit this file with your name/email; it is never committed to this repo.
