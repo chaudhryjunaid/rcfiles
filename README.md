@@ -51,7 +51,9 @@ written.
   (fzf-tab replaces the completion menu with an fzf picker)
 - **fnm** — Node version manager
 - **bat** — used as the man pager on macOS
-- **eza** — optional; used for the `cd` completion preview in fzf-tab
+- **eza** — modern `ls`; aliased to `ls`/`l`/`ll`/`la`/`lt` when present (falls
+  back to plain `ls` otherwise) and used for the `cd` completion preview in
+  fzf-tab
 
 ## tmux
 - **tmux** 3.2+ (popup styling)
