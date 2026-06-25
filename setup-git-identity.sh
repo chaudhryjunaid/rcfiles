@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set up the git identity in ~/.gitconfig.local (untracked, included by the
-# tracked ~/.gitconfig). Run this once on a new system, after install.sh, so
+# tracked ~/.gitconfig). Run this once on a new system, after configure.sh, so
 # you don't have to type your name/email by hand.
 #
 # Usage:
