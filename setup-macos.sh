@@ -55,7 +55,7 @@ FORMULAE=(
     git vim
     git-delta fzf ripgrep bat
     tmux
-    liquidprompt
+    starship
     fnm tmuxinator
 )
 echo "==> Installing formulae"

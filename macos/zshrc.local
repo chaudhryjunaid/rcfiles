@@ -10,10 +10,8 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 # enable homebrew on apple silicon
 [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Liquidprompt setup
-if [[ -f /opt/homebrew/share/liquidprompt ]]; then
-  source /opt/homebrew/share/liquidprompt
-fi
+# Starship prompt (only if installed)
+command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
 # fzf integration (only if installed)
 if command -v fzf >/dev/null 2>&1; then

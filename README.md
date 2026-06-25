@@ -42,7 +42,8 @@ written.
   Meslo Nerd Fonts
 
 ## zsh prompt & integrations
-- **liquidprompt** — prompt
+- **starship** — prompt (`setup-ubuntu.sh` installs it via the official script,
+  since it isn't reliably packaged in apt; `setup-macos.sh` installs it via brew)
 - **zsh-syntax-highlighting**, **zsh-autosuggestions**
 - **fnm** — Node version manager (macOS config)
 - **bat** — used as the man pager on macOS
