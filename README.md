@@ -7,11 +7,8 @@ git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
 ```
 
-## Configs provided
-- zsh customizations as zshrc.local intended to be sourced at the end of the main .zshrc file
-- gitconfig
-- gitignore_global
-- vimrc
-- tmux.conf
-- zprofile
-- editorconfig
+# Notes
+- uses oh-my-zsh, fzf, fnm, zsh-syntax-highlighting, zsh-autosuggestions and
+  liquidprompt
+- zsh customizations as provided as zshrc.local intended to be sourced at the end of the .zshrc file
+

@@ -1,4 +1,4 @@
-set -o emacs
+set -o vi
 export EDITOR='vim'
 export VISUAL='vim'
 
@@ -70,10 +70,9 @@ fi
 alias grep='grep --color=auto'
 alias rm='rm -i'
 command -v rg >/dev/null 2>&1 && alias rgi='rg -i'
-command -v batcat >/dev/null 2>&1 && alias cat='batcat --paging=never'
+#command -v batcat >/dev/null 2>&1 && alias cat='batcat --paging=never'
 command -v duf >/dev/null 2>&1 && alias df='duf'
 
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
-
 
