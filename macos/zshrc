@@ -27,6 +27,7 @@ if [[ $- = *i* ]]; then
   zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
   if [ -f /opt/homebrew/share/liquidprompt ]; then
+    . ~/.liquidpromptrc
     . /opt/homebrew/share/liquidprompt
   fi
   # zoxide — smarter cd (provides `z` and `zi`). Init after compinit so its
