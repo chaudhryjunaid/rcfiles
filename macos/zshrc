@@ -26,8 +26,9 @@ if [[ $- = *i* ]]; then
   zstyle ':completion:*' menu select
   zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-  source /opt/homebrew/share/liquidprompt
-
+  if [ -f /opt/homebrew/share/liquidprompt ]; then
+    . /opt/homebrew/share/liquidprompt
+  fi
   # zoxide — smarter cd (provides `z` and `zi`). Init after compinit so its
   # completions register. `z foo` jumps; `zi` fzf-picks.
   command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
