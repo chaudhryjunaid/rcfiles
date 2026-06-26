@@ -32,7 +32,7 @@ echo "==> Installing core packages"
 $SUDO apt-get install -y "${CORE_PKGS[@]}"
 
 # Optional packages — install each best-effort so a missing one doesn't abort.
-OPTIONAL_PKGS=(git-delta duf tmuxinator kitty zoxide eza)
+OPTIONAL_PKGS=(git-delta duf tmuxinator kitty zoxide eza liquidprompt)
 echo "==> Installing optional packages (best-effort)"
 for pkg in "${OPTIONAL_PKGS[@]}"; do
     if $SUDO apt-get install -y "$pkg" >/dev/null 2>&1; then
@@ -64,16 +64,6 @@ if ! command -v fnm >/dev/null 2>&1; then
     curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
 else
     echo "==> fnm already installed"
-fi
-
-# starship (prompt). Not reliably packaged in apt; use the official installer.
-# Installs to /usr/local/bin, so it needs sudo; --yes skips the confirmation.
-if ! command -v starship >/dev/null 2>&1; then
-    echo "==> Installing starship"
-    curl -sS https://starship.rs/install.sh | $SUDO sh -s -- --yes \
-        || echo "    WARN: could not install starship — install manually if you want it" >&2
-else
-    echo "==> starship already installed"
 fi
 
 # Nerd Fonts (patched with the powerline/icon glyphs kitty and vim-airline use).

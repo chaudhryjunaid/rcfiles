@@ -13,6 +13,7 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 # enable homebrew on apple silicon
 [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
+
 # Only load interactive integrations in shells with a prompt.
 if [[ $- = *i* ]]; then
   autoload -Uz compinit
@@ -25,8 +26,7 @@ if [[ $- = *i* ]]; then
   zstyle ':completion:*' menu select
   zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-  # Starship prompt (only if installed)
-  command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
+  source /opt/homebrew/share/liquidprompt
 
   # zoxide — smarter cd (provides `z` and `zi`). Init after compinit so its
   # completions register. `z foo` jumps; `zi` fzf-picks.

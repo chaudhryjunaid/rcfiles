@@ -24,6 +24,9 @@ command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden
 [[ -n "$FZF_DEFAULT_COMMAND" ]] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border'
 
+# Only load liquidprompt in interactive shells, not from a script or from scp
+echo $- | grep -q i 2>/dev/null && . /usr/share/liquidprompt/liquidprompt
+
 # Only load interactive integrations in shells with a prompt.
 if [[ $- = *i* ]]; then
   autoload -Uz compinit
@@ -35,9 +38,6 @@ if [[ $- = *i* ]]; then
   fi
   zstyle ':completion:*' menu select
   zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-  # Starship prompt (only if installed)
-  command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
   # zoxide — smarter cd (provides `z` and `zi`). Init after compinit so its
   # completions register. Use `z foo` to jump; `zi` for interactive fzf pick.
@@ -58,3 +58,5 @@ command -v duf >/dev/null 2>&1 && alias df='duf'
 # zsh plugins (fzf-tab, autosuggestions, syntax-highlighting) — defined in
 # zshrc.common, called last so syntax-highlighting wraps all other ZLE widgets.
 zsh_load_plugins
+
+

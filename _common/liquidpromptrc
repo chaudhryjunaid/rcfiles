@@ -1,0 +1,91 @@
+# Liquidprompt configuration — symlinked to ~/.liquidpromptrc by configure.sh.
+# Liquidprompt sources this automatically when it loads. Tuned to surface a lot
+# of context: VCS state, runtime, jobs, load/battery/temp, virtualenv, etc.
+# Reference: https://liquidprompt.readthedocs.io/ (and the liquidpromptrc-dist
+# template shipped with the package).
+
+###############################################################################
+# Features — what each prompt segment shows.
+###############################################################################
+
+# Show the error code of the last command when it failed.
+LP_ENABLE_ERROR=1
+
+# Mark when the current user can run sudo without a password prompt.
+LP_ENABLE_SUDO=1
+
+# Filesystem permission marker on the current dir (e.g. a lock when read-only).
+LP_ENABLE_PERM=1
+
+# Shorten long paths in the middle instead of printing the whole thing.
+LP_ENABLE_SHORTEN_PATH=1
+
+# Number of background/suspended jobs.
+LP_ENABLE_JOBS=1
+
+# 1-minute load average (only shown past LP_LOAD_THRESHOLD).
+LP_ENABLE_LOAD=1
+
+# Battery level + charging state (only shown past LP_BATTERY_THRESHOLD).
+LP_ENABLE_BATT=1
+
+# CPU/system temperature (only shown past LP_TEMP_THRESHOLD; needs a sensor).
+LP_ENABLE_TEMP=1
+
+# How long the last command ran (only shown past LP_RUNTIME_THRESHOLD).
+LP_ENABLE_RUNTIME=1
+
+# Wall-clock time in the prompt. Off by default — the terminal usually has it;
+# flip to 1 if you want it inline.
+LP_ENABLE_TIME=0
+
+# Version control state: branch, ahead/behind, dirty/staged/stash counts.
+LP_ENABLE_GIT=1
+LP_ENABLE_SVN=1
+LP_ENABLE_HG=1
+LP_ENABLE_FOSSIL=1
+LP_ENABLE_BZR=1
+
+# Show VCS info even when standing on the repository root directory.
+LP_ENABLE_VCS_ROOT=1
+
+# Python virtualenv / conda env name when one is active.
+LP_ENABLE_VIRTUALENV=1
+
+# Other language/tool contexts (shown only when relevant).
+LP_ENABLE_RUBY_VENV=1
+LP_ENABLE_NODE_VENV=1
+
+# Set the terminal/tab title to user@host:dir.
+LP_ENABLE_TITLE=1
+LP_ENABLE_SCREEN_TITLE=1
+
+# Colour the hostname deterministically from its name, so each SSH box looks
+# distinct; also detach-session marker for screen/tmux.
+LP_ENABLE_SSH_COLORS=1
+LP_ENABLE_DETACHED_SESSIONS=1
+
+###############################################################################
+# Thresholds — keep the prompt quiet until something is worth noticing.
+###############################################################################
+
+LP_BATTERY_THRESHOLD=75    # warn when battery drops below 75%
+LP_LOAD_THRESHOLD=0.60     # show load above 0.60 per core
+LP_TEMP_THRESHOLD=60       # show temperature above 60°C
+LP_RUNTIME_THRESHOLD=2     # show runtime for commands longer than 2s
+
+###############################################################################
+# Path display.
+###############################################################################
+
+LP_PATH_LENGTH=35          # shorten the path once it exceeds 35 chars
+LP_PATH_KEEP=2             # always keep the first 2 path components visible
+LP_ENABLE_FQDN=0           # short hostname, not the fully-qualified one
+
+###############################################################################
+# Always show user@host so SSH sessions are unambiguous; show % even at 0.
+###############################################################################
+
+LP_USER_ALWAYS=1           # always print the username
+LP_HOSTNAME_ALWAYS=0       # print host only over SSH (local host stays clean)
+LP_PERCENTS_ALWAYS=1       # always show battery/load percentages when enabled

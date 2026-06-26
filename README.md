@@ -29,7 +29,7 @@ with `command -v`), but the following are assumed by the configuration as
 written.
 
 ## Required
-- **zsh** — shell (no framework; the prompt is starship and the two plugins
+- **zsh** — shell (no framework; the prompt is liquidprompt and the two plugins
   below are sourced directly from `~/.zsh/plugins`)
 - **vim** (8.0+, built with `+clipboard`) — editor; plugins are managed by
   vim-plug, which self-installs on first launch (needs **curl** and **git**)
@@ -44,8 +44,9 @@ written.
   Meslo Nerd Fonts
 
 ## zsh prompt & integrations
-- **starship** — prompt (`setup-ubuntu.sh` installs it via the official script,
-  since it isn't reliably packaged in apt; `setup-macos.sh` installs it via brew)
+- **liquidprompt** — feature-rich prompt (installed via apt / brew); tuned in
+  `~/.liquidpromptrc` to show git/VCS state, runtime, jobs, load, battery,
+  virtualenv, return code and more
 - **fzf-tab**, **zsh-syntax-highlighting**, **zsh-autosuggestions** — cloned to
   `~/.zsh/plugins` by the setup scripts and sourced directly by `~/.zshrc`
   (fzf-tab replaces the completion menu with an fzf picker)
@@ -81,7 +82,7 @@ written.
 - The platform `zshrc` is the tracked entry point, symlinked to `~/.zshrc`; it
   sources a shared `zshrc.common`. Per-machine tweaks go in an untracked
   `~/.zshrc.machine` (sourced automatically if present).
-- No shell framework: the prompt is starship and the two zsh plugins are
+- No shell framework: the prompt is liquidprompt and the two zsh plugins are
   sourced directly from `~/.zsh/plugins`.
 - vim plugins install automatically on first launch via vim-plug.
 

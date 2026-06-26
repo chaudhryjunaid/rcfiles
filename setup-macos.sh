@@ -55,7 +55,7 @@ FORMULAE=(
     git vim
     git-delta fzf ripgrep bat
     tmux
-    starship
+    liquidprompt
     zoxide eza
     fnm tmuxinator
 )
