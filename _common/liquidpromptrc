@@ -88,4 +88,3 @@ LP_ENABLE_FQDN=0           # short hostname, not the fully-qualified one
 
 LP_USER_ALWAYS=1           # always print the username
 LP_HOSTNAME_ALWAYS=0       # print host only over SSH (local host stays clean)
-LP_PERCENTS_ALWAYS=1       # always show battery/load percentages when enabled
