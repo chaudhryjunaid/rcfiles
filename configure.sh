@@ -41,17 +41,12 @@ for dir in "$SCRIPT_DIR/_common" "$SCRIPT_DIR/$PLATFORM_DIR"; do
     done
 done
 
-# Link kitty config into its XDG location (~/.config/kitty/kitty.conf).
-if [ -f "$SCRIPT_DIR/_common/kitty.conf" ]; then
-    mkdir -p "$HOME/.config/kitty"
-    link_file "$SCRIPT_DIR/_common/kitty.conf" "$HOME/.config/kitty/kitty.conf"
-fi
+# Link kitty and nvim configs into their XDG locations
+mkdir -p "$HOME/.config/kitty"
+link_file "$SCRIPT_DIR/_common/kitty.conf" "$HOME/.config/kitty/kitty.conf"
 
-# The platform `zshrc` is linked straight to ~/.zshrc by the loop above (it is
-# the entry point and sources ~/.zshrc.common itself). Any prior real ~/.zshrc
-# (e.g. an oh-my-zsh one) is backed up by link_file. Remove a stale
-# ~/.zshrc.local symlink left over from the old two-file layout.
-[ -L "$HOME/.zshrc.local" ] && rm -f "$HOME/.zshrc.local"
+mkdir -p "$HOME/.config/nvim"
+link_file "$SCRIPT_DIR/_common/init.vim" "$HOME/.config/nvim/init.vim"
 
 # Create the untracked per-machine git identity file (included by ~/.gitconfig).
 # Edit this file with your name/email; it is never committed to this repo.

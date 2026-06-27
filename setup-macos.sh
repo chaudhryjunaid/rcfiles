@@ -52,7 +52,7 @@ brew_cask() {
 # CLI tools (formulae). zsh ships with macOS; the two zsh plugins are cloned
 # below into ~/.zsh/plugins and sourced directly (no framework).
 FORMULAE=(
-    git vim
+    git vim nvim
     git-delta fzf ripgrep bat
     tmux
     liquidprompt

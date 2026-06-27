@@ -1,14 +1,11 @@
 set -o vi
 
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
-path_prepend "$HOME/.local/share/fnm"  # fnm binary (installed with --skip-shell)
-
-export PATH
+export PATH="$HOME/.local/share/fnm:$PATH"  # fnm binary (installed with --skip-shell)
 
 echo $- | grep -q i 2>/dev/null && . /usr/share/liquidprompt/liquidprompt
-
 command -v duf >/dev/null 2>&1 && alias df='duf'
-
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
 
+alias update='sudo apt update && sudo apt upgrade'

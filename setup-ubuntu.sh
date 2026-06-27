@@ -24,6 +24,7 @@ $SUDO apt-get update -y
 CORE_PKGS=(
     zsh git curl unzip ca-certificates fontconfig
     vim-gtk3            # vim built with +clipboard
+    neovim
     fzf ripgrep bat
     tmux
     wl-clipboard xclip xsel

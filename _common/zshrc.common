@@ -1,7 +1,13 @@
 # Platform-agnostic zsh settings.
+
 # Default editor.
-export EDITOR='vim'
-export VISUAL='vim'
+export EDITOR=nvim
+export VISUAL=nvim
+
+alias vim='nvim'
+alias vi='nvim'
+alias v='nvim'
+
 
 # Prefer US English and use UTF-8.
 export LANG='en_US.UTF-8';
@@ -40,6 +46,9 @@ setopt extended_history     # Save timestamps and durations
 setopt hist_find_no_dups    # Don't show duplicate history entries in search
 setopt hist_ignore_all_dups # Remove older duplicate entries
 setopt hist_save_no_dups    # Don't save duplicate entries
+setopt share_history
+setopt correct
+setopt hist_ignore_all_dups
 
 # Directory navigation
 setopt auto_cd            # `foo/bar` alone cds into it
@@ -104,6 +113,22 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 
+
+alias v='nvim'
+alias c='clear'
+alias r='reset'
+alias ports='ss -tulpn'
+alias myip='curl ifconfig.me'
+
+alias d='docker'
+alias dc='docker compose'
+alias dps='docker ps'
+alias dcu='docker compose up -d'
+alias dcd='docker compose down'
+alias dcl='docker compose logs -f'
+
+alias please='sudo'
+
 # Antidote plugin manager
 source ~/.antidote/antidote.zsh
 antidote load ~/.zsh_plugins.txt
@@ -124,13 +149,7 @@ command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell zsh)"
 # Per-machine overrides (untracked; create ~/.zshrc.machine for local tweaks).
 [ -f ~/.zshrc.machine ] && source ~/.zshrc.machine
 
-path_prepend() {
-  [[ -d "$1" ]] && [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:$PATH"
-}
-
-path_prepend "$HOME/.local/bin"
-path_prepend "$HOME/bin"
-export PATH
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 
 command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
 [[ -n "$FZF_DEFAULT_COMMAND" ]] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -139,3 +158,34 @@ export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border'
 
 command -v rg >/dev/null 2>&1 && alias rgi='rg -i'
 command -v batcat >/dev/null 2>&1 && alias bat='batcat --paging=never'
+command -v bat >/dev/null 2>&1 && alias bat='bat --paging=never'
+
+killport() {
+  if [ -z "$1" ]; then
+    echo "Usage: killport <port>"
+    return 1
+  fi
+  lsof -ti :"$1" | xargs -r kill -9
+}
+
+extract() {
+  if [ -f "$1" ]; then
+    case "$1" in
+      *.tar.bz2) tar xjf "$1" ;;
+      *.tar.gz)  tar xzf "$1" ;;
+      *.bz2)     bunzip2 "$1" ;;
+      *.rar)     unrar x "$1" ;;
+      *.gz)      gunzip "$1" ;;
+      *.tar)     tar xf "$1" ;;
+      *.tbz2)    tar xjf "$1" ;;
+      *.tgz)     tar xzf "$1" ;;
+      *.zip)     unzip "$1" ;;
+      *.7z)      7z x "$1" ;;
+      *)         echo "Unknown archive format: $1" ;;
+    esac
+  else
+    echo "Not a file: $1"
+  fi
+}
+
+
