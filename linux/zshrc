@@ -1,62 +1,14 @@
-# Entry point for zsh on Linux. Symlinked to ~/.zshrc by configure.sh.
-# Sources the shared ~/.zshrc.common, then adds Linux-specific setup.
-
 set -o vi
 
-export MANPAGER="less -R --use-color -Dd+r -Du+b"
-
-# Shared, platform-agnostic settings (env, history, common aliases).
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
-
-path_prepend() {
-  [[ -d "$1" ]] && [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:$PATH"
-}
-
-path_prepend "$HOME/.local/bin"
-path_prepend "$HOME/bin"
 path_prepend "$HOME/.local/share/fnm"  # fnm binary (installed with --skip-shell)
+
 export PATH
 
-# fnm (Node version manager), only if installed.
-command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell zsh)"
-
-command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
-[[ -n "$FZF_DEFAULT_COMMAND" ]] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border'
-
-# Only load liquidprompt in interactive shells, not from a script or from scp
 echo $- | grep -q i 2>/dev/null && . /usr/share/liquidprompt/liquidprompt
 
-# Only load interactive integrations in shells with a prompt.
-if [[ $- = *i* ]]; then
-  autoload -Uz compinit
-  ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
-  if mkdir -p "$ZSH_CACHE_DIR" 2>/dev/null; then
-    compinit -d "$ZSH_CACHE_DIR/zcompdump"
-  else
-    compinit
-  fi
-  zstyle ':completion:*' menu select
-  zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-  # zoxide — smarter cd (provides `z` and `zi`). Init after compinit so its
-  # completions register. Use `z foo` to jump; `zi` for interactive fzf pick.
-  command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
-fi
-
-# platform-specific aliases
-command -v rg >/dev/null 2>&1 && alias rgi='rg -i'
-#command -v batcat >/dev/null 2>&1 && alias cat='batcat --paging=never'
 command -v duf >/dev/null 2>&1 && alias df='duf'
 
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
-
-# Per-machine overrides (untracked; create ~/.zshrc.machine for local tweaks).
-[ -f ~/.zshrc.machine ] && source ~/.zshrc.machine
-
-# zsh plugins (fzf-tab, autosuggestions, syntax-highlighting) — defined in
-# zshrc.common, called last so syntax-highlighting wraps all other ZLE widgets.
-zsh_load_plugins
-
 

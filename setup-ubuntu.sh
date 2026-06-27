@@ -42,21 +42,7 @@ for pkg in "${OPTIONAL_PKGS[@]}"; do
     fi
 done
 
-# zsh plugins (framework-free — sourced directly by our zshrc, no oh-my-zsh).
-ZSH_PLUGIN_DIR="${ZSH_PLUGIN_DIR:-$HOME/.zsh/plugins}"
-clone_plugin() {
-    local repo="$1" dest="$2"
-    if [ -d "$dest" ]; then
-        echo "    present: $(basename "$dest")"
-    else
-        git clone --depth 1 "$repo" "$dest"
-    fi
-}
-echo "==> Installing zsh plugins"
-mkdir -p "$ZSH_PLUGIN_DIR"
-clone_plugin https://github.com/Aloxaf/fzf-tab                    "$ZSH_PLUGIN_DIR/fzf-tab"
-clone_plugin https://github.com/zsh-users/zsh-autosuggestions     "$ZSH_PLUGIN_DIR/zsh-autosuggestions"
-clone_plugin https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting"
+git clone --depth=1 https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
 
 # fnm (Node version manager). --skip-shell: our rc files handle the env line.
 if ! command -v fnm >/dev/null 2>&1; then

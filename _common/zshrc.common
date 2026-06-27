@@ -1,18 +1,15 @@
 # Platform-agnostic zsh settings.
-# Symlinked to ~/.zshrc.common and sourced by linux/zshrc.local and
-# macos/zshrc.local.
-# Only put things here that are identical and correct on BOTH platforms.
-
 # Default editor.
 export EDITOR='vim'
 export VISUAL='vim'
 
 # Prefer US English and use UTF-8.
 export LANG='en_US.UTF-8';
+export LC_ALL='en_US.UTF-8';
 
 export LESS="-FRX"
 export PAGER='less'
-
+export MANPAGER="less -R --use-color -Dd+r -Du+b"
 # disable annoying docker menu at the bottom
 export COMPOSE_MENU=false
 
@@ -30,6 +27,7 @@ KEYTIMEOUT=15
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
+
 setopt appendhistory # Append to history file, don't overwrite
 setopt sharehistory # Share history across all Zsh sessions
 setopt hist_ignore_dups # Don't store duplicate commands
@@ -106,33 +104,38 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 
-# Load zsh plugins (framework-free). Call this LAST from the platform rc — after
-# compinit, fzf and the prompt are set up. Ordering matters:
-#   * fzf-tab must load after compinit but before the widget-wrapping plugins.
-#   * zsh-syntax-highlighting must be sourced last of all.
-zsh_load_plugins() {
-  [[ $- = *i* ]] || return                       # interactive shells only
-  local dir="${ZSH_PLUGIN_DIR:-$HOME/.zsh/plugins}"
+# Antidote plugin manager
+source ~/.antidote/antidote.zsh
+antidote load ~/.zsh_plugins.txt
 
-  # fzf-tab — replace zsh's completion menu with an fzf picker.
-  if [ -f "$dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
-    source "$dir/fzf-tab/fzf-tab.plugin.zsh"
-    # fzf-tab needs the native menu off so it can capture the completion list.
-    zstyle ':completion:*' menu no
-    zstyle ':completion:*:descriptions' format '[%d]'
-    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-    zstyle ':completion:*:git-checkout:*' sort false   # keep git's own order
-    zstyle ':fzf-tab:*' switch-group '<' '>'           # move between groups
-    # Preview directory contents when completing `cd`.
-    if command -v eza >/dev/null 2>&1; then
-      zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-    else
-      zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1 $realpath'
-    fi
-  fi
+# Better completion
+autoload -Uz compinit
+compinit
 
-  [ -f "$dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ] \
-    && source "$dir/zsh-autosuggestions/zsh-autosuggestions.zsh"
-  [ -f "$dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] \
-    && source "$dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+# zoxide
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
+
+command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell zsh)"
+
+# Per-machine overrides (untracked; create ~/.zshrc.machine for local tweaks).
+[ -f ~/.zshrc.machine ] && source ~/.zshrc.machine
+
+path_prepend() {
+  [[ -d "$1" ]] && [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:$PATH"
 }
+
+path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/bin"
+export PATH
+
+command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
+[[ -n "$FZF_DEFAULT_COMMAND" ]] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border'
+
+
+command -v rg >/dev/null 2>&1 && alias rgi='rg -i'
+command -v batcat >/dev/null 2>&1 && alias bat='batcat --paging=never'

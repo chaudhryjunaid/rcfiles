@@ -1,11 +1,7 @@
 # Entry point for zsh on macOS. Symlinked to ~/.zshrc by configure.sh.
 # Sources the shared ~/.zshrc.common, then adds macOS-specific setup.
 
-set -o emacs
-
-# macOS also pins LC_ALL; LANG comes from the shared file.
-export LC_ALL='en_US.UTF-8';
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+set -o vi
 
 # Shared, platform-agnostic settings (env, history, common aliases).
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
@@ -13,41 +9,11 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 # enable homebrew on apple silicon
 [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
-
 # Only load interactive integrations in shells with a prompt.
 if [[ $- = *i* ]]; then
-  autoload -Uz compinit
-  ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
-  if mkdir -p "$ZSH_CACHE_DIR" 2>/dev/null; then
-    compinit -d "$ZSH_CACHE_DIR/zcompdump"
-  else
-    compinit
-  fi
-  zstyle ':completion:*' menu select
-  zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
   if [ -f /opt/homebrew/share/liquidprompt ]; then
     . ~/.liquidpromptrc
     . /opt/homebrew/share/liquidprompt
   fi
-  # zoxide — smarter cd (provides `z` and `zi`). Init after compinit so its
-  # completions register. `z foo` jumps; `zi` fzf-picks.
-  command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 fi
 
-# fzf integration (only if installed)
-if command -v fzf >/dev/null 2>&1; then
-  source <(fzf --zsh)
-fi
-
-command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell zsh)"
-
-# platform-specific aliases
-alias mux=tmuxinator
-
-# Per-machine overrides (untracked; create ~/.zshrc.machine for local tweaks).
-[ -f ~/.zshrc.machine ] && source ~/.zshrc.machine
-
-# zsh plugins (fzf-tab, autosuggestions, syntax-highlighting) — defined in
-# zshrc.common, called last so syntax-highlighting wraps all other ZLE widgets.
-zsh_load_plugins

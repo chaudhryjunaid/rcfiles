@@ -76,21 +76,7 @@ for c in "${CASKS[@]}"; do
     brew_cask "$c"
 done
 
-# zsh plugins (framework-free — sourced directly by our zshrc, no oh-my-zsh).
-ZSH_PLUGIN_DIR="${ZSH_PLUGIN_DIR:-$HOME/.zsh/plugins}"
-clone_plugin() {
-    local repo="$1" dest="$2"
-    if [ -d "$dest" ]; then
-        echo "    present: $(basename "$dest")"
-    else
-        git clone --depth 1 "$repo" "$dest"
-    fi
-}
-echo "==> Installing zsh plugins"
-mkdir -p "$ZSH_PLUGIN_DIR"
-clone_plugin https://github.com/Aloxaf/fzf-tab                    "$ZSH_PLUGIN_DIR/fzf-tab"
-clone_plugin https://github.com/zsh-users/zsh-autosuggestions     "$ZSH_PLUGIN_DIR/zsh-autosuggestions"
-clone_plugin https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting"
+git clone --depth=1 https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
 
 cat <<'NOTE'
 
