@@ -27,10 +27,10 @@ LP_ENABLE_JOBS=1
 LP_ENABLE_LOAD=1
 
 # Battery level + charging state (only shown past LP_BATTERY_THRESHOLD).
-LP_ENABLE_BATT=1
+LP_ENABLE_BATT=0
 
 # CPU/system temperature (only shown past LP_TEMP_THRESHOLD; needs a sensor).
-LP_ENABLE_TEMP=1
+LP_ENABLE_TEMP=0
 
 # How long the last command ran (only shown past LP_RUNTIME_THRESHOLD).
 LP_ENABLE_RUNTIME=1
@@ -70,7 +70,7 @@ LP_ENABLE_DETACHED_SESSIONS=1
 ###############################################################################
 
 LP_BATTERY_THRESHOLD=75    # warn when battery drops below 75%
-LP_LOAD_THRESHOLD=0.60     # show load above 0.60 per core
+LP_LOAD_THRESHOLD=0.30     # show load above 0.60 per core
 LP_TEMP_THRESHOLD=60       # show temperature above 60°C
 LP_RUNTIME_THRESHOLD=2     # show runtime for commands longer than 2s
 

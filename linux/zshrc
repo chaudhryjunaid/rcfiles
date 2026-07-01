@@ -1,8 +1,8 @@
 set -o vi
 
-[ -f ~/.zshrc.common ] && source ~/.zshrc.common
 export PATH="$HOME/.local/share/fnm:$PATH"  # fnm binary (installed with --skip-shell)
 
+[ -f ~/.zshrc.common ] && source ~/.zshrc.common
 echo $- | grep -q i 2>/dev/null && . /usr/share/liquidprompt/liquidprompt
 command -v duf >/dev/null 2>&1 && alias df='duf'
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
