@@ -1,6 +1,6 @@
-set -o vi
+set -o emacs
 
-export PATH="$HOME/.local/share/fnm:$PATH"  # fnm binary (installed with --skip-shell)
+export PATH="/opt/webstorm/bin:$HOME/.local/share/fnm:$PATH"  # fnm binary (installed with --skip-shell)
 
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
 echo $- | grep -q i 2>/dev/null && . /usr/share/liquidprompt/liquidprompt
