@@ -187,4 +187,11 @@ extract() {
   fi
 }
 
+# Let arrow keys move inside a multi-line command first.
+bindkey "${terminfo[kcuu1]}" up-line-or-history
+bindkey "${terminfo[kcud1]}" down-line-or-history
+
+# Fallback for common Kitty/xterm escape sequences.
+bindkey '^[[A' up-line-or-history
+bindkey '^[[B' down-line-or-history
 
