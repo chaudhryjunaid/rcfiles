@@ -78,18 +78,60 @@ alias gco='git checkout'
 alias gcb='git checkout -b'
 alias gsw='git switch'
 alias gb='git branch'
+alias gbd='git branch --delete'
+alias gbD='git branch --delete --force'
 alias gd='git diff'
 alias gds='git diff --staged'
+alias gdca='git diff --cached'
 alias gl='git pull'
 alias gp='git push'
 alias gf='git fetch'
 alias gcl='git clone'
 alias glog='git log --oneline --graph --decorate'
 alias glga='git log --oneline --graph --decorate --all'
+alias glo='git log --oneline --decorate'
+alias glol="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'"
+alias glod="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'"
+alias glola="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all"
+alias gloda="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --all"
 alias grh='git reset HEAD'
 alias grhh='git reset --hard'
 alias gstash='git stash'
 alias gstp='git stash pop'
+
+# oh-my-zsh helpers required by gbda: resolve the repo's trunk/develop branch
+# so we never try to delete them when pruning merged branches.
+function git_main_branch() {
+  command git rev-parse --git-dir &>/dev/null || return
+  local ref
+  for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}; do
+    if command git show-ref -q --verify $ref; then
+      echo ${ref:t}
+      return 0
+    fi
+  done
+  echo master
+  return 1
+}
+
+function git_develop_branch() {
+  command git rev-parse --git-dir &>/dev/null || return
+  local branch
+  for branch in dev devel develop development; do
+    if command git show-ref -q --verify refs/heads/$branch; then
+      echo $branch
+      return 0
+    fi
+  done
+  echo develop
+  return 1
+}
+
+# gbda: delete all local branches that have already been merged, skipping the
+# main and develop branches.
+function gbda() {
+  git branch --no-color --merged | command grep -vE "^([+*]|\s*($(git_main_branch)|$(git_develop_branch))\s*$)" | command xargs git branch --delete 2>/dev/null
+}
 
 # custom aliases (shared)
 # Use eza as a drop-in replacement for ls when available, else fall back.
