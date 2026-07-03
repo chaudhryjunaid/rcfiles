@@ -439,22 +439,6 @@ match ExtraWhitespace /\s\+$/
 
 nnoremap <leader>tw :%s/\s\+$//e<CR>
 
-" ----------------------------
-" Directories
-" ----------------------------
-
-if !isdirectory(expand('~/.local/share/nvim/undo'))
-  call mkdir(expand('~/.local/share/nvim/undo'), 'p')
-endif
-
-if !isdirectory(expand('~/.local/share/nvim/backup'))
-  call mkdir(expand('~/.local/share/nvim/backup'), 'p')
-endif
-
-if !isdirectory(expand('~/.local/share/nvim/swap'))
-  call mkdir(expand('~/.local/share/nvim/swap'), 'p')
-endif
-
 " ------------------------------------------------------------
 " Files, backup, swap
 " ------------------------------------------------------------
