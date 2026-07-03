@@ -1,20 +1,12 @@
-" Don't try to be vi compatible
 set nocompatible
 
-" Baseline
 scriptencoding utf-8
 set encoding=utf-8
 
-" Don't set 'term' here: the terminal already exports the right TERM
-" (e.g. xterm-kitty). Forcing xterm-256color clobbers that terminfo, loses
-" true-color/cursor-shape capabilities, and misbehaves inside tmux.
-
-" Use 24-bit true color when the terminal supports it (kitty does).
 if has('termguicolors')
   set termguicolors
 endif
 
-" Helps force plugins to load correctly when it is turned back on below
 filetype off
 
 " ==========================
@@ -41,6 +33,13 @@ if filereadable(s:plug_path)
   Plug 'reedes/vim-pencil'                      " prose-aware soft/hard wrap & motions
   Plug 'godlygeek/tabular'                       " align text / :TableFormat (vim-markdown dep)
   Plug 'preservim/vim-markdown'                 " rich Markdown: folding, :Toc, code fences
+  Plug 'morhetz/gruvbox'
+  Plug 'joshdick/onedark.vim'
+  Plug 'tomasr/molokai'
+  Plug 'dracula/vim'
+  Plug 'sainnhe/everforest'
+  Plug 'sainnhe/gruvbox-material'
+  Plug 'vim-airline/vim-airline-themes'
   call plug#end()
 endif
 
@@ -48,18 +47,10 @@ endif
 " vim-airline status line
 " ==========================
 " Theme — swap for any in :AirlineTheme <Tab> (e.g. minimalist, tomorrow, dark)
-let g:airline_theme = 'papercolor'
+let g:airline_theme = 'onedark'
 
 " Use powerline/Nerd Font glyphs for separators and symbols
 let g:airline_powerline_fonts = 1
-
-" Show open buffers along the top as a tab line
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:airline#extensions#tabline#buffer_nr_show = 1
-
-" Trim the section that shows file encoding/format unless it's non-standard
-let g:airline#parts#ffenc#skip_expected_string = 'utf-8[unix]'
 
 " ==========================
 " Prose & git commit messages
@@ -105,20 +96,21 @@ set modelines=0
 
 " Show line numbers
 set number
-set relativenumber
+"set relativenumber
 
 " Show file stats
 set ruler
 
 " Blink cursor on error instead of beeping (grr)
-"set visualbell
+set visualbell
 
-set cpoptions+=$
+set cpoptions&vim
+
 
 " Whitespace
 set wrap
 set textwidth=79
-set formatoptions=tcqrn1
+set formatoptions=crqnj
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2
@@ -226,6 +218,7 @@ set signcolumn=yes
 set list
 set listchars=tab:>-,trail:.,nbsp:+
 set colorcolumn=80,120
+highlight ColorColumn ctermbg=236 guibg=#1f2430
 set completeopt=menuone,noinsert,noselect
 set updatetime=300
 
@@ -235,7 +228,7 @@ if executable('rg')
 endif
 
 "set background=dark
-silent! colorscheme sorbet  " silent!: don't error out if the scheme is missing
+silent! colorscheme onedark  " silent!: don't error out if the scheme is missing
 
 " Set the backspace key to behave more intuitively
 set backspace=indent,eol,start
