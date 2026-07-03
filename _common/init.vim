@@ -461,6 +461,6 @@ endif
 "set nobackup
 "set nowritebackup
 set noswapfile
-set backupdir='~/.local/share/nvim/backup'
-set undodir='~/.local/share/nvim/undo'
+set backupdir=~/.local/share/nvim/backup
+set undodir=~/.local/share/nvim/undo
 
