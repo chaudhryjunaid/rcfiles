@@ -48,7 +48,6 @@ setopt hist_find_no_dups    # Don't show duplicate history entries in search
 setopt hist_ignore_all_dups # Remove older duplicate entries
 setopt hist_save_no_dups    # Don't save duplicate entries
 setopt share_history
-setopt correct
 setopt hist_ignore_all_dups
 
 # Directory navigation
@@ -62,7 +61,8 @@ setopt interactive_comments  # allow `# comments` when typing commands
 setopt extended_glob         # ^, ~, # in globs (e.g. ls ^*.bak)
 setopt no_beep               # stop the terminal bell
 setopt numeric_glob_sort     # file9 before file10
-
+unsetopt correct
+unsetopt correct_all
 # Make Ctrl-W delete a single path component, not the whole path
 WORDCHARS=${WORDCHARS//[\/]}
 
@@ -173,7 +173,7 @@ alias dcl='docker compose logs -f'
 alias please='sudo'
 
 # Antidote plugin manager
-source ~/.antidote/antidote.zsh
+source ~/shutils/antidote/antidote.zsh
 antidote load ~/.zsh_plugins.txt
 
 # Better completion

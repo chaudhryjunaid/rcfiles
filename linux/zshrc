@@ -1,11 +1,11 @@
 set -o emacs
 
-export PATH="/opt/webstorm/bin:$HOME/.local/share/fnm:$PATH"  # fnm binary (installed with --skip-shell)
+export PATH="/opt/nosqlbooster:/opt/webstorm/bin:$HOME/.local/share/fnm:$PATH"
 
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
-echo $- | grep -q i 2>/dev/null && . /usr/share/liquidprompt/liquidprompt
+echo $- | grep -q i 2>/dev/null && . ~/shutils/liquidprompt/liquidprompt
 command -v duf >/dev/null 2>&1 && alias df='duf'
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
 
-alias update='sudo apt update && sudo apt upgrade'
+export PATH="$HOME/.cargo/bin:$PATH"
