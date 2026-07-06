@@ -1,11 +1,19 @@
 set -o emacs
 
-export PATH="/opt/nosqlbooster:/opt/webstorm/bin:$HOME/.local/share/fnm:$PATH"
+export PATH="$HOME/.local/webstorm/bin:$PATH"
 
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
-echo $- | grep -q i 2>/dev/null && . ~/shutils/liquidprompt/liquidprompt
+echo $- | grep -q i 2>/dev/null && . ~/sh/liquidprompt/liquidprompt
 command -v duf >/dev/null 2>&1 && alias df='duf'
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
 
 export PATH="$HOME/.cargo/bin:$PATH"
+
+# fnm
+FNM_PATH="/home/junaid/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "$(fnm env --shell zsh)"
+fi
+eval "$(zoxide init zsh)"

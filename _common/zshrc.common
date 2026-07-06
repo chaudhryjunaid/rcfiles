@@ -173,7 +173,7 @@ alias dcl='docker compose logs -f'
 alias please='sudo'
 
 # Antidote plugin manager
-source ~/shutils/antidote/antidote.zsh
+source ~/sh/antidote/antidote.zsh
 antidote load ~/.zsh_plugins.txt
 
 # Better completion
@@ -245,4 +245,13 @@ if test -n "$KITTY_INSTALLATION_DIR"; then
   kitty-integration
   unfunction kitty-integration
 fi
+
+# fnm
+FNM_PATH="/home/junaid/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "$(fnm env --shell zsh)"
+fi
+
+alias kssh="kitty +kitten ssh"
 
