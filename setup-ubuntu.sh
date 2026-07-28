@@ -43,7 +43,8 @@ for pkg in "${OPTIONAL_PKGS[@]}"; do
     fi
 done
 
-git clone --depth=1 https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
+mkdir -p ~/sh
+git clone --depth=1 https://github.com/mattmc3/antidote.git ~/sh/.antidote
 
 # fnm (Node version manager). --skip-shell: our rc files handle the env line.
 if ! command -v fnm >/dev/null 2>&1; then

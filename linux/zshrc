@@ -3,7 +3,6 @@ set -o emacs
 export PATH="$HOME/.local/webstorm/bin:$PATH"
 
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
-echo $- | grep -q i 2>/dev/null && . ~/sh/liquidprompt/liquidprompt
 command -v duf >/dev/null 2>&1 && alias df='duf'
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
@@ -17,3 +16,9 @@ if [ -d "$FNM_PATH" ]; then
   eval "$(fnm env --shell zsh)"
 fi
 eval "$(zoxide init zsh)"
+
+
+
+# Only load liquidprompt in interactive shells, not from a script or from scp
+echo $- | grep -q i 2>/dev/null && . /usr/share/liquidprompt/liquidprompt
+
