@@ -201,7 +201,6 @@ export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border'
 
 command -v rg >/dev/null 2>&1 && alias rgi='rg -i'
 command -v batcat >/dev/null 2>&1 && alias bat='batcat --paging=never'
-command -v bat >/dev/null 2>&1 && alias bat='bat --paging=never'
 
 killport() {
   if [ -z "$1" ]; then
