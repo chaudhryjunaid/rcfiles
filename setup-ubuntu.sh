@@ -43,8 +43,14 @@ for pkg in "${OPTIONAL_PKGS[@]}"; do
     fi
 done
 
-mkdir -p ~/sh
-git clone --depth=1 https://github.com/mattmc3/antidote.git ~/sh/.antidote
+# Antidote (zsh plugin manager) — sourced from ~/sh/antidote by zshrc.common.
+if [ ! -d ~/sh/antidote ]; then
+    echo "==> Installing antidote"
+    mkdir -p ~/sh
+    git clone --depth=1 https://github.com/mattmc3/antidote.git ~/sh/antidote
+else
+    echo "==> antidote already installed"
+fi
 
 # fnm (Node version manager). --skip-shell: our rc files handle the env line.
 if ! command -v fnm >/dev/null 2>&1; then
