@@ -1,3 +1,21 @@
+# If not running interactively, don't do anything.
+case $- in
+  *i*) ;;
+  *) return ;;
+esac
+
+# History: ignore duplicates and space-prefixed commands, append across sessions.
+HISTCONTROL=ignoreboth
+HISTSIZE=100000
+HISTFILESIZE=200000
+shopt -s histappend
+
+# Update LINES/COLUMNS after each command if the window was resized.
+shopt -s checkwinsize
+
+# Programmable completion (git, docker, ...).
+[ -f /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion
+
 # Default editor.
 export EDITOR=nvim
 export VISUAL=nvim
@@ -25,11 +43,9 @@ export NODE_REPL_MODE='sloppy';
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
 export PYTHONIOENCODING='UTF-8';
 
-# Key sequence timeout (15 = 150ms).
-KEYTIMEOUT=15
-
-# Make Ctrl-W delete a single path component, not the whole path
-WORDCHARS=${WORDCHARS//[\/]}
+# Make Ctrl-W delete a single path component, not the whole path.
+stty werase undef 2>/dev/null
+bind '"\C-w": unix-filename-rubout'
 
 alias g='git'
 alias gst='git status'
@@ -69,7 +85,7 @@ function git_main_branch() {
   local ref
   for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}; do
     if command git show-ref -q --verify $ref; then
-      echo ${ref:t}
+      echo "${ref##*/}"
       return 0
     fi
   done
@@ -117,8 +133,6 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 
-
-alias v='nvim'
 alias c='clear'
 alias r='reset'
 alias ports='ss -tulpn'
@@ -140,7 +154,6 @@ if command -v fzf >/dev/null 2>&1; then
   source <(fzf --bash)
 fi
 
-command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell bash)"
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
 [[ -n "$FZF_DEFAULT_COMMAND" ]] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -178,27 +191,21 @@ extract() {
   fi
 }
 
-if test -n "$KITTY_INSTALLATION_DIR"; then
+if [ -n "$KITTY_INSTALLATION_DIR" ]; then
   export KITTY_SHELL_INTEGRATION="enabled"
-  autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
-  kitty-integration
-  unfunction kitty-integration
+  source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"
 fi
 
 alias kssh="kitty +kitten ssh"
 
-set -o emacs
-
 command -v duf >/dev/null 2>&1 && alias df='duf'
 export PATH="$HOME/.cargo/bin:$PATH"
 
-# fnm
-FNM_PATH="/home/junaid/.local/share/fnm"
+# fnm, with auto-switching on cd
+FNM_PATH="$HOME/.local/share/fnm"
 if [ -d "$FNM_PATH" ]; then
   export PATH="$FNM_PATH:$PATH"
-  eval "$(fnm env --shell bash)"
 fi
-eval "$(zoxide init bash)"
+command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell bash)"
 
-# Only load liquidprompt in interactive shells, not from a script or from scp
-echo $- | grep -q i 2>/dev/null && . /usr/share/liquidprompt/liquidprompt
+[ -f /usr/share/liquidprompt/liquidprompt ] && . /usr/share/liquidprompt/liquidprompt
