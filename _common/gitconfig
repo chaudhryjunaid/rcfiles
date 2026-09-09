@@ -6,6 +6,7 @@
   editor = vim
   excludesfile = ~/.gitignore_global
   pager = delta
+  autocrlf = false
 [init]
   defaultBranch = production
 [interactive]

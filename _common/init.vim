@@ -55,8 +55,26 @@ Plug 'machakann/vim-highlightedyank'
 
 " Terminal integration
 Plug 'voldikss/vim-floaterm'
+Plug 'coder/claudecode.nvim'
 
 call plug#end()
+
+lua << EOF
+require("claudecode").setup({
+  auto_start = true,
+
+  terminal = {
+    provider = "none",
+  },
+})
+EOF
+
+
+" Send current buffer to Claude
+nnoremap <leader>ab :ClaudeCodeAdd %<CR>
+
+" Send visual selection to Claude
+xnoremap <leader>as :ClaudeCodeSend<CR>
 
 " ------------------------------------------------------------
 " Core behavior

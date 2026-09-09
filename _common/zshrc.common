@@ -35,6 +35,11 @@ HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
 
+export CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=2
+export CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=4
+export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1
+export CLAUDE_CODE_FORK_SUBAGENT=0
+
 setopt appendhistory # Append to history file, don't overwrite
 setopt sharehistory # Share history across all Zsh sessions
 setopt hist_ignore_dups # Don't store duplicate commands
@@ -59,7 +64,6 @@ setopt pushd_silent       # don't print the stack on every cd
 # Shell quality-of-life
 setopt interactive_comments  # allow `# comments` when typing commands
 setopt extended_glob         # ^, ~, # in globs (e.g. ls ^*.bak)
-setopt no_beep               # stop the terminal bell
 setopt numeric_glob_sort     # file9 before file10
 unsetopt correct
 unsetopt correct_all

@@ -1,7 +1,5 @@
 set -o emacs
 
-export PATH="$HOME/.local/webstorm/bin:$PATH"
-
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
 command -v duf >/dev/null 2>&1 && alias df='duf'
 
@@ -10,3 +8,8 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # .zshrc is only sourced by interactive shells, so no interactivity guard needed.
 [ -f /usr/share/liquidprompt/liquidprompt ] && . /usr/share/liquidprompt/liquidprompt
 
+export PATH=$PATH:$HOME/.maestro/bin
+
+# >>> can-care-qa >>>
+[ -f "$HOME/.can-care-qa/env.sh" ] && . "$HOME/.can-care-qa/env.sh"
+# <<< can-care-qa <<<

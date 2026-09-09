@@ -214,3 +214,8 @@ fi
 command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell bash)"
 
 [ -f /usr/share/liquidprompt/liquidprompt ] && . /usr/share/liquidprompt/liquidprompt
+export PATH=$PATH:$HOME/.maestro/bin
+
+# >>> can-care-qa >>>
+[ -f "$HOME/.can-care-qa/env.sh" ] && . "$HOME/.can-care-qa/env.sh"
+# <<< can-care-qa <<<
