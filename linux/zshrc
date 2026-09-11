@@ -3,7 +3,7 @@ set -o emacs
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
 command -v duf >/dev/null 2>&1 && alias df='duf'
 
-export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$HOME/opt/smartgit/bin:$PATH"
 
 # .zshrc is only sourced by interactive shells, so no interactivity guard needed.
 [ -f /usr/share/liquidprompt/liquidprompt ] && . /usr/share/liquidprompt/liquidprompt
