@@ -46,7 +46,18 @@ Plug 'windwp/nvim-autopairs'
 Plug 'preservim/nerdtree'
 
 " Better syntax / structure
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" Pinned to master: the rewritten main branch needs Neovim 0.12+ and
+" tree-sitter-cli, and drops the nvim-treesitter.configs module used below.
+Plug 'nvim-treesitter/nvim-treesitter', {'branch': 'master', 'do': ':TSUpdate'}
+
+" LSP: server configs, server installer, completion
+Plug 'neovim/nvim-lspconfig'
+Plug 'mason-org/mason.nvim'
+Plug 'mason-org/mason-lspconfig.nvim'
+Plug 'saghen/blink.cmp', { 'tag': 'v1.*' }
+
+" Ctrl-h/j/k/l across nvim splits and tmux panes (see ~/.tmux.conf)
+Plug 'christoomey/vim-tmux-navigator'
 
 " Useful UI helpers
 Plug 'Yggdroot/indentLine'
@@ -98,7 +109,7 @@ set ttimeoutlen=10
 " ------------------------------------------------------------
 set termguicolors
 set background=dark
-colorscheme onedark
+silent! colorscheme onedark  " silent!: plugins aren't installed on first launch
 
 set number
 set relativenumber
@@ -190,11 +201,8 @@ nnoremap <leader>w :w<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>Q :qa<CR>
 
-" Better window navigation
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
+" Window navigation: Ctrl-h/j/k/l is mapped by vim-tmux-navigator, which also
+" crosses into tmux panes.
 
 " Resize splits
 nnoremap <A-h> :vertical resize -3<CR>
@@ -339,7 +347,9 @@ let g:floaterm_position = 'center'
 let g:floaterm_keymap_toggle = '<F12>'
 
 nnoremap <leader>tt :FloatermToggle<CR>
-tnoremap <Esc> <C-\><C-n>
+" Double Esc leaves terminal mode; a single Esc still reaches TUIs running in
+" the terminal (Claude Code, fzf, htop, nested vim).
+tnoremap <Esc><Esc> <C-\><C-n>
 tnoremap <C-h> <C-\><C-n><C-w>h
 tnoremap <C-j> <C-\><C-n><C-w>j
 tnoremap <C-k> <C-\><C-n><C-w>k
@@ -406,6 +416,60 @@ lua << EOF
 pcall(function()
   require("nvim-autopairs").setup {}
 end)
+EOF
+
+" ------------------------------------------------------------
+" LSP + completion
+" ------------------------------------------------------------
+" Servers are installed by mason (:Mason) and enabled by mason-lspconfig.
+" Neovim 0.11 default maps: grn rename, gra code action, grr references,
+" gri implementation, gO symbols, K hover, [d/]d diagnostics, <C-s> signature.
+lua << EOF
+local servers = { "ts_ls", "pyright", "lua_ls", "bashls", "jsonls", "yamlls" }
+if vim.fn.executable("go") == 1 then
+  table.insert(servers, "gopls")
+end
+
+pcall(function()
+  require("mason").setup()
+  require("mason-lspconfig").setup({ ensure_installed = servers })
+end)
+
+pcall(function()
+  require("blink.cmp").setup({
+    keymap = { preset = "default" },  -- <C-y> accept, <C-n>/<C-p> select, <C-space> open
+    completion = { documentation = { auto_show = true } },
+    signature = { enabled = true },
+    fuzzy = { implementation = "prefer_rust_with_warning" },
+  })
+  vim.lsp.config("*", { capabilities = require("blink.cmp").get_lsp_capabilities() })
+end)
+
+-- Know about the `vim` global when editing Neovim config.
+vim.lsp.config("lua_ls", {
+  settings = { Lua = { diagnostics = { globals = { "vim" } } } },
+})
+
+vim.diagnostic.config({
+  virtual_text = true,
+  severity_sort = true,
+  float = { border = "rounded", source = true },
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("user_lsp", { clear = true }),
+  callback = function(args)
+    local map = function(lhs, rhs, desc)
+      vim.keymap.set("n", lhs, rhs, { buffer = args.buf, desc = desc })
+    end
+    map("gd", vim.lsp.buf.definition, "Go to definition")
+    map("gD", vim.lsp.buf.declaration, "Go to declaration")
+    map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
+    map("<leader>ca", vim.lsp.buf.code_action, "Code action")
+    map("<leader>lf", function() vim.lsp.buf.format({ async = true }) end, "Format buffer")
+    map("<leader>ld", vim.diagnostic.open_float, "Line diagnostics")
+  end,
+})
 EOF
 
 " ------------------------------------------------------------

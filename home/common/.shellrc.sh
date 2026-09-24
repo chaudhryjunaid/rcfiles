@@ -12,9 +12,9 @@ alias v='nvim'
 alias nv='nvim'
 alias nvi='nvim'
 
-# Prefer US English and use UTF-8.
+# Prefer US English and use UTF-8. LANG only: exporting LC_ALL overrides every
+# category and spews setlocale warnings where en_US.UTF-8 isn't generated.
 export LANG='en_US.UTF-8'
-export LC_ALL='en_US.UTF-8'
 
 export LESS="-FRX"
 export PAGER='less'

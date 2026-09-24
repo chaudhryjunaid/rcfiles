@@ -41,10 +41,10 @@ LP_ENABLE_TIME=1
 
 # Version control state: branch, ahead/behind, dirty/staged/stash counts.
 LP_ENABLE_GIT=1
-LP_ENABLE_SVN=1
-LP_ENABLE_HG=1
-LP_ENABLE_FOSSIL=1
-LP_ENABLE_BZR=1
+LP_ENABLE_SVN=0
+LP_ENABLE_HG=0
+LP_ENABLE_FOSSIL=0
+LP_ENABLE_BZR=0
 
 # Show VCS info even when standing on the repository root directory.
 LP_ENABLE_VCS_ROOT=1
@@ -70,7 +70,7 @@ LP_ENABLE_DETACHED_SESSIONS=1
 ###############################################################################
 
 LP_BATTERY_THRESHOLD=75    # warn when battery drops below 75%
-LP_LOAD_THRESHOLD=0.30     # show load above 0.60 per core
+LP_LOAD_THRESHOLD=0.30     # show load above 0.30 per core (default 0.60)
 LP_TEMP_THRESHOLD=60       # show temperature above 60°C
 LP_RUNTIME_THRESHOLD=2     # show runtime for commands longer than 2s
 
@@ -87,4 +87,4 @@ LP_ENABLE_FQDN=0           # short hostname, not the fully-qualified one
 ###############################################################################
 
 LP_USER_ALWAYS=1           # always print the username
-LP_HOSTNAME_ALWAYS=1       # print host only over SSH (local host stays clean)
+LP_HOSTNAME_ALWAYS=0       # print host only over SSH (local host stays clean)

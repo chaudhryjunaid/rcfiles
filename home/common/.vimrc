@@ -39,7 +39,6 @@ if filereadable(s:plug_path)
   Plug 'dracula/vim'
   Plug 'sainnhe/everforest'
   Plug 'sainnhe/gruvbox-material'
-  Plug 'vim-airline/vim-airline-themes'
   call plug#end()
 endif
 
@@ -288,8 +287,9 @@ nnoremap <leader>cc :cclose<CR>
 nnoremap <leader>cn :cnext<CR>
 nnoremap <leader>cp :cprevious<CR>
 
-" Map ':W' as a sudo write command (useful for editing system files)
-cnoremap W w !sudo tee % > /dev/null
+" :W writes the file via sudo (useful for editing system files). A command,
+" not a cnoremap, so typing a capital W elsewhere on the command line is safe.
+command! W execute 'silent w !sudo tee % > /dev/null' | edit!
 
 " Quick saving with Ctrl+S
 nnoremap <C-s> :w<CR>

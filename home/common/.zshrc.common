@@ -50,6 +50,22 @@ if command -v fzf >/dev/null 2>&1; then
   fi
 fi
 
+# Completion styles (read when completion runs, so fine to set before compinit).
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'  # case-insensitive, then partial-word
+zstyle ':completion:*' menu no                       # fzf-tab does the selecting
+zstyle ':completion:*:descriptions' format '[%d]'    # group headers (fzf-tab shows them)
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompcache"
+zstyle ':completion:*:git-checkout:*' sort false     # keep git's recency order
+zstyle ':fzf-tab:*' switch-group '<' '>'             # cycle completion groups
+# Preview directories when completing cd/z/ls.
+if command -v eza >/dev/null 2>&1; then
+  zstyle ':fzf-tab:complete:(cd|z|__zoxide_z|ls|eza):*' fzf-preview 'eza -1 --color=always --group-directories-first $realpath'
+else
+  zstyle ':fzf-tab:complete:(cd|z|__zoxide_z|ls):*' fzf-preview 'ls -1 --color=always $realpath'
+fi
+
 # Antidote plugin manager (completion, fzf-tab, autosuggestions, highlighting).
 # ~/.zsh_plugins.txt starts with ez-compinit, which runs compinit for us.
 # Install: git clone --depth=1 https://github.com/mattmc3/antidote.git ~/sh/antidote
@@ -66,13 +82,18 @@ command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 # fnm, with auto-switching on cd
 command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell zsh)"
 
-# Let arrow keys move inside a multi-line command first.
-bindkey "${terminfo[kcuu1]}" up-line-or-history
-bindkey "${terminfo[kcud1]}" down-line-or-history
-
-# Fallback for common Kitty/xterm escape sequences.
-bindkey '^[[A' up-line-or-history
-bindkey '^[[B' down-line-or-history
+# Up/Down: move inside a multi-line command first, then search history for
+# entries starting with what's typed so far (empty line = plain history).
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+for key in "${terminfo[kcuu1]}" '^[[A' '^[OA'; do
+  [ -n "$key" ] && bindkey "$key" up-line-or-beginning-search
+done
+for key in "${terminfo[kcud1]}" '^[[B' '^[OB'; do
+  [ -n "$key" ] && bindkey "$key" down-line-or-beginning-search
+done
+unset key
 
 if test -n "$KITTY_INSTALLATION_DIR"; then
   export KITTY_SHELL_INTEGRATION="enabled"

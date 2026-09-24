@@ -24,9 +24,13 @@ written.
 ## Required
 - **zsh** — shell; plugins are managed by antidote (cloned to `~/sh/antidote`
   by the setup scripts)
-- **neovim** — editor (`EDITOR`, git's `core.editor`, and `vim`/`vi` are
+- **neovim** 0.11+ — editor (`EDITOR`, git's `core.editor`, and `vim`/`vi` are
   aliased to `nvim`); plugins are managed by vim-plug, which self-installs on
-  first launch (needs **curl** and **git**). A plain-vim `vimrc` is kept too.
+  first launch (needs **curl** and **git**). LSP servers (TypeScript, Python,
+  Lua, Bash, JSON, YAML; Go when `go` is present) are installed by mason on
+  first launch (needs **node**/**npm**, which fnm provides), with completion
+  from blink.cmp. Treesitter parsers compile with a **C compiler**. A plain-vim
+  `vimrc` is kept too.
 - **git**
 - **delta** — git pager / diff filter (git is configured to use it for
   `diff`/`log`; remove the `delta` lines from `.gitconfig` if you don't want it)
@@ -52,7 +56,8 @@ written.
   fzf-tab
 
 ## tmux
-- **tmux** 3.2+ (popup styling)
+- **tmux** 3.2+ (popup styling); `Ctrl-h/j/k/l` moves between tmux panes and
+  nvim splits alike (vim-tmux-navigator), `` `Ctrl-l `` clears the screen
 - a clipboard tool for copy-mode: **wl-clipboard** (Wayland) or **xclip** /
   **xsel** (X11) on Linux; macOS uses pbcopy / OSC 52 automatically
 
