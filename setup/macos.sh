@@ -49,10 +49,11 @@ brew_cask() {
     fi
 }
 
-# CLI tools (formulae). zsh ships with macOS; the two zsh plugins are cloned
-# below into ~/.zsh/plugins and sourced directly (no framework).
+# CLI tools (formulae). zsh ships with macOS; its plugins come via antidote.
+# Neovim itself is installed by bob (below); tree-sitter-cli builds
+# nvim-treesitter parsers.
 FORMULAE=(
-    git vim nvim
+    git vim bob tree-sitter-cli
     git-delta fzf ripgrep bat
     tmux
     liquidprompt
@@ -77,3 +78,4 @@ for c in "${CASKS[@]}"; do
 done
 
 install_antidote
+install_neovim

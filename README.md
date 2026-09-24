@@ -24,12 +24,17 @@ written.
 ## Required
 - **zsh** — shell; plugins are managed by antidote (cloned to `~/sh/antidote`
   by the setup scripts)
-- **neovim** 0.11+ — editor (`EDITOR`, git's `core.editor`, and `vim`/`vi` are
+- **neovim** (latest stable, installed and managed by
+  [**bob**](https://github.com/MordechaiHadad/bob): `bob use stable`,
+  `bob ls`, `bob use <version>` to switch; its `nvim-bin` is put on PATH by
+  `.shellrc.sh`, ahead of any system nvim) — editor (`EDITOR`, git's `core.editor`, and `vim`/`vi` are
   aliased to `nvim`); plugins are managed by vim-plug, which self-installs on
   first launch (needs **curl** and **git**). LSP servers (TypeScript, Python,
   Lua, Bash, JSON, YAML; Go when `go` is present) are installed by mason on
   first launch (needs **node**/**npm**, which fnm provides), with completion
-  from blink.cmp. Treesitter parsers compile with a **C compiler**. A plain-vim
+  from blink.cmp. Treesitter parsers are built by nvim-treesitter's `main`
+  branch, which needs **tree-sitter-cli** 0.26+ and a **C compiler** (the setup
+  scripts install both). A plain-vim
   `vimrc` is kept too.
 - **git**
 - **delta** — git pager / diff filter (git is configured to use it for

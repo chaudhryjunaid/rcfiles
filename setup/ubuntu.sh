@@ -23,7 +23,7 @@ $SUDO apt-get update -y
 CORE_PKGS=(
     zsh git curl unzip ca-certificates fontconfig
     vim-gtk3            # vim built with +clipboard
-    neovim
+    build-essential     # C compiler for nvim-treesitter parsers
     fzf ripgrep bat
     tmux
     wl-clipboard xclip xsel
@@ -44,6 +44,40 @@ for pkg in "${OPTIONAL_PKGS[@]}"; do
 done
 
 install_antidote
+
+# gh_release_bin <name> <url> <extract-cmd>: install a single binary from a
+# GitHub release into ~/.local/bin unless it's already there.
+BIN_DIR="$HOME/.local/bin"
+mkdir -p "$BIN_DIR"
+export PATH="$BIN_DIR:$PATH"
+gh_release_bin() {
+    local name="$1" url="$2" kind="$3" tmp
+    if [ -x "$BIN_DIR/$name" ] || command -v "$name" >/dev/null 2>&1; then
+        log "$name already installed"
+        return
+    fi
+    log "Installing $name"
+    tmp=$(mktemp -d)
+    curl -fsSL -o "$tmp/dl" "$url"
+    case "$kind" in
+        zip) unzip -q "$tmp/dl" -d "$tmp/x" && find "$tmp/x" -type f -name "$name" -exec mv {} "$BIN_DIR/$name" \; ;;
+        gz)  gunzip -c "$tmp/dl" > "$BIN_DIR/$name" ;;
+    esac
+    chmod +x "$BIN_DIR/$name"
+    rm -rf "$tmp"
+}
+
+case "$(uname -m)" in
+    x86_64)        BOB_ARCH=x86_64; TS_ARCH=x64 ;;
+    aarch64|arm64) BOB_ARCH=arm;    TS_ARCH=arm64 ;;
+    *)             die "Unsupported architecture: $(uname -m)" ;;
+esac
+
+# bob (Neovim version manager) and tree-sitter-cli (nvim-treesitter needs it
+# to build parsers; apt's is too old).
+gh_release_bin bob "https://github.com/MordechaiHadad/bob/releases/latest/download/bob-linux-$BOB_ARCH.zip" zip
+gh_release_bin tree-sitter "https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-$TS_ARCH.gz" gz
+install_neovim
 
 # fnm (Node version manager). --skip-shell: our rc files handle the env line.
 if ! command -v fnm >/dev/null 2>&1 && [ ! -x "$HOME/.local/share/fnm/fnm" ]; then

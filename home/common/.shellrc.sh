@@ -37,6 +37,8 @@ export CLAUDE_CODE_FORK_SUBAGENT=0
 # PATH: user bins first. fnm's install dir is added so `fnm env` can run.
 export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$PATH"
 [ -d "$HOME/.local/share/fnm" ] && export PATH="$HOME/.local/share/fnm:$PATH"
+# Neovim managed by bob (`bob use stable`, `bob ls`); ahead of any system nvim.
+[ -d "$HOME/.local/share/bob/nvim-bin" ] && export PATH="$HOME/.local/share/bob/nvim-bin:$PATH"
 
 # fzf defaults (key-bindings are loaded per shell).
 command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'

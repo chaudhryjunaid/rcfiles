@@ -46,9 +46,9 @@ Plug 'windwp/nvim-autopairs'
 Plug 'preservim/nerdtree'
 
 " Better syntax / structure
-" Pinned to master: the rewritten main branch needs Neovim 0.12+ and
-" tree-sitter-cli, and drops the nvim-treesitter.configs module used below.
-Plug 'nvim-treesitter/nvim-treesitter', {'branch': 'master', 'do': ':TSUpdate'}
+" main branch: needs Neovim 0.12+ (installed via bob), tree-sitter-cli and a
+" C compiler to build parsers.
+Plug 'nvim-treesitter/nvim-treesitter', {'branch': 'main', 'do': ':TSUpdate'}
 
 " LSP: server configs, server installer, completion
 Plug 'neovim/nvim-lspconfig'
@@ -371,11 +371,12 @@ augroup END
 " Treesitter config
 " ------------------------------------------------------------
 lua << EOF
-local ok, treesitter = pcall(require, "nvim-treesitter.configs")
+local ok, treesitter = pcall(require, "nvim-treesitter")
 
 if ok then
-  treesitter.setup {
-    ensure_installed = {
+  -- Installs missing parsers in the background; a no-op once installed.
+  if vim.fn.executable("tree-sitter") == 1 then
+    treesitter.install({
       "bash",
       "c",
       "cpp",
@@ -394,18 +395,19 @@ if ok then
       "typescript",
       "vim",
       "vimdoc",
-      "yaml"
-    },
+      "yaml",
+    })
+  end
 
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = false,
-    },
-
-    indent = {
-      enable = true,
-    },
-  }
+  -- Highlighting and indentation are opt-in per buffer on the main branch.
+  vim.api.nvim_create_autocmd("FileType", {
+    group = vim.api.nvim_create_augroup("user_treesitter", { clear = true }),
+    callback = function(args)
+      if pcall(vim.treesitter.start, args.buf) then
+        vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end
+    end,
+  })
 end
 EOF
 
