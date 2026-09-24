@@ -23,7 +23,8 @@ mkdir -p "$HOME/.vim/backups" "$HOME/.vim/swaps" "$HOME/.vim/undo"
 link_file() {
     local src="$1" target="$2"
     if [ -e "$target" ] && [ ! -L "$target" ]; then
-        local backup="$target.bak.$(date +%s)"
+        local backup
+        backup="$target.bak.$(date +%s)"
         mv "$target" "$backup"
         echo "Backed up $target -> $backup"
     fi

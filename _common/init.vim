@@ -40,7 +40,6 @@ Plug 'airblade/vim-gitgutter'
 " Editing improvements
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
-Plug 'jiangmiao/auto-pairs'
 Plug 'windwp/nvim-autopairs'
 
 " File navigation
@@ -286,9 +285,7 @@ nnoremap <leader>hp :GitGutterPreviewHunk<CR>
 " ------------------------------------------------------------
 " Airline: dashboard-style statusline
 " ------------------------------------------------------------
-set laststatus=2
 set showtabline=2
-set noshowmode
 
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'onedark'
@@ -455,8 +452,6 @@ set wrap
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
 
-nnoremap <leader>tw :%s/\s\+$//e<CR>
-
 " ------------------------------------------------------------
 " Files, backup, swap
 " ------------------------------------------------------------
@@ -464,5 +459,4 @@ nnoremap <leader>tw :%s/\s\+$//e<CR>
 "set nowritebackup
 set noswapfile
 set backupdir=~/.local/share/nvim/backup
-set undodir=~/.local/share/nvim/undo
 

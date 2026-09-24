@@ -3,7 +3,7 @@
 [include]
   path = ~/.gitconfig.local
 [core]
-  editor = vim
+  editor = nvim
   excludesfile = ~/.gitignore_global
   pager = delta
   autocrlf = false
@@ -21,7 +21,6 @@
   prune = true
 [pull]
 	rebase = false
-  #rebase = true                 # Avoid merge commits on pull
 [push]
   default = current
   autoSetupRemote = true  # Auto-create remote branch on first push
@@ -73,8 +72,6 @@
   save = stash push -m
   # Show files in last commit
   last = show --name-only
-  # Cleanup merged branches -> needs update
-  # cleanup = !git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d
   # List available aliases
   aliases = !git config --get-regexp alias | sed -re 's/alias\\.(\\S*)\\s(.*)$/\\1 = \\2/g'
   # Display tree-like log, because default log is a pain…

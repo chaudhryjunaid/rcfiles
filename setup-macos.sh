@@ -76,7 +76,14 @@ for c in "${CASKS[@]}"; do
     brew_cask "$c"
 done
 
-git clone --depth=1 https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
+# Antidote (zsh plugin manager) — sourced from ~/sh/antidote by zshrc.common.
+if [ ! -d ~/sh/antidote ]; then
+    echo "==> Installing antidote"
+    mkdir -p ~/sh
+    git clone --depth=1 https://github.com/mattmc3/antidote.git ~/sh/antidote
+else
+    echo "==> antidote already installed"
+fi
 
 cat <<'NOTE'
 

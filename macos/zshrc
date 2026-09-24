@@ -1,19 +1,17 @@
 # Entry point for zsh on macOS. Symlinked to ~/.zshrc by configure.sh.
 # Sources the shared ~/.zshrc.common, then adds macOS-specific setup.
+# Homebrew's shellenv is set up in ~/.zprofile.
+# Don't let installers append here; put machine-specific lines in ~/.zshrc.machine.
 
 set -o vi
 
-# Shared, platform-agnostic settings (env, history, common aliases).
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
 
-# enable homebrew on apple silicon
-[[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+# Liquidprompt reads ~/.liquidpromptrc itself.
+[ -f /opt/homebrew/share/liquidprompt ] && . /opt/homebrew/share/liquidprompt
 
-# Only load interactive integrations in shells with a prompt.
-if [[ $- = *i* ]]; then
-  if [ -f /opt/homebrew/share/liquidprompt ]; then
-    . ~/.liquidpromptrc
-    . /opt/homebrew/share/liquidprompt
-  fi
-fi
+# Per-machine overrides (untracked); last so they win.
+[ -f ~/.zshrc.machine ] && source ~/.zshrc.machine
 
+# typeset -U only dedupes array assignments; apply it to PATH=... edits above.
+path=($path)

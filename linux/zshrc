@@ -1,21 +1,16 @@
+# Entry point for zsh on Linux. Symlinked to ~/.zshrc by configure.sh.
+# Sources the shared ~/.zshrc.common, then adds Linux-specific setup.
+# Don't let installers append here; put machine-specific lines in ~/.zshrc.machine.
+
 set -o emacs
 
 [ -f ~/.zshrc.common ] && source ~/.zshrc.common
-command -v duf >/dev/null 2>&1 && alias df='duf'
-
-export PATH="$HOME/.cargo/bin:$HOME/opt/smartgit/bin:$PATH"
 
 # .zshrc is only sourced by interactive shells, so no interactivity guard needed.
 [ -f /usr/share/liquidprompt/liquidprompt ] && . /usr/share/liquidprompt/liquidprompt
 
-export PATH=$PATH:$HOME/.maestro/bin
+# Per-machine overrides (untracked); last so they win.
+[ -f ~/.zshrc.machine ] && source ~/.zshrc.machine
 
-# >>> can-care-qa >>>
-[ -f "$HOME/.can-care-qa/env.sh" ] && . "$HOME/.can-care-qa/env.sh"
-# <<< can-care-qa <<<
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/junaid/google-cloud-sdk/path.zsh.inc' ]; then . '/home/junaid/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/junaid/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/junaid/google-cloud-sdk/completion.zsh.inc'; fi
+# typeset -U only dedupes array assignments; apply it to PATH=... edits above.
+path=($path)

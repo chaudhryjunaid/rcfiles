@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # setup-ubuntu.sh — install the dependencies used by these dotfiles on a
-# modern Ubuntu (24.04+/26.x) system. Safe to re-run; it skips what's already
-# present and treats optional packages as best-effort.
+# modern Ubuntu (24.04+/26.x) system, including Ubuntu under WSL. Safe to
+# re-run; it skips what's already present and treats optional packages as
+# best-effort. Under WSL, kitty and the Nerd Fonts are skipped: the terminal
+# and its fonts live on the Windows side.
 #
 # After this, run:  ./configure.sh  &&  ./setup-git-identity.sh
 
@@ -16,6 +18,12 @@ fi
 # Use sudo only when not already root.
 SUDO=""
 [ "$(id -u)" -ne 0 ] && SUDO="sudo"
+
+IS_WSL=0
+if [ -n "${WSL_DISTRO_NAME:-}" ] || grep -qi microsoft /proc/version 2>/dev/null; then
+    IS_WSL=1
+    echo "==> WSL detected"
+fi
 
 echo "==> Updating apt package lists"
 $SUDO apt-get update -y
@@ -33,7 +41,8 @@ echo "==> Installing core packages"
 $SUDO apt-get install -y "${CORE_PKGS[@]}"
 
 # Optional packages — install each best-effort so a missing one doesn't abort.
-OPTIONAL_PKGS=(git-delta duf tmuxinator kitty zoxide eza liquidprompt)
+OPTIONAL_PKGS=(git-delta duf tmuxinator zoxide eza liquidprompt)
+[ "$IS_WSL" -eq 0 ] && OPTIONAL_PKGS+=(kitty)
 echo "==> Installing optional packages (best-effort)"
 for pkg in "${OPTIONAL_PKGS[@]}"; do
     if $SUDO apt-get install -y "$pkg" >/dev/null 2>&1; then
@@ -65,6 +74,7 @@ FONT_DIR="$HOME/.local/share/fonts"
 NERD_FONTS=(JetBrainsMono CascadiaCode Meslo)
 NERD_BASE="https://github.com/ryanoasis/nerd-fonts/releases/latest/download"
 fonts_changed=0
+[ "$IS_WSL" -eq 1 ] && NERD_FONTS=()
 for font in "${NERD_FONTS[@]}"; do
     dest="$FONT_DIR/$font"
     if [ -d "$dest" ] && [ -n "$(ls -A "$dest" 2>/dev/null)" ]; then
@@ -97,4 +107,5 @@ Done installing dependencies. Next steps:
   3. Log out/in (or restart your terminal) to pick up zsh and the new fonts.
      Set your terminal font to a Nerd Font, e.g. "JetBrainsMono Nerd Font",
      "CaskaydiaCove Nerd Font" (Cascadia Code), or "MesloLGS Nerd Font".
+     On WSL, install the Nerd Font on Windows and select it in Windows Terminal.
 NOTE

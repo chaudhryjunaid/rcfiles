@@ -1,31 +1,10 @@
 # Platform-agnostic zsh settings.
 
-# Default editor.
-export EDITOR=nvim
-export VISUAL=nvim
+# Keep PATH/FPATH free of duplicates (the platform zshrc re-applies this last).
+typeset -U path fpath
 
-alias vim='nvim'
-alias vi='nvim'
-alias v='nvim'
-alias nv='nvim'
-alias nvi='nvim'
-
-# Prefer US English and use UTF-8.
-export LANG='en_US.UTF-8';
-export LC_ALL='en_US.UTF-8';
-
-export LESS="-FRX"
-export PAGER='less'
-export MANPAGER="less -R --use-color -Dd+r -Du+b"
-# disable annoying docker menu at the bottom
-export COMPOSE_MENU=false
-
-export NODE_REPL_HISTORY=~/.node_history;
-export NODE_REPL_HISTORY_SIZE='32768';
-export NODE_REPL_MODE='sloppy';
-
-# Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
-export PYTHONIOENCODING='UTF-8';
+# Env, aliases and functions shared with bash.
+[ -f ~/.shellrc.sh ] && source ~/.shellrc.sh
 
 # Key sequence timeout (15 = 150ms).
 KEYTIMEOUT=15
@@ -35,25 +14,15 @@ HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
 
-export CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=2
-export CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=4
-export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1
-export CLAUDE_CODE_FORK_SUBAGENT=0
-
-setopt appendhistory # Append to history file, don't overwrite
-setopt sharehistory # Share history across all Zsh sessions
-setopt hist_ignore_dups # Don't store duplicate commands
-setopt hist_ignore_space # Don't store commands starting with a space
-setopt hist_expire_dups_first # Expire older duplicates first
-setopt hist_verify          # Show command before executing from history
-setopt hist_reduce_blanks   # Remove extra blanks from commands
-setopt inc_append_history   # Add commands immediately, not at shell exit
+setopt share_history        # Share history across sessions (implies append + incremental)
 setopt extended_history     # Save timestamps and durations
-setopt hist_find_no_dups    # Don't show duplicate history entries in search
 setopt hist_ignore_all_dups # Remove older duplicate entries
+setopt hist_ignore_space    # Don't store commands starting with a space
+setopt hist_expire_dups_first # Expire older duplicates first
+setopt hist_find_no_dups    # Don't show duplicate history entries in search
 setopt hist_save_no_dups    # Don't save duplicate entries
-setopt share_history
-setopt hist_ignore_all_dups
+setopt hist_reduce_blanks   # Remove extra blanks from commands
+setopt hist_verify          # Show command before executing from history
 
 # Directory navigation
 setopt auto_cd            # `foo/bar` alone cds into it
@@ -70,124 +39,7 @@ unsetopt correct_all
 # Make Ctrl-W delete a single path component, not the whole path
 WORDCHARS=${WORDCHARS//[\/]}
 
-# git aliases (a curated subset of the oh-my-zsh `git` plugin, vendored so we
-# don't need a framework just for these).
-alias g='git'
-alias gst='git status'
-alias gss='git status -s'
-alias ga='git add'
-alias gaa='git add --all'
-alias gc='git commit -v'
-alias gcm='git commit -m'
-alias gca='git commit -v -a'
-alias gco='git checkout'
-alias gcb='git checkout -b'
-alias gsw='git switch'
-alias gb='git branch'
-alias gbd='git branch --delete'
-alias gbD='git branch --delete --force'
-alias gd='git diff'
-alias gds='git diff --staged'
-alias gdca='git diff --cached'
-alias gl='git pull'
-alias gp='git push'
-alias gf='git fetch'
-alias gcl='git clone'
-alias glog='git log --oneline --graph --decorate'
-alias glga='git log --oneline --graph --decorate --all'
-alias glo='git log --oneline --decorate'
-alias glol="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'"
-alias glod="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'"
-alias glola="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all"
-alias gloda="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --all"
-alias grh='git reset HEAD'
-alias grhh='git reset --hard'
-alias gstash='git stash'
-alias gstp='git stash pop'
-
-# oh-my-zsh helpers required by gbda: resolve the repo's trunk/develop branch
-# so we never try to delete them when pruning merged branches.
-function git_main_branch() {
-  command git rev-parse --git-dir &>/dev/null || return
-  local ref
-  for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}; do
-    if command git show-ref -q --verify $ref; then
-      echo ${ref:t}
-      return 0
-    fi
-  done
-  echo master
-  return 1
-}
-
-function git_develop_branch() {
-  command git rev-parse --git-dir &>/dev/null || return
-  local branch
-  for branch in dev devel develop development; do
-    if command git show-ref -q --verify refs/heads/$branch; then
-      echo $branch
-      return 0
-    fi
-  done
-  echo develop
-  return 1
-}
-
-# gbda: delete all local branches that have already been merged, skipping the
-# main and develop branches.
-function gbda() {
-  git branch --no-color --merged | command grep -vE "^([+*]|\s*($(git_main_branch)|$(git_develop_branch))\s*$)" | command xargs -r git branch --delete
-}
-
-# custom aliases (shared)
-# Use eza as a drop-in replacement for ls when available, else fall back.
-if command -v eza >/dev/null 2>&1; then
-  alias ls='eza --group-directories-first'
-  alias l='eza -1 --group-directories-first'
-  alias ll='eza -lh --group-directories-first --git'
-  alias la='eza -lah --group-directories-first --git'
-  alias lt='eza --tree --level=2 --group-directories-first'
-else
-  alias ls='ls --color=auto'
-  alias ll='ls -lh'
-  alias la='ls -lah'
-fi
-alias grep='grep --color=auto'
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-
-alias c='clear'
-alias r='reset'
-alias ports='ss -tulpn'
-alias myip='curl ifconfig.me'
-
-alias d='docker'
-alias dc='docker compose'
-alias dps='docker ps'
-alias dcu='docker compose up -d'
-alias dcd='docker compose down'
-alias dcl='docker compose logs -f'
-
-alias please='sudo'
-
-# Antidote plugin manager (syntax highlighting, autosuggestions, fzf-tab).
-# Install: git clone --depth=1 https://github.com/mattmc3/antidote.git ~/sh/antidote
-if [ -f ~/sh/antidote/antidote.zsh ]; then
-  source ~/sh/antidote/antidote.zsh
-  antidote load ~/.zsh_plugins.txt
-fi
-
-# Better completion
-autoload -Uz compinit
-compinit
-
-# zoxide
-command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
-
+# fzf key-bindings. Loaded before the plugins so fzf-tab, not fzf, owns Tab.
 if command -v fzf >/dev/null 2>&1; then
   # fzf >= 0.48 generates its own setup; older apt packages ship example files.
   if fzf --zsh >/dev/null 2>&1; then
@@ -198,52 +50,21 @@ if command -v fzf >/dev/null 2>&1; then
   fi
 fi
 
-# fnm, with auto-switching on cd
-FNM_PATH="$HOME/.local/share/fnm"
-if [ -d "$FNM_PATH" ]; then
-  export PATH="$FNM_PATH:$PATH"
+# Antidote plugin manager (completion, fzf-tab, autosuggestions, highlighting).
+# ~/.zsh_plugins.txt starts with ez-compinit, which runs compinit for us.
+# Install: git clone --depth=1 https://github.com/mattmc3/antidote.git ~/sh/antidote
+if [ -f ~/sh/antidote/antidote.zsh ]; then
+  source ~/sh/antidote/antidote.zsh
+  antidote load ~/.zsh_plugins.txt
+else
+  autoload -Uz compinit && compinit
 fi
+
+# zoxide
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+
+# fnm, with auto-switching on cd
 command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell zsh)"
-
-# Per-machine overrides (untracked; create ~/.zshrc.machine for local tweaks).
-[ -f ~/.zshrc.machine ] && source ~/.zshrc.machine
-
-export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
-
-command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
-[[ -n "$FZF_DEFAULT_COMMAND" ]] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border'
-
-
-command -v rg >/dev/null 2>&1 && alias rgi='rg -i'
-command -v batcat >/dev/null 2>&1 && alias bat='batcat --paging=never'
-
-killport() {
-  if [ -z "$1" ]; then
-    echo "Usage: killport <port>"
-    return 1
-  fi
-  lsof -ti :"$1" | xargs -r kill -9
-}
-
-extract() {
-  if [ -f "$1" ]; then
-    case "$1" in
-      # GNU tar auto-detects the compression (gz, bz2, xz, zst, ...).
-      *.tar|*.tar.*|*.tgz|*.tbz2|*.txz) tar xf "$1" ;;
-      *.bz2)     bunzip2 "$1" ;;
-      *.rar)     unrar x "$1" ;;
-      *.gz)      gunzip "$1" ;;
-      *.xz)      unxz "$1" ;;
-      *.zst)     unzstd "$1" ;;
-      *.zip)     unzip "$1" ;;
-      *.7z)      7z x "$1" ;;
-      *)         echo "Unknown archive format: $1" ;;
-    esac
-  else
-    echo "Not a file: $1"
-  fi
-}
 
 # Let arrow keys move inside a multi-line command first.
 bindkey "${terminfo[kcuu1]}" up-line-or-history
@@ -259,6 +80,3 @@ if test -n "$KITTY_INSTALLATION_DIR"; then
   kitty-integration
   unfunction kitty-integration
 fi
-
-alias kssh="kitty +kitten ssh"
-
