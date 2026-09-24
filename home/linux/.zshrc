@@ -1,4 +1,4 @@
-# Entry point for zsh on Linux. Symlinked to ~/.zshrc by configure.sh.
+# Entry point for zsh on Linux. Symlinked to ~/.zshrc by link.sh.
 # Sources the shared ~/.zshrc.common, then adds Linux-specific setup.
 # Don't let installers append here; put machine-specific lines in ~/.zshrc.machine.
 

@@ -1,4 +1,4 @@
-# Entry point for bash on Linux. Symlinked to ~/.bashrc by configure.sh.
+# Entry point for bash on Linux. Symlinked to ~/.bashrc by link.sh.
 # Don't let installers append here; put machine-specific lines in ~/.bashrc.machine.
 
 # If not running interactively, don't do anything.

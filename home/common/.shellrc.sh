@@ -1,5 +1,5 @@
 # Settings shared by bash and zsh: env, aliases and helper functions.
-# Symlinked to ~/.shellrc.sh by configure.sh and sourced by ~/.zshrc.common
+# Symlinked to ~/.shellrc.sh by link.sh and sourced by ~/.zshrc.common
 # and ~/.bashrc. Keep it to syntax both shells understand.
 
 # Default editor.

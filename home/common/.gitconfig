@@ -1,5 +1,5 @@
 # Per-machine identity (user.name/email) lives here, untracked.
-# Created by configure.sh from a template if missing.
+# Created by link.sh from a template if missing.
 [include]
   path = ~/.gitconfig.local
 [core]

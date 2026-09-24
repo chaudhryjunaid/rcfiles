@@ -1,0 +1,89 @@
+# ─────────────────────────────────────────────
+# Font
+# ─────────────────────────────────────────────
+
+font-family = JetBrains Mono
+font-size = 16
+
+
+# ─────────────────────────────────────────────
+# Appearance
+# ─────────────────────────────────────────────
+
+# Keep text maximally readable for long coding sessions.
+background-opacity = 1.0
+
+window-padding-x = 10
+window-padding-y = 8
+window-padding-balance = true
+
+window-decoration = auto
+window-theme = system
+
+
+# ─────────────────────────────────────────────
+# GTK / GNOME
+# ─────────────────────────────────────────────
+
+# Integrate tabs into the title bar to save vertical space.
+gtk-titlebar-style = tabs
+gtk-tabs-location = top
+gtk-wide-tabs = false
+gtk-toolbar-style = flat
+
+
+# ─────────────────────────────────────────────
+# Cursor
+# ─────────────────────────────────────────────
+
+cursor-style = block
+cursor-style-blink = false
+
+
+# ─────────────────────────────────────────────
+# Shell
+# ─────────────────────────────────────────────
+
+shell-integration = detect
+
+
+# ─────────────────────────────────────────────
+# Scrollback
+# ─────────────────────────────────────────────
+
+# 64 MiB per terminal surface.
+# Allocation is lazy, so this isn't allocated immediately.
+scrollback-limit = 67108864
+
+
+# ─────────────────────────────────────────────
+# Clipboard
+# ─────────────────────────────────────────────
+
+# I prefer explicit Ctrl+Shift+C instead of accidental
+# clipboard replacement whenever text is selected.
+copy-on-select = false
+
+right-click-action = context-menu
+
+# Keep protection against suspicious multiline pastes.
+clipboard-paste-protection = true
+
+
+# ─────────────────────────────────────────────
+# Splits
+# ─────────────────────────────────────────────
+
+# Create panes
+keybind = ctrl+shift+d=new_split:right
+keybind = ctrl+shift+e=new_split:down
+
+# Vim-style pane movement
+keybind = ctrl+alt+h=goto_split:left
+keybind = ctrl+alt+j=goto_split:down
+keybind = ctrl+alt+k=goto_split:up
+keybind = ctrl+alt+l=goto_split:right
+
+# Temporarily maximize the current pane
+keybind = ctrl+shift+enter=toggle_split_zoom
+

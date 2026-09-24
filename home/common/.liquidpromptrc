@@ -1,4 +1,4 @@
-# Liquidprompt configuration — symlinked to ~/.liquidpromptrc by configure.sh.
+# Liquidprompt configuration — symlinked to ~/.liquidpromptrc by link.sh.
 # Liquidprompt sources this automatically when it loads. Tuned to surface a lot
 # of context: VCS state, runtime, jobs, load/battery/temp, virtualenv, etc.
 # Reference: https://liquidprompt.readthedocs.io/ (and the liquidpromptrc-dist

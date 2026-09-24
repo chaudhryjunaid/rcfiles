@@ -1,21 +1,21 @@
 #!/bin/bash
 
-# setup-macos.sh — install the dependencies used by these dotfiles on macOS
+# setup/macos.sh — install the dependencies used by these dotfiles on macOS
 # via Homebrew. Safe to re-run; it skips what's already present and treats
 # each package as best-effort so one failure doesn't abort the rest.
 #
-# After this, run:  ./configure.sh  &&  ./setup-git-identity.sh
+# Normally run via ../install.sh.
 
 set -euo pipefail
 
-if [ "$(uname -s)" != "Darwin" ]; then
-    echo "This script targets macOS (Darwin)." >&2
-    exit 1
-fi
+# shellcheck source=setup/lib.sh
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+
+[ "$(uname -s)" = "Darwin" ] || die "This script targets macOS (Darwin)."
 
 # Install Homebrew if missing.
 if ! command -v brew >/dev/null 2>&1; then
-    echo "==> Installing Homebrew"
+    log "Installing Homebrew"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
@@ -24,28 +24,28 @@ if [ -x /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-echo "==> Updating Homebrew"
+log "Updating Homebrew"
 brew update
 
 # Best-effort install of a formula / cask (warn instead of aborting).
 brew_formula() {
     local f="$1"
     if brew list --formula "$f" >/dev/null 2>&1; then
-        echo "    present: $f"
+        info "present: $f"
     elif brew install "$f"; then
-        echo "    installed: $f"
+        info "installed: $f"
     else
-        echo "    WARN: could not install formula '$f'" >&2
+        warn "could not install formula '$f'"
     fi
 }
 brew_cask() {
     local c="$1"
     if brew list --cask "$c" >/dev/null 2>&1; then
-        echo "    present: $c"
+        info "present: $c"
     elif brew install --cask "$c"; then
-        echo "    installed: $c"
+        info "installed: $c"
     else
-        echo "    WARN: could not install cask '$c'" >&2
+        warn "could not install cask '$c'"
     fi
 }
 
@@ -59,7 +59,7 @@ FORMULAE=(
     zoxide eza
     fnm tmuxinator
 )
-echo "==> Installing formulae"
+log "Installing formulae"
 for f in "${FORMULAE[@]}"; do
     brew_formula "$f"
 done
@@ -71,26 +71,9 @@ CASKS=(
     font-caskaydia-cove-nerd-font
     font-meslo-lg-nerd-font
 )
-echo "==> Installing casks (apps and Nerd Fonts)"
+log "Installing casks (apps and Nerd Fonts)"
 for c in "${CASKS[@]}"; do
     brew_cask "$c"
 done
 
-# Antidote (zsh plugin manager) — sourced from ~/sh/antidote by zshrc.common.
-if [ ! -d ~/sh/antidote ]; then
-    echo "==> Installing antidote"
-    mkdir -p ~/sh
-    git clone --depth=1 https://github.com/mattmc3/antidote.git ~/sh/antidote
-else
-    echo "==> antidote already installed"
-fi
-
-cat <<'NOTE'
-
-Done installing dependencies. Next steps:
-  1. ./configure.sh            # symlink the dotfiles into place (incl. ~/.zshrc)
-  2. ./setup-git-identity.sh   # set your git name/email
-  3. Restart your terminal and set your terminal/kitty font to a Nerd Font,
-     e.g. "JetBrainsMono Nerd Font", "CaskaydiaCove Nerd Font", or
-     "MesloLGS Nerd Font".
-NOTE
+install_antidote

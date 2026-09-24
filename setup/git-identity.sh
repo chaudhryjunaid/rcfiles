@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Set up the git identity in ~/.gitconfig.local (untracked, included by the
-# tracked ~/.gitconfig). Run this once on a new system, after configure.sh, so
-# you don't have to type your name/email by hand.
+# tracked ~/.gitconfig). install.sh runs this after linking; run it by hand to
+# change your identity later.
 #
 # Usage:
-#   ./setup-git-identity.sh                       # use the defaults below
-#   ./setup-git-identity.sh "Name" "email@x.com"  # override
+#   setup/git-identity.sh                         # use the defaults below
+#   setup/git-identity.sh "Name" "email@x.com"    # override
 
 set -euo pipefail
 

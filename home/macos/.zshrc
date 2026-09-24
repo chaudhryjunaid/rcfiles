@@ -1,4 +1,4 @@
-# Entry point for zsh on macOS. Symlinked to ~/.zshrc by configure.sh.
+# Entry point for zsh on macOS. Symlinked to ~/.zshrc by link.sh.
 # Sources the shared ~/.zshrc.common, then adds macOS-specific setup.
 # Homebrew's shellenv is set up in ~/.zprofile.
 # Don't let installers append here; put machine-specific lines in ~/.zshrc.machine.

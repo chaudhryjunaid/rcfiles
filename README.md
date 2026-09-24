@@ -2,19 +2,19 @@
 Set of good enough system configuration/rc files for macOS/Linux.
 
 # setup
-On a fresh Ubuntu (24.04+/26.x) system, including Ubuntu under WSL
-(WSL is detected; kitty and the Nerd Fonts are skipped):
+On a fresh Ubuntu (24.04+/26.x) system (including Ubuntu under WSL, where
+kitty and the Nerd Fonts are skipped) or on macOS:
 ```
-./setup-ubuntu.sh        # install dependencies (see below)
-./configure.sh           # symlink the dotfiles into place
-./setup-git-identity.sh  # set your git name/email
+./install.sh             # deps, then symlinks, then git identity
 ```
-On macOS:
+`install.sh` runs these steps, each safe to re-run and usable on its own:
 ```
-./setup-macos.sh         # install dependencies via Homebrew
-./configure.sh           # symlink the dotfiles into place
-./setup-git-identity.sh  # set your git name/email
+setup/ubuntu.sh          # or setup/macos.sh: install dependencies
+./link.sh                # symlink the dotfiles into $HOME (--dry-run, --unlink)
+setup/git-identity.sh    # write your git name/email to ~/.gitconfig.local
 ```
+Use `./install.sh --skip-deps` to only relink and set the identity. Run
+`./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before committing.
 
 # Dependencies
 Most config degrades gracefully when a tool is missing (commands are guarded
@@ -29,19 +29,19 @@ written.
   first launch (needs **curl** and **git**). A plain-vim `vimrc` is kept too.
 - **git**
 - **delta** — git pager / diff filter (git is configured to use it for
-  `diff`/`log`; remove the `delta` lines from `gitconfig` if you don't want it)
+  `diff`/`log`; remove the `delta` lines from `.gitconfig` if you don't want it)
 - **fzf** — fuzzy finder (shell key-bindings + vim `:Files`/`:Rg`)
 - **ripgrep** (`rg`) — fzf's file source and vim's grep program
 - **zoxide** — smarter `cd`; adds `z`/`zi` (jump by frecency / fzf-pick)
 - a **Nerd Font** — for the glyphs in the tmux status bar, vim-airline and
-  kitty; `setup-ubuntu.sh` installs the JetBrains Mono, Cascadia Code and
+  kitty; the setup scripts install the JetBrains Mono, Cascadia Code and
   Meslo Nerd Fonts
 
 ## zsh prompt & integrations
 - **liquidprompt** — feature-rich prompt (installed via apt / brew); tuned in
   `~/.liquidpromptrc` to show git/VCS state, runtime, jobs, load, battery,
   virtualenv, return code and more
-- **antidote** plugins, listed in `zsh_plugins.txt` (order matters):
+- **antidote** plugins, listed in `.zsh_plugins.txt` (order matters):
   zsh-completions, ez-compinit (runs compinit), **fzf-tab** (replaces the
   completion menu with an fzf picker), **zsh-autosuggestions** and
   **zsh-syntax-highlighting** (last)
@@ -64,20 +64,24 @@ written.
 - **code** / **cursor** — git difftool/mergetool aliases (`git diffc`, etc.)
 
 # Layout
-- `_common/` — config shared across platforms, symlinked into `~/`
-  (except `kitty.conf` and `init.vim`, linked into `~/.config/`)
-- `_common/shellrc.sh` — env, aliases and functions shared by bash and zsh
-- `linux/`, `macos/` — platform-specific files (e.g. `zshrc`, the entry point
-  symlinked to `~/.zshrc`)
-- `configure.sh` — symlink the dotfiles into place (backs up existing files)
-- `setup-ubuntu.sh` — install dependencies on Ubuntu (and Ubuntu on WSL)
-- `setup-macos.sh` — install dependencies on macOS via Homebrew
-- `setup-git-identity.sh` — write your git name/email to `~/.gitconfig.local`
+- `home/common/`, `home/linux/`, `home/macos/` — mirror `$HOME`: every file is
+  symlinked to the same relative path (e.g. `home/common/.config/nvim/init.vim`
+  → `~/.config/nvim/init.vim`). A platform file overrides a common one with
+  the same path. To add a config, drop it in at its home path and rerun
+  `./link.sh`.
+- `home/common/.shellrc.sh` — env, aliases and functions shared by bash and zsh
+- `install.sh` — one-shot setup (deps → link → identity)
+- `link.sh` — symlink the dotfiles; existing files are moved to
+  `~/.rcfiles-backup/<timestamp>/`, dangling links into the repo are pruned
+- `setup/ubuntu.sh`, `setup/macos.sh` — install dependencies; `setup/lib.sh`
+  holds their shared helpers
+- `setup/git-identity.sh` — write your git name/email to `~/.gitconfig.local`
+- `lint.sh` — shellcheck the scripts, syntax-check the rc files
 
 # Notes
-- The platform `zshrc` is the tracked entry point, symlinked to `~/.zshrc`; it
-  sources `zshrc.common`, which sources `shellrc.sh`. `~/.bashrc` sources
-  `shellrc.sh` too.
+- The platform `.zshrc` is the tracked entry point, symlinked to `~/.zshrc`;
+  it sources `.zshrc.common`, which sources `.shellrc.sh`. `~/.bashrc` sources
+  `.shellrc.sh` too.
 - Per-machine tweaks (PATH entries, SDK/installer snippets like gcloud) go in
   untracked `~/.zshrc.machine` / `~/.bashrc.machine`, sourced last. Because
   `~/.zshrc` is a symlink into this repo, move anything an installer appends
