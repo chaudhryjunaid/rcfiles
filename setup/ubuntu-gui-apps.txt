@@ -1,0 +1,100 @@
+GUI apps to install by hand on a new Ubuntu desktop
+===================================================
+
+These GUI apps are on my main machine (Ubuntu 26.04, GNOME) but
+setup/ubuntu.sh does not install them. Apps that ship with a stock Ubuntu
+desktop are left out. Snapshot taken 2026-10-03.
+
+
+Ubuntu archive: sudo apt install <package>
+------------------------------------------
+alacritty                       terminal (config: home/.config/alacritty)
+gnome-tweaks                    Tweaks
+gnome-shell-extension-manager   Extension Manager (see GNOME extensions)
+gnome-boxes                     Boxes, virtual machines
+liferea                         Liferea, RSS reader
+solaar                          Solaar, Logitech device manager
+
+
+Vendor apt repos: add the repo, then sudo apt install <package>
+----------------------------------------------------------------
+Get each signing key from the vendor's Linux install page. Some vendor
+.debs (Chrome, Slack) add their repo themselves on first install.
+
+google-chrome-stable            Google Chrome
+    https://dl.google.com/linux/chrome-stable/deb/ stable main
+google-chrome-beta              Google Chrome (beta)
+    https://dl.google.com/linux/chrome-beta/deb/ stable main
+claude-desktop                  Claude
+    https://downloads.claude.ai/claude-desktop/apt/stable stable main
+chatgpt                         ChatGPT
+    https://persistent.oaistatic.com/codex-app-prod/linux/deb stable main
+slack-desktop                   Slack
+    https://packagecloud.io/slacktechnologies/slack/debian/ jessie main
+sublime-text, sublime-merge     Sublime Text, Sublime Merge
+    https://download.sublimetext.com/ apt/stable/
+typora                          Typora, Markdown editor
+    https://downloads.typora.io/linux ./
+tableplus                       TablePlus, database client
+    https://deb.tableplus.com/debian/26 tableplus main
+insync                          Insync, Google Drive/OneDrive sync
+    http://apt.insync.io/ubuntu <ubuntu-codename> non-free contrib
+kopia-ui                        KopiaUI, backups
+    http://packages.kopia.io/apt/ stable main
+tacit-dynamics-aps-foldersync-desktop    FolderSync Desktop
+    https://github.com/tacitdynamics/foldersync-desktop-production/releases/latest/download/ ./
+
+
+Plain .deb downloads: sudo apt install ./<file>.deb
+---------------------------------------------------
+No repo, so download the new .deb by hand to update.
+
+obsidian                        Obsidian            https://obsidian.md/download
+draw.io                         draw.io             https://github.com/jgraph/drawio-desktop/releases
+mongodb-compass                 MongoDB Compass     https://www.mongodb.com/try/download/compass
+duplicati                       Duplicati, backups  https://duplicati.com/download
+master-pdf-editor-5             Master PDF Editor 5 https://code-industry.net
+smooth-csv                      SmoothCSV           https://smoothcsv.com
+
+
+Snaps: sudo snap install <name>
+-------------------------------
+foliate                         Foliate, e-book reader
+onlyoffice-desktopeditors       ONLYOFFICE, office suite
+transmission                    Transmission, BitTorrent client
+
+
+Flatpak
+-------
+sudo apt install flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install flathub it.mijorus.gearlever
+
+it.mijorus.gearlever            Gear Lever, manages the AppImages below
+
+
+AppImages (in ~/AppImages, added to the app menu with Gear Lever)
+-----------------------------------------------------------------
+Need FUSE 2 first: sudo apt install libfuse2t64
+
+Bruno                           API client          https://www.usebruno.com/downloads
+Dadroit JSON Viewer             JSON viewer         https://dadroit.com
+Prettify                        JSON/YAML/CSV/XML/Mermaid viewer (source not recorded)
+
+
+Other installers
+----------------
+Zed (editor)
+    curl -f https://zed.dev/install.sh | sh     # installs to ~/.local/zed.app
+SmartGit (Git client)
+    Download the Linux tarball from https://www.syntevo.com/smartgit/download/,
+    extract it to /opt/smartgit, then run /opt/smartgit/bin/add-menuitem.sh
+WhatsApp Web (Chrome web app)
+    Open https://web.whatsapp.com in Chrome and use "Install page as app".
+
+
+GNOME extensions (install with Extension Manager)
+-------------------------------------------------
+Just Perfection     just-perfection-desktop@just-perfection
+Tiling Shell        tilingshell@ferrarodomenico.com
+Vitals              Vitals@CoreCoding.com

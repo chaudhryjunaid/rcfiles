@@ -14,7 +14,9 @@ setup/ubuntu.sh          # install dependencies (incl. mise tools)
 setup/git-identity.sh    # write your git name/email to ~/.gitconfig.local
 ```
 Use `./install.sh --skip-deps` to only relink and set the identity. Run
-`./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before committing.
+`./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before committing. GUI apps
+aren't installed by the scripts; `setup/ubuntu-gui-apps.txt` lists them and
+how to install each by hand.
 
 # Dependencies
 Most config degrades gracefully when a tool is missing (commands are guarded
