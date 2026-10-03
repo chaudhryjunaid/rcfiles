@@ -34,9 +34,7 @@ export CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=4
 export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1
 export CLAUDE_CODE_FORK_SUBAGENT=0
 
-# PATH: user bins first. fnm's install dir is added so `fnm env` can run.
 export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$PATH"
-[ -d "$HOME/.local/share/fnm" ] && export PATH="$HOME/.local/share/fnm:$PATH"
 # Neovim managed by bob (`bob use stable`, `bob ls`); ahead of any system nvim.
 [ -d "$HOME/.local/share/bob/nvim-bin" ] && export PATH="$HOME/.local/share/bob/nvim-bin:$PATH"
 
