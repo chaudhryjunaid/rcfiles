@@ -52,6 +52,17 @@ else
     $SUDO add-apt-repository -y ppa:jdxcode/mise
     $SUDO apt-get install -y mise
 fi
+
+# rustup, for the cargo that mise builds tokei with (it has no release
+# binaries past 12.x).
+if command -v cargo >/dev/null 2>&1 || [ -x "$HOME/.cargo/bin/cargo" ]; then
+    log "cargo already installed"
+else
+    log "Installing rustup"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+        | sh -s -- -y --no-modify-path --profile minimal
+fi
+export PATH="$HOME/.cargo/bin:$PATH"
 install_mise_tools
 
 # Nerd Fonts (patched with the powerline/icon glyphs kitty and vim-airline use).
