@@ -7,9 +7,13 @@ Desktop.ini
 Thumbs.db
 
 # vim files
-# swap
-[._]*.s[a-w][a-z]
-[._]s[a-w][a-z]
+# swap (GitHub's Vim template; these skip .ssh and *.svg)
+[._]*.s[a-v][a-z]
+!*.svg
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
 # session
 Session.vim
 # temporary
