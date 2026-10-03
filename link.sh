@@ -98,6 +98,28 @@ fi
 # Directories .vimrc expects.
 run mkdir -p "$HOME/.vim/backups" "$HOME/.vim/swaps" "$HOME/.vim/undo"
 
+# ssh refuses a config others can write to, and git checks files out with the
+# umask (often 002, i.e. group-writable).
+run chmod 700 "$HOME/.ssh"
+run chmod 600 "$HOME_DIR/.ssh/config"
+
+# Untracked per-machine ssh hosts (included by ~/.ssh/config).
+SSHLOCAL="$HOME/.ssh/config.local"
+if [ ! -f "$SSHLOCAL" ]; then
+    echo "create $SSHLOCAL (placeholder)"
+    if [ "$DRY_RUN" -eq 0 ]; then
+        cat > "$SSHLOCAL" <<'EOF'
+# Per-machine ssh hosts (untracked). Included first by ~/.ssh/config, so
+# settings here override its Host * defaults.
+#
+# Host myserver
+#     HostName 203.0.113.10
+#     User me
+EOF
+        chmod 600 "$SSHLOCAL"
+    fi
+fi
+
 # Untracked per-machine git identity (included by ~/.gitconfig); see
 # setup/git-identity.sh.
 GITLOCAL="$HOME/.gitconfig.local"

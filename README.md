@@ -117,6 +117,9 @@ downloaded directly).
   untracked `~/.zshrc.machine` / `~/.bashrc.machine`, sourced last. Because
   `~/.zshrc` is a symlink into this repo, move anything an installer appends
   there into the `.machine` file instead of committing it.
+- `~/.ssh/config` holds only generic defaults (connection sharing,
+  keepalives, agent loading), since this repo is public. Real hosts go in
+  untracked `~/.ssh/config.local`, which it includes first.
 - The prompt is liquidprompt, configured by `~/.liquidpromptrc`.
 - vim plugins install automatically on first launch via vim-plug.
 
