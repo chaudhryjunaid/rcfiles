@@ -1,6 +1,6 @@
 # Settings shared by bash and zsh: env, aliases and helper functions.
-# Symlinked to ~/.shellrc.sh by link.sh and sourced by ~/.zshrc.common
-# and ~/.bashrc. Keep it to syntax both shells understand.
+# Symlinked to ~/.shellrc.sh by link.sh and sourced by ~/.zshrc and
+# ~/.bashrc. Keep it to syntax both shells understand.
 
 # Default editor.
 export EDITOR=nvim
@@ -35,8 +35,16 @@ export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1
 export CLAUDE_CODE_FORK_SUBAGENT=0
 
 export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$PATH"
-# Neovim managed by bob (`bob use stable`, `bob ls`); ahead of any system nvim.
-[ -d "$HOME/.local/share/bob/nvim-bin" ] && export PATH="$HOME/.local/share/bob/nvim-bin:$PATH"
+# mise puts the tools from ~/.config/mise/config.toml (neovim, node, fzf, ...)
+# on PATH, ahead of system ones, and switches versions per project on cd.
+# Activated before anything below that checks `command -v`.
+if command -v mise >/dev/null 2>&1; then
+  if [ -n "${ZSH_VERSION:-}" ]; then
+    eval "$(mise activate zsh)"
+  elif [ -n "${BASH_VERSION:-}" ]; then
+    eval "$(mise activate bash)"
+  fi
+fi
 
 # fzf defaults (key-bindings are loaded per shell).
 command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
@@ -150,7 +158,7 @@ alias kssh="kitty +kitten ssh"
 
 command -v duf >/dev/null 2>&1 && alias df='duf'
 command -v rg >/dev/null 2>&1 && alias rgi='rg -i'
-command -v batcat >/dev/null 2>&1 && alias bat='batcat --paging=never'
+command -v bat >/dev/null 2>&1 && alias bat='bat --paging=never'
 
 killport() {
   if [ -z "$1" ]; then
@@ -178,6 +186,3 @@ extract() {
     echo "Not a file: $1"
   fi
 }
-
-eval "$(mise activate zsh)"
-

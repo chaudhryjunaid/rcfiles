@@ -1,0 +1,20 @@
+# Global mise config: every CLI tool these dotfiles rely on that isn't a
+# system package. Symlinked to ~/.config/mise/config.toml by link.sh, so
+# `mise use -g <tool>@<version>` edits this tracked file.
+#
+#   mise install    install anything missing
+#   mise upgrade    move "latest" tools to their newest release
+#   mise ls         show what's installed and active
+
+[tools]
+node = "26"           # mason's LSP servers need node/npm
+neovim = "latest"
+tree-sitter = "latest" # nvim-treesitter (main) builds parsers with it
+fzf = "latest"
+ripgrep = "latest"
+bat = "latest"
+delta = "latest"
+zoxide = "latest"
+duf = "latest"
+shellcheck = "latest" # used by lint.sh
+eza = "latest"

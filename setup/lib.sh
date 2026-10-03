@@ -30,24 +30,18 @@ clone_once() {
     fi
 }
 
-# Antidote (zsh plugin manager) — sourced from ~/sh/antidote by .zshrc.common.
+# Antidote (zsh plugin manager) — sourced from ~/sh/antidote by .zshrc.
 install_antidote() {
     clone_once https://github.com/mattmc3/antidote.git "$HOME/sh/antidote"
 }
 
-# Neovim, managed by bob (https://github.com/MordechaiHadad/bob). bob keeps the
-# active version's nvim in ~/.local/share/bob/nvim-bin, which .shellrc.sh puts
-# on PATH. The repo's bob config disables bob's own PATH edits (they would
-# land in the symlinked rc files); point at it directly since link.sh may not
-# have run yet.
-install_neovim() {
-    command -v bob >/dev/null 2>&1 || die "bob is not installed"
-    export BOB_CONFIG
-    BOB_CONFIG="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/home/common/.config/bob/config.json"
-    if [ -x "$HOME/.local/share/bob/nvim-bin/nvim" ]; then
-        log "Neovim already installed via bob (see: bob ls)"
-    else
-        log "Installing Neovim stable via bob"
-        bob use stable
-    fi
+# CLI tools (neovim, node, fzf, ripgrep, ...) are managed by mise from the
+# repo's home/.config/mise/config.toml. Point mise at that file
+# directly since link.sh may not have run yet.
+install_mise_tools() {
+    command -v mise >/dev/null 2>&1 || die "mise is not installed"
+    export MISE_GLOBAL_CONFIG_FILE
+    MISE_GLOBAL_CONFIG_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/home/.config/mise/config.toml"
+    log "Installing tools with mise"
+    mise install --yes
 }

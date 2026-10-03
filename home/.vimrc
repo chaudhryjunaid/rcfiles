@@ -168,9 +168,7 @@ augroup vimrc_checktime
 augroup END
 
 " Use the OS clipboard
-if has('mac')
-  set clipboard=unnamed
-elseif executable('wl-copy') && executable('wl-paste')
+if executable('wl-copy') && executable('wl-paste')
   let g:clipboard = {
         \ 'name': 'wl-clipboard',
         \ 'copy': {
@@ -267,11 +265,6 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-
-" On macOS, fzf is installed via Homebrew and needs to be on the runtimepath.
-if has('mac') && isdirectory('/opt/homebrew/opt/fzf')
-  set rtp+=/opt/homebrew/opt/fzf
-endif
 
 function! s:OpenFzf() abort
   if exists(':FZF')

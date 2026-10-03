@@ -2,17 +2,18 @@
 
 # link.sh — symlink the dotfiles into $HOME.
 #
-# home/common/ and home/<platform>/ mirror the layout of $HOME: every file in
-# them is linked to the same relative path under $HOME, e.g.
-#   home/common/.config/nvim/init.vim -> ~/.config/nvim/init.vim
-# A platform file wins over a common file with the same path. Existing files
-# are moved to ~/.rcfiles-backup/<timestamp>/ first. Safe to re-run.
+# home/ mirrors the layout of $HOME: every file in it is linked to the same
+# relative path under $HOME, e.g.
+#   home/.config/nvim/init.vim -> ~/.config/nvim/init.vim
+# Existing files are moved to ~/.rcfiles-backup/<timestamp>/ first. Safe to
+# re-run.
 #
 # Usage: ./link.sh [--dry-run] [--unlink]
 
 set -euo pipefail
 
 REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+HOME_DIR="$REPO/home"
 BACKUP_DIR="$HOME/.rcfiles-backup/$(date +%Y%m%d-%H%M%S)"
 
 DRY_RUN=0
@@ -26,33 +27,17 @@ for arg in "$@"; do
     esac
 done
 
-case "$(uname -s)" in
-    Linux)  PLATFORM="linux" ;;
-    Darwin) PLATFORM="macos" ;;
-    *)      echo "Unsupported platform: $(uname -s)" >&2; exit 1 ;;
-esac
-
 # run <cmd...>: execute, or just print under --dry-run.
 run() {
     if [ "$DRY_RUN" -eq 1 ]; then echo "    would: $*"; else "$@"; fi
 }
 
-# List "<relative path>\t<source>" for every file to link. Platform files come
-# first; a common file is skipped when the platform has the same path.
-# (Plain arrays and POSIX find only: macOS ships bash 3.2 and BSD find.)
+# List "<relative path>\t<source>" for every file to link.
 list_sources() {
-    local pkg dir file rel
-    for pkg in "$PLATFORM" common; do
-        dir="$REPO/home/$pkg"
-        [ -d "$dir" ] || continue
-        while IFS= read -r -d '' file; do
-            rel="${file#"$dir"/}"
-            if [ "$pkg" = common ] && [ -f "$REPO/home/$PLATFORM/$rel" ]; then
-                continue
-            fi
-            printf '%s\t%s\n' "$rel" "$file"
-        done < <(find "$dir" -type f -print0)
-    done | sort
+    local file
+    while IFS= read -r -d '' file; do
+        printf '%s\t%s\n' "${file#"$HOME_DIR"/}" "$file"
+    done < <(find "$HOME_DIR" -type f -print0) | sort
 }
 
 linked=0 skipped=0 backed_up=0 removed=0
@@ -127,6 +112,6 @@ EOF
     fi
 fi
 
-echo "Done ($PLATFORM): $linked linked, $skipped already linked, $backed_up backed up, $removed pruned."
+echo "Done: $linked linked, $skipped already linked, $backed_up backed up, $removed pruned."
 [ "$DRY_RUN" -eq 1 ] && echo "(dry run: nothing was changed)"
 exit 0

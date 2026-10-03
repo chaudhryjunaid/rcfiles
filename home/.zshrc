@@ -1,6 +1,9 @@
-# Platform-agnostic zsh settings.
+# zsh config. Symlinked to ~/.zshrc by link.sh.
+# Don't let installers append here; put machine-specific lines in ~/.zshrc.machine.
 
-# Keep PATH/FPATH free of duplicates (the platform zshrc re-applies this last).
+set -o emacs
+
+# Keep PATH/FPATH free of duplicates (re-applied at the end of this file).
 typeset -U path fpath
 
 # Env, aliases and functions shared with bash.
@@ -40,15 +43,7 @@ unsetopt correct_all
 WORDCHARS=${WORDCHARS//[\/]}
 
 # fzf key-bindings. Loaded before the plugins so fzf-tab, not fzf, owns Tab.
-if command -v fzf >/dev/null 2>&1; then
-  # fzf >= 0.48 generates its own setup; older apt packages ship example files.
-  if fzf --zsh >/dev/null 2>&1; then
-    source <(fzf --zsh)
-  else
-    [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
-    [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
-  fi
-fi
+command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
 
 # Completion styles (read when completion runs, so fine to set before compinit).
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'  # case-insensitive, then partial-word
@@ -98,3 +93,12 @@ if test -n "$KITTY_INSTALLATION_DIR"; then
   kitty-integration
   unfunction kitty-integration
 fi
+
+# .zshrc is only sourced by interactive shells, so no interactivity guard needed.
+[ -f /usr/share/liquidprompt/liquidprompt ] && . /usr/share/liquidprompt/liquidprompt
+
+# Per-machine overrides (untracked); last so they win.
+[ -f ~/.zshrc.machine ] && source ~/.zshrc.machine
+
+# typeset -U only dedupes array assignments; apply it to PATH=... edits above.
+path=($path)

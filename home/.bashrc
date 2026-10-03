@@ -29,18 +29,8 @@ bind '"\C-w": unix-filename-rubout'
 # zoxide
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
 
-if command -v fzf >/dev/null 2>&1; then
-  # fzf >= 0.48 generates its own setup; older apt packages ship example files.
-  if fzf --bash >/dev/null 2>&1; then
-    source <(fzf --bash)
-  else
-    [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
-    [ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
-  fi
-fi
-
-# fnm, with auto-switching on cd
-command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell bash)"
+# fzf key-bindings and completion.
+command -v fzf >/dev/null 2>&1 && source <(fzf --bash)
 
 if [ -n "$KITTY_INSTALLATION_DIR" ]; then
   export KITTY_SHELL_INTEGRATION="enabled"

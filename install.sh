@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # install.sh — set up a machine end to end:
-#   1. install dependencies  (setup/ubuntu.sh or setup/macos.sh)
+#   1. install dependencies  (setup/ubuntu.sh)
 #   2. symlink the dotfiles  (link.sh)
 #   3. set the git identity  (setup/git-identity.sh), unless already set
 # Every step is safe to re-run.
@@ -23,16 +23,11 @@ for arg in "$@"; do
     esac
 done
 
-case "$(uname -s)" in
-    Linux)
-        command -v apt-get >/dev/null 2>&1 \
-            || { echo "Only Ubuntu/Debian is supported on Linux." >&2; exit 1; }
-        SETUP="$REPO/setup/ubuntu.sh" ;;
-    Darwin)
-        SETUP="$REPO/setup/macos.sh" ;;
-    *)
-        echo "Unsupported platform: $(uname -s)" >&2; exit 1 ;;
-esac
+if [ "$(uname -s)" != Linux ] || ! command -v apt-get >/dev/null 2>&1; then
+    echo "Only Ubuntu/Debian Linux is supported." >&2
+    exit 1
+fi
+SETUP="$REPO/setup/ubuntu.sh"
 
 if [ "$SKIP_DEPS" -eq 0 ]; then
     echo "### Installing dependencies ($(basename "$SETUP"))"

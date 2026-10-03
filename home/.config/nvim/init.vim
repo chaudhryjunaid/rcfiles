@@ -46,7 +46,7 @@ Plug 'windwp/nvim-autopairs'
 Plug 'preservim/nerdtree'
 
 " Better syntax / structure
-" main branch: needs Neovim 0.12+ (installed via bob), tree-sitter-cli and a
+" main branch: needs Neovim 0.12+ (installed via mise), tree-sitter-cli and a
 " C compiler to build parsers.
 Plug 'nvim-treesitter/nvim-treesitter', {'branch': 'main', 'do': ':TSUpdate'}
 
