@@ -178,3 +178,6 @@ extract() {
     echo "Not a file: $1"
   fi
 }
+
+eval "$(mise activate zsh)"
+
