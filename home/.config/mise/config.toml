@@ -32,6 +32,3 @@ tokei = "latest"      # built with cargo (rustup): no release binaries past 12.x
 # Not in mise's registry: prebuilt GitHub release binaries.
 "github:dalance/procs" = "latest"
 "github:max-niederman/ttyper" = "latest"
-# Python CLIs, installed into their own venvs with uv.
-"pipx:visidata" = "latest"
-"pipx:csvkit" = "latest"

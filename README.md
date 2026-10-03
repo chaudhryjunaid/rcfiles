@@ -27,10 +27,9 @@ Developer CLI tools are installed and versioned by
 `home/.config/mise/config.toml` (linked to `~/.config/mise/config.toml`):
 neovim, tree-sitter, node, fzf, ripgrep, fd, bat, delta, zoxide, eza, duf,
 dust, btop, procs, jq, jless, jnv, miller, hyperfine, tokei, ttyper, uv,
-shellcheck and shfmt, plus visidata and csvkit (Python CLIs mise installs
-with uv). `setup/ubuntu.sh` installs mise itself (from its apt PPA), and
-rustup if cargo is missing (mise builds tokei with cargo), then runs
-`mise install`;
+shellcheck and shfmt. `setup/ubuntu.sh` installs mise itself (from its apt
+PPA), and rustup if cargo is missing (mise builds tokei with cargo), then
+runs `mise install`;
 `.shellrc.sh` runs `mise activate` for both bash and zsh. Day to day:
 `mise install` (add missing tools), `mise upgrade` (bump the `latest` ones),
 `mise use -g <tool>@<version>` (edits the tracked config — commit it). A
