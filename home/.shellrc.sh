@@ -49,6 +49,8 @@ fi
 # fzf defaults (key-bindings are loaded per shell).
 command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
 [ -n "${FZF_DEFAULT_COMMAND:-}" ] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+# Alt-C: fd skips what .gitignore lists (venvs, build output), unlike fzf's walker.
+command -v fd >/dev/null 2>&1 && export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border'
 
 # git aliases (a curated subset of the oh-my-zsh `git` plugin, vendored so we
