@@ -1,0 +1,10 @@
+// Settings in here override those in "Default/Preferences.sublime-settings",
+// and are overridden in turn by syntax-specific settings.
+{
+	"font_face": "CaskaydiaCove Nerd Font Mono",
+	"font_size": 14,
+	// The font size set when using "Reset Size"
+	"default_font_size": 14,
+	"theme": "Adaptive.sublime-theme",
+	"color_scheme": "Mariana.sublime-color-scheme",
+}

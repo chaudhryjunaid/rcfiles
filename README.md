@@ -89,6 +89,10 @@ downloaded directly).
 - **kitty** — terminal emulator; config is linked to `~/.config/kitty/kitty.conf`
   and expects the **JetBrainsMono Nerd Font**; not installed by the setup
   script
+- **Sublime Text** — settings are linked to
+  `~/.config/sublime-text/Packages/User/Preferences.sublime-settings` and
+  expect the **CaskaydiaCove Nerd Font Mono**; not installed by the setup
+  script (see `setup/ubuntu-gui-apps.txt`)
 - **duf** — `df` alias
 - **tmuxinator** — tmux session manager
 - **code** / **cursor** — git difftool/mergetool aliases (`git diffc`, etc.)
