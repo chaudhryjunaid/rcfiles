@@ -107,3 +107,5 @@
 	fetchalways = false
 	update = true
 	initializenew = true
+[gc]
+	autoDetach = false

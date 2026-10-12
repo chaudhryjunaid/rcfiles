@@ -41,3 +41,5 @@ fi
 
 # Per-machine overrides (untracked); last so they win.
 [ -f ~/.bashrc.machine ] && . ~/.bashrc.machine
+
+source /home/junaid/.config/broot/launcher/bash/br

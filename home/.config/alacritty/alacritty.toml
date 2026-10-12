@@ -29,3 +29,11 @@ style = "Italic"
 style = { shape = "Block", blinking = "On" }
 blink_interval = 500
 
+[keyboard]
+bindings = [
+  { key = "K", mods = "Control|Shift", mode = "~Vi|~Search", chars = "\u000c" },
+  { key = "K", mods = "Control|Shift", mode = "~Vi|~Search", action = "ClearHistory" },
+  { key = "R", mods = "Control|Shift", mode = "~Vi|~Search", chars = "\u0015reset\r" },
+  { key = "R", mods = "Control|Shift", mode = "~Vi|~Search", action = "ClearHistory" },
+]
+

@@ -102,3 +102,5 @@ fi
 
 # typeset -U only dedupes array assignments; apply it to PATH=... edits above.
 path=($path)
+
+source /home/junaid/.config/broot/launcher/bash/br
