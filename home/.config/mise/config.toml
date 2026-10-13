@@ -6,6 +6,11 @@
 #   mise upgrade    move "latest" tools to their newest release
 #   mise ls         show what's installed and active
 
+[settings]
+# Honour .nvmrc / .node-version, so cd-ing into a repo that pins node (the
+# CAN-Go backend's .nvmrc, which CI also reads) switches to that version.
+idiomatic_version_file_enable_tools = ["node"]
+
 [tools]
 node = "26"           # mason's LSP servers need node/npm
 neovim = "latest"
