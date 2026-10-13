@@ -2,9 +2,28 @@
 // and are overridden in turn by syntax-specific settings.
 {
 	"font_face": "CaskaydiaCove Nerd Font Mono",
-	"font_size": 14,
+	"font_size": 12,
 	// The font size set when using "Reset Size"
-	"default_font_size": 14,
+	"default_font_size": 12,
 	"theme": "Adaptive.sublime-theme",
 	"color_scheme": "Mariana.sublime-color-scheme",
+	"ignored_packages":
+	[
+		"Vintage",
+	],
+	"index_files": true,
+	"hardware_acceleration": "opengl",
+	"hot_exit": "only_on_quit",
+	"hot_exit_projects": false,
+	"open_files_in_new_window": "always",
+	"close_windows_when_empty": true,
+	"ui_scale": 1.25,
+	"show_encoding": true,
+	"highlight_modified_tabs": true,
+	"translate_tabs_to_spaces": true,
+	"highlight_line": true,
+	"scroll_past_end": false,
+	"ensure_newline_at_eof_on_save": true,
+	"save_on_focus_lost": true,
+	"auto_complete_commit_on_tab": true,
 }
