@@ -34,21 +34,23 @@ asked while `~/.gitconfig.local` still has the placeholder that `link.sh`
 writes). Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
 committing.
 
-GUI apps aren't installed by the scripts. `gui-apps.manifest.csv` lists the
-ones I use (a snapshot of my main machine taken 2026-10-14), with columns
-`category,name,homepage,description`, to install by hand on a GNOME desktop.
-Install each the way its homepage recommends for the distro: distro repo,
-Flathub, the vendor's apt/rpm repo or package, or an AppImage. AppImages need
-FUSE 2 (`libfuse2t64` on Ubuntu, `fuse-libs` on Fedora). Apps that ship with
-a stock GNOME desktop (Firefox, ...) are left out.
-
+GUI apps aren't installed by the setup scripts. `gui-apps.manifest.csv` lists
+the ones I use on a GNOME desktop (a snapshot of my main machine taken
+2026-10-14), with columns `category,name,homepage,description,ubuntu,fedora`.
+Apps that ship with a stock GNOME desktop (Firefox, ...) are left out.
 `cli-apps.manifest.csv` does the same for command-line tools that aren't in a
 stock Ubuntu desktop and that the setup scripts and mise config don't
-install (a snapshot taken 2026-10-14 on Ubuntu 26.04), with an extra
-`install` column for how each one got here: `apt: <packages>` for the distro
-archive (Fedora names can differ), or a vendor repo, `.deb`, snap, release
-binary or installer script, whose setup steps for either distro are on the
-homepage.
+install, with an extra `install` column for how each one got onto that
+machine (Ubuntu 26.04): `apt: <packages>`, a vendor repo, `.deb`, snap,
+release binary or installer script.
+
+The `ubuntu` and `fedora` columns name each app's packages in that distro's
+own repos (Fedora's often differ, e.g. `lm_sensors`, `vim-enhanced`), and are
+empty when it has none. `./extra-install.sh [--dry-run] [--cli-only]`
+installs those with apt or dnf (skipping apps already installed as a snap or
+Flatpak), then lists the rest, to install the way each homepage recommends:
+Flathub, the vendor's apt/rpm repo or package, or an AppImage (AppImages
+need FUSE 2: `libfuse2t64` on Ubuntu, `fuse-libs` on Fedora).
 
 Fonts aren't installed by `install.sh` either. The optional
 `setup/install-fonts.sh [FOLDER]` asks for a name and searches the distro's
@@ -178,6 +180,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
   hand
 - `cli-apps.manifest.csv` — CLI tools the setup scripts don't install, to
   install by hand
+- `extra-install.sh` — optional: install the apps from both manifests that
+  the distro's own repos have (their `ubuntu`/`fedora` column)
 - `lint.sh` — shellcheck the scripts, syntax-check the rc files (shellcheck
   comes from mise)
 - `set-font.sh` — set the font family and size in the kitty, alacritty and

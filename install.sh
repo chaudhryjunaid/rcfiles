@@ -12,6 +12,8 @@
 set -euo pipefail
 
 REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# shellcheck source=setup/lib.sh
+. "$REPO/setup/lib.sh"
 
 SKIP_DEPS=0
 SKIP_IDENTITY=0
@@ -23,21 +25,6 @@ for arg in "$@"; do
         *)               echo "Unknown option: $arg" >&2; exit 2 ;;
     esac
 done
-
-# Print the distro to set up (ubuntu or fedora) from /etc/os-release: its ID,
-# else the first supported ID_LIKE entry (e.g. Linux Mint -> ubuntu).
-detect_distro() {
-    local ids id
-    [ -r /etc/os-release ] || return 1
-    # shellcheck disable=SC1091
-    ids=$(. /etc/os-release && echo "${ID:-} ${ID_LIKE:-}")
-    for id in $ids; do
-        case "$id" in
-            ubuntu|fedora) echo "$id"; return 0 ;;
-        esac
-    done
-    return 1
-}
 
 if [ "$SKIP_DEPS" -eq 0 ]; then
     if ! DISTRO=$(detect_distro); then

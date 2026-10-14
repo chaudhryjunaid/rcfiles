@@ -20,6 +20,21 @@ export IS_WSL
 
 FONT_DIR="$HOME/.local/share/fonts"
 
+# Print the distro to set up (ubuntu or fedora) from /etc/os-release: its ID,
+# else the first supported ID_LIKE entry (e.g. Linux Mint -> ubuntu).
+detect_distro() {
+    local ids id
+    [ -r /etc/os-release ] || return 1
+    # shellcheck disable=SC1091
+    ids=$(. /etc/os-release && echo "${ID:-} ${ID_LIKE:-}")
+    for id in $ids; do
+        case "$id" in
+            ubuntu|fedora) echo "$id"; return 0 ;;
+        esac
+    done
+    return 1
+}
+
 # install_nerd_font <name>: download the latest Nerd Fonts release asset
 # <name>.zip (e.g. JetBrainsMono) and unpack it as $FONT_DIR/<name>, replacing
 # what was there only once that worked. Run fc-cache afterwards.
