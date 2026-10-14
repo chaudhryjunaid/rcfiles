@@ -30,7 +30,7 @@ log "Installing core packages"
 $SUDO apt-get install -y "${CORE_PKGS[@]}"
 
 # Optional packages — install each best-effort so a missing one doesn't abort.
-OPTIONAL_PKGS=(tmuxinator liquidprompt)
+OPTIONAL_PKGS=(tmuxinator)
 log "Installing optional packages (best-effort)"
 for pkg in "${OPTIONAL_PKGS[@]}"; do
     if $SUDO apt-get install -y "$pkg" >/dev/null 2>&1; then

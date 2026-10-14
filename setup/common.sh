@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # setup/common.sh — the distro-independent part of the setup: antidote,
-# rustup, the mise tools, the Nerd Fonts, and zsh as the login shell. Run it
-# after setup/<distro>.sh has installed the system packages and mise. Safe to
-# re-run. Under WSL, the Nerd Fonts are skipped: the terminal and its fonts
-# live on the Windows side.
+# liquidprompt, rustup, the mise tools, the Nerd Fonts, and zsh as the login
+# shell. Run it after setup/<distro>.sh has installed the system packages and
+# mise. Safe to re-run. Under WSL, the Nerd Fonts are skipped: the terminal
+# and its fonts live on the Windows side.
 #
 # Normally run via ../install.sh.
 
@@ -21,6 +21,11 @@ done
 
 # Antidote (zsh plugin manager) — sourced from ~/sh/antidote by .zshrc.
 clone_once https://github.com/mattmc3/antidote.git "$HOME/sh/antidote"
+
+# liquidprompt (prompt), latest release — sourced from ~/sh/liquidprompt by
+# .zshrc and .bashrc.
+clone_once https://github.com/liquidprompt/liquidprompt.git \
+    "$HOME/sh/liquidprompt" --branch stable
 
 # rustup, for the cargo that mise builds tokei with (it has no release
 # binaries past 12.x).

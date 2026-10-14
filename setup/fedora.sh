@@ -2,8 +2,8 @@
 
 # setup/fedora.sh — install the system packages these dotfiles need on a
 # current Fedora (tested on 44), including Fedora under WSL, and mise from
-# its rpm repo. liquidprompt isn't packaged for Fedora, so it's cloned from
-# git. Safe to re-run. setup/common.sh does the distro-independent rest.
+# its rpm repo. Safe to re-run. setup/common.sh does the distro-independent
+# rest.
 #
 # Normally run via ../install.sh.
 
@@ -35,9 +35,5 @@ else
         | $SUDO tee /etc/yum.repos.d/mise.repo >/dev/null
     $SUDO dnf install -y mise
 fi
-
-# The rc files look for liquidprompt here when the distro doesn't ship it.
-clone_once https://github.com/liquidprompt/liquidprompt.git \
-    "$HOME/sh/liquidprompt" --branch stable
 
 info "tmuxinator isn't packaged for Fedora; 'gem install tmuxinator' if you want it"

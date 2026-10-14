@@ -95,11 +95,8 @@ if test -n "$KITTY_INSTALLATION_DIR"; then
 fi
 
 # .zshrc is only sourced by interactive shells, so no interactivity guard needed.
-# liquidprompt: the distro package (Ubuntu) or a git clone (Fedora).
-for lp in /usr/share/liquidprompt/liquidprompt ~/sh/liquidprompt/liquidprompt; do
-  [ -f "$lp" ] && { . "$lp"; break; }
-done
-unset lp
+# liquidprompt, cloned to ~/sh/liquidprompt by setup/common.sh.
+[ -f ~/sh/liquidprompt/liquidprompt ] && . ~/sh/liquidprompt/liquidprompt
 
 # Per-machine overrides (untracked); last so they win.
 [ -f ~/.zshrc.machine ] && source ~/.zshrc.machine

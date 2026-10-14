@@ -13,7 +13,7 @@ and usable on its own:
 ```
 setup/ubuntu.sh          # system packages and mise, via apt
 setup/fedora.sh          #   ...or via dnf
-setup/common.sh          # antidote, rustup, mise tools, Nerd Fonts, zsh login shell
+setup/common.sh          # antidote, liquidprompt, rustup, mise tools, fonts, zsh
 ./link.sh                # symlink the dotfiles into $HOME (--dry-run, --unlink)
 setup/git-identity.sh    # write your git name/email to ~/.gitconfig.local
 ```
@@ -45,9 +45,9 @@ Terminals use `mise activate`; login files (`~/.profile`, `~/.zprofile`)
 also put mise's shims on PATH so desktop-launched apps (editors, git GUIs)
 find the same tools.
 Only things mise can't or shouldn't own come from apt/dnf: zsh, git, tmux,
-build tools and clipboard tools, plus liquidprompt and tmuxinator on Ubuntu.
-Fedora doesn't package those two, so liquidprompt is cloned from git and
-tmuxinator is left to you. The Nerd Fonts are downloaded directly.
+build tools and clipboard tools, plus tmuxinator on Ubuntu (Fedora doesn't
+package it). antidote and liquidprompt are cloned from GitHub into `~/sh`,
+and the Nerd Fonts are downloaded directly.
 
 ## Required
 - **zsh** — shell; plugins are managed by antidote (cloned to `~/sh/antidote`
@@ -72,8 +72,9 @@ tmuxinator is left to you. The Nerd Fonts are downloaded directly.
   Meslo Nerd Fonts
 
 ## zsh prompt & integrations
-- **liquidprompt** — feature-rich prompt (apt on Ubuntu, a git clone in
-  `~/sh/liquidprompt` on Fedora); tuned in
+- **liquidprompt** — feature-rich prompt, cloned from its `stable` branch
+  (the latest release) to `~/sh/liquidprompt` by the setup script; update it
+  with `git -C ~/sh/liquidprompt pull`. Tuned in
   `~/.liquidpromptrc` to show git/VCS state, runtime, jobs, load, battery,
   virtualenv, return code and more
 - **antidote** plugins, listed in `.zsh_plugins.txt` (order matters):
