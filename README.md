@@ -1,22 +1,27 @@
 # rcfiles
-Set of good enough system configuration/rc files for Linux (Ubuntu).
+Set of good enough system configuration/rc files for Linux (Ubuntu, Fedora).
 
 # setup
-On a fresh Ubuntu (24.04+/26.x) system (including Ubuntu under WSL, where
-the Nerd Fonts are skipped):
+On a fresh Ubuntu (24.04+/26.x) or Fedora (44+) system, including under WSL
+(where the Nerd Fonts are skipped):
 ```
 ./install.sh             # deps, then symlinks, then git identity
 ```
-`install.sh` runs these steps, each safe to re-run and usable on its own:
+`install.sh` picks the distro script from `/etc/os-release` (derivatives such
+as Linux Mint count as their base) and runs these steps, each safe to re-run
+and usable on its own:
 ```
-setup/ubuntu.sh          # install dependencies (incl. mise tools)
+setup/ubuntu.sh          # system packages and mise, via apt
+setup/fedora.sh          #   ...or via dnf
+setup/common.sh          # antidote, rustup, mise tools, Nerd Fonts, zsh login shell
 ./link.sh                # symlink the dotfiles into $HOME (--dry-run, --unlink)
 setup/git-identity.sh    # write your git name/email to ~/.gitconfig.local
 ```
-Use `./install.sh --skip-deps` to only relink and set the identity. Run
-`./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before committing. GUI apps
-aren't installed by the scripts; `setup/ubuntu-gui-apps.txt` lists them and
-how to install each by hand.
+Use `./install.sh --skip-deps` to only relink and set the identity; that
+works on any system. Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
+committing. GUI apps aren't installed by the scripts;
+`setup/ubuntu-gui-apps.txt` lists the ones on my Ubuntu desktop and how to
+install each by hand.
 
 # Dependencies
 Most config degrades gracefully when a tool is missing (commands are guarded
@@ -29,9 +34,9 @@ Developer CLI tools are installed and versioned by
 `home/.config/mise/config.toml` (linked to `~/.config/mise/config.toml`):
 neovim, tree-sitter, node, fzf, ripgrep, fd, bat, delta, zoxide, eza, duf,
 dust, btop, procs, jq, jless, jnv, miller, hyperfine, tokei, ttyper, uv,
-shellcheck and shfmt. `setup/ubuntu.sh` installs mise itself (from its apt
-PPA), and rustup if cargo is missing (mise builds tokei with cargo), then
-runs `mise install`;
+shellcheck and shfmt. The distro script installs mise itself (from its apt
+PPA or rpm repo), then `setup/common.sh` installs rustup if cargo is missing
+(mise builds tokei with cargo) and runs `mise install`.
 `.shellrc.sh` runs `mise activate` for both bash and zsh. Day to day:
 `mise install` (add missing tools), `mise upgrade` (bump the `latest` ones),
 `mise use -g <tool>@<version>` (edits the tracked config — commit it). A
@@ -39,9 +44,10 @@ project's own `mise.toml` overrides these versions inside that directory.
 Terminals use `mise activate`; login files (`~/.profile`, `~/.zprofile`)
 also put mise's shims on PATH so desktop-launched apps (editors, git GUIs)
 find the same tools.
-Only things mise can't or shouldn't own come from apt: zsh, git, tmux, build
-tools, clipboard tools, liquidprompt and tmuxinator (plus the Nerd Fonts,
-downloaded directly).
+Only things mise can't or shouldn't own come from apt/dnf: zsh, git, tmux,
+build tools and clipboard tools, plus liquidprompt and tmuxinator on Ubuntu.
+Fedora doesn't package those two, so liquidprompt is cloned from git and
+tmuxinator is left to you. The Nerd Fonts are downloaded directly.
 
 ## Required
 - **zsh** — shell; plugins are managed by antidote (cloned to `~/sh/antidote`
@@ -66,7 +72,8 @@ downloaded directly).
   Meslo Nerd Fonts
 
 ## zsh prompt & integrations
-- **liquidprompt** — feature-rich prompt (installed via apt); tuned in
+- **liquidprompt** — feature-rich prompt (apt on Ubuntu, a git clone in
+  `~/sh/liquidprompt` on Fedora); tuned in
   `~/.liquidpromptrc` to show git/VCS state, runtime, jobs, load, battery,
   virtualenv, return code and more
 - **antidote** plugins, listed in `.zsh_plugins.txt` (order matters):
@@ -94,7 +101,8 @@ downloaded directly).
   expect the **CaskaydiaCove Nerd Font Mono**; not installed by the setup
   script (see `setup/ubuntu-gui-apps.txt`)
 - **duf** — `df` alias
-- **tmuxinator** — tmux session manager
+- **tmuxinator** — tmux session manager (apt on Ubuntu; on Fedora,
+  `gem install tmuxinator`)
 - **code** / **cursor** — git difftool/mergetool aliases (`git diffc`, etc.)
 
 # Layout
@@ -105,7 +113,9 @@ downloaded directly).
 - `install.sh` — one-shot setup (deps → link → identity)
 - `link.sh` — symlink the dotfiles; existing files are moved to
   `~/.rcfiles-backup/<timestamp>/`, dangling links into the repo are pruned
-- `setup/ubuntu.sh` — install dependencies; `setup/lib.sh` holds its helpers
+- `setup/ubuntu.sh`, `setup/fedora.sh` — system packages and mise for each
+  distro; `setup/common.sh` — the distro-independent rest; `setup/lib.sh`
+  holds their shared helpers
 - `setup/git-identity.sh` — write your git name/email to `~/.gitconfig.local`
 - `lint.sh` — shellcheck the scripts, syntax-check the rc files (shellcheck
   comes from mise)
@@ -113,6 +123,8 @@ downloaded directly).
 # Notes
 - `~/.zshrc` and `~/.bashrc` both source `~/.shellrc.sh`. `~/.profile`
   (Ubuntu's default) and `~/.zprofile` are tracked too, for the mise shims.
+  Fedora's stock `~/.bash_profile` shadows `~/.profile` for bash login
+  shells; zsh, the login shell after setup, reads `~/.zprofile` instead.
 - Per-machine tweaks (PATH entries, SDK/installer snippets like gcloud) go in
   untracked `~/.zshrc.machine` / `~/.bashrc.machine`, sourced last. Because
   `~/.zshrc` is a symlink into this repo, move anything an installer appends

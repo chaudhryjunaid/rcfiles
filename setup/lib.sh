@@ -18,30 +18,16 @@ if [ -n "${WSL_DISTRO_NAME:-}" ] || grep -qi microsoft /proc/version 2>/dev/null
 fi
 export IS_WSL
 
-# clone_once <repo-url> <dest>: shallow-clone unless dest already exists.
+# clone_once <repo-url> <dest> [git-clone-args...]: shallow-clone unless dest
+# already exists.
 clone_once() {
     local url="$1" dest="$2"
+    shift 2
     if [ -d "$dest" ]; then
         log "$(basename "$dest") already installed"
     else
         log "Installing $(basename "$dest")"
         mkdir -p "$(dirname "$dest")"
-        git clone --depth=1 "$url" "$dest"
+        git clone --depth=1 "$@" "$url" "$dest"
     fi
-}
-
-# Antidote (zsh plugin manager) — sourced from ~/sh/antidote by .zshrc.
-install_antidote() {
-    clone_once https://github.com/mattmc3/antidote.git "$HOME/sh/antidote"
-}
-
-# CLI tools (neovim, node, fzf, ripgrep, ...) are managed by mise from the
-# repo's home/.config/mise/config.toml. Point mise at that file
-# directly since link.sh may not have run yet.
-install_mise_tools() {
-    command -v mise >/dev/null 2>&1 || die "mise is not installed"
-    export MISE_GLOBAL_CONFIG_FILE
-    MISE_GLOBAL_CONFIG_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/home/.config/mise/config.toml"
-    log "Installing tools with mise"
-    mise install --yes
 }

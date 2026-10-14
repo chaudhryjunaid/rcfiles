@@ -37,9 +37,11 @@ if [ -n "$KITTY_INSTALLATION_DIR" ]; then
   source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"
 fi
 
-[ -f /usr/share/liquidprompt/liquidprompt ] && . /usr/share/liquidprompt/liquidprompt
+# liquidprompt: the distro package (Ubuntu) or a git clone (Fedora).
+for lp in /usr/share/liquidprompt/liquidprompt ~/sh/liquidprompt/liquidprompt; do
+  [ -f "$lp" ] && { . "$lp"; break; }
+done
+unset lp
 
 # Per-machine overrides (untracked); last so they win.
 [ -f ~/.bashrc.machine ] && . ~/.bashrc.machine
-
-source /home/junaid/.config/broot/launcher/bash/br

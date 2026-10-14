@@ -95,12 +95,14 @@ if test -n "$KITTY_INSTALLATION_DIR"; then
 fi
 
 # .zshrc is only sourced by interactive shells, so no interactivity guard needed.
-[ -f /usr/share/liquidprompt/liquidprompt ] && . /usr/share/liquidprompt/liquidprompt
+# liquidprompt: the distro package (Ubuntu) or a git clone (Fedora).
+for lp in /usr/share/liquidprompt/liquidprompt ~/sh/liquidprompt/liquidprompt; do
+  [ -f "$lp" ] && { . "$lp"; break; }
+done
+unset lp
 
 # Per-machine overrides (untracked); last so they win.
 [ -f ~/.zshrc.machine ] && source ~/.zshrc.machine
 
 # typeset -U only dedupes array assignments; apply it to PATH=... edits above.
 path=($path)
-
-source /home/junaid/.config/broot/launcher/bash/br
