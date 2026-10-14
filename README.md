@@ -93,9 +93,9 @@ liquidprompt are cloned from GitHub into `~/sh`.
   **zsh-syntax-highlighting** (last)
 - **node** — via mise (`node = "26"` in the mise config)
 - **bat** — `cat` with syntax highlighting (aliased to `bat --paging=never`)
-- **eza** — modern `ls`; aliased to `ls`/`l`/`ll`/`la`/`lt` when present (falls
-  back to plain `ls` otherwise) and used for the `cd` completion preview in
-  fzf-tab
+- **eza** — modern `ls`; backs the `l`/`ll`/`la`/`lt` aliases when present
+  (they fall back to plain `ls` otherwise; `ls` itself stays GNU `ls`) and is
+  used for the `cd` completion preview in fzf-tab
 
 ## tmux
 - **tmux** 3.2+ (popup styling); `Ctrl-h/j/k/l` moves between tmux panes and
@@ -111,7 +111,7 @@ liquidprompt are cloned from GitHub into `~/sh`.
   `~/.config/sublime-text/Packages/User/Preferences.sublime-settings` and
   expect the **CaskaydiaCove Nerd Font Mono**; not installed by the setup
   script (see `setup/gui-apps.manifest.txt`)
-- **duf** — `df` alias
+- **duf** — friendlier `df`; run it as `duf` (`df` is not aliased)
 - **tmuxinator** — tmux session manager (apt on Ubuntu; on Fedora,
   `gem install tmuxinator`)
 - **code** / **cursor** — git difftool/mergetool aliases (`git diffc`, etc.)

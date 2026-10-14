@@ -124,15 +124,14 @@ gbda() {
   git branch --no-color --merged | command grep -vE "^([+*]|\s*($(git_main_branch)|$(git_develop_branch))\s*$)" | command xargs -r git branch --delete
 }
 
-# Use eza as a drop-in replacement for ls when available, else fall back.
+alias ls='ls --color=auto'
+# Use eza for the ls shortcuts when available, else fall back to plain ls.
 if command -v eza >/dev/null 2>&1; then
-  alias ls='eza --group-directories-first'
   alias l='eza -1 --group-directories-first'
   alias ll='eza -lh --group-directories-first --git'
   alias la='eza -lah --group-directories-first --git'
   alias lt='eza --tree --level=2 --group-directories-first'
 else
-  alias ls='ls --color=auto'
   alias ll='ls -lh'
   alias la='ls -lah'
 fi
@@ -159,7 +158,6 @@ alias dcl='docker compose logs -f'
 alias please='sudo'
 alias kssh="kitty +kitten ssh"
 
-command -v duf >/dev/null 2>&1 && alias df='duf'
 command -v rg >/dev/null 2>&1 && alias rgi='rg -i'
 command -v bat >/dev/null 2>&1 && alias bat='bat --paging=never'
 
