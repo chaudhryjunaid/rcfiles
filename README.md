@@ -25,7 +25,7 @@ homepage, to install by hand on either distro. For more fonts, the optional
 `setup/install-fonts.sh [FOLDER]` asks for a name and searches the distro's
 packages, Nerd Fonts, Google Fonts and the font files under FOLDER (default
 `~/media/fonts`), then installs the ones you pick. `setup/ensure-fonts.sh
-[--dry-run]` updates the fonts from the first three to their latest versions,
+[--dry-run] [--no-packages]` updates the fonts from the first three to their latest versions,
 and moves loose files in `~/.local/share/fonts` whose family is on Google
 Fonts over to the Google version (the loose files go to `~/.rcfiles-backup/`).
 

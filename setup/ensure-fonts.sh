@@ -4,14 +4,15 @@
 # Nerd Fonts or Google Fonts to its latest version, via install-fonts.sh.
 # Optional, like install-fonts.sh. Fonts it copied from a local folder are left
 # alone. Updates
-#   - the installed font packages (apt: fonts-*, ttf-*, otf-*; dnf: *fonts*)
+#   - the installed font packages (apt: fonts-*, ttf-*, otf-*; dnf: *fonts*),
+#     unless --no-packages (that step needs sudo)
 #   - the Nerd Fonts in ~/.local/share/fonts/<Name>/
 #   - the Google Fonts in ~/.local/share/fonts/google/<Family>/
 # and moves loose font files in ~/.local/share/fonts whose family is on Google
 # Fonts over to google/<Family>/: once Google's version is installed, the loose
 # files go to ~/.rcfiles-backup/<timestamp>/.local/share/fonts/.
 #
-# Usage: setup/ensure-fonts.sh [--dry-run]
+# Usage: setup/ensure-fonts.sh [--dry-run] [--no-packages]
 
 set -euo pipefail
 
@@ -22,11 +23,13 @@ SETUP=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BACKUP_DIR="$HOME/.rcfiles-backup/$(date +%Y%m%d-%H%M%S)/.local/share/fonts"
 
 DRY_RUN=0
+PACKAGES=1
 for arg in "$@"; do
     case "$arg" in
-        -n|--dry-run) DRY_RUN=1 ;;
-        -h|--help)    sed -n '3,14p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-        *)            echo "Unknown option: $arg" >&2; exit 2 ;;
+        -n|--dry-run)  DRY_RUN=1 ;;
+        --no-packages) PACKAGES=0 ;;
+        -h|--help)     sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        *)             echo "Unknown option: $arg" >&2; exit 2 ;;
     esac
 done
 
@@ -44,7 +47,9 @@ google_get metadata/fonts | jq -r '.familyMetadataList[].family' > "$TMP/google"
     || die "Couldn't get the Google Fonts catalog."
 
 pkgs=()
-if command -v apt-get >/dev/null 2>&1; then
+if [ "$PACKAGES" -eq 0 ]; then
+    :
+elif command -v apt-get >/dev/null 2>&1; then
     # shellcheck disable=SC2016 # ${db:...} is a dpkg-query format, not shell
     mapfile -t pkgs < <({ dpkg-query -W -f='${db:Status-Abbrev}\t${Package}\n' \
         'fonts-*' 'ttf-*' 'otf-*' 2>/dev/null || true; } | awk -F'\t' '$1 ~ /^ii/ { print $2 }')
@@ -82,7 +87,11 @@ for dir in "$FONT_DIR"/google/*/; do
     fi
 done
 
-info "packages (${#pkgs[@]}): ${pkgs[*]}"
+if [ "$PACKAGES" -eq 1 ]; then
+    info "packages (${#pkgs[@]}): ${pkgs[*]}"
+else
+    info "packages: left alone (--no-packages)"
+fi
 info "Nerd Fonts (${#nerd[@]}): ${nerd[*]}"
 info "Google Fonts (${#google[@]}): ${google[*]}"
 info "loose files to move to Google Fonts (${#migrate[@]}):"
