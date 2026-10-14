@@ -21,7 +21,10 @@ Use `./install.sh --skip-deps` to only relink and set the identity; that
 works on any system. Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
 committing. GUI apps aren't installed by the scripts;
 `setup/gui-apps.manifest.txt` lists the ones I use, one per line with its
-homepage, to install by hand on either distro.
+homepage, to install by hand on either distro. For more fonts, the optional
+`setup/install-fonts.sh [FOLDER]` asks for a name and searches the distro's
+packages, Nerd Fonts, Google Fonts and the font files under FOLDER (default
+`~/media/fonts`), then installs the ones you pick.
 
 # Dependencies
 Most config degrades gracefully when a tool is missing (commands are guarded
@@ -121,6 +124,9 @@ and the Nerd Fonts are downloaded directly.
   distro; `setup/common.sh` — the distro-independent rest; `setup/lib.sh`
   holds their shared helpers
 - `setup/git-identity.sh` — write your git name/email to `~/.gitconfig.local`
+- `setup/install-fonts.sh` — optional: search for a font by name (packages,
+  Nerd Fonts, Google Fonts, a local folder) and install the ones you pick into
+  `~/.local/share/fonts` (packages system-wide)
 - `lint.sh` — shellcheck the scripts, syntax-check the rc files (shellcheck
   comes from mise)
 - `set-font.sh` — set the font family and size in the kitty, alacritty and

@@ -44,9 +44,8 @@ log "Installing tools with mise"
 MISE_GLOBAL_CONFIG_FILE="$REPO/home/.config/mise/config.toml" mise install --yes
 
 # Nerd Fonts (patched with the powerline/icon glyphs kitty and vim-airline use).
-FONT_DIR="$HOME/.local/share/fonts"
+# setup/install-fonts.sh searches for and installs others.
 NERD_FONTS=(JetBrainsMono CascadiaCode Meslo)
-NERD_BASE="https://github.com/ryanoasis/nerd-fonts/releases/latest/download"
 if [ "$IS_WSL" -eq 1 ]; then
     log "WSL detected: skipping the Nerd Fonts"
     NERD_FONTS=()
@@ -59,11 +58,7 @@ for font in "${NERD_FONTS[@]}"; do
         continue
     fi
     log "Installing $font Nerd Font"
-    mkdir -p "$dest"
-    tmpzip=$(mktemp --suffix=.zip)
-    curl -fsSL -o "$tmpzip" "$NERD_BASE/$font.zip"
-    unzip -o "$tmpzip" -d "$dest" >/dev/null
-    rm -f "$tmpzip"
+    install_nerd_font "$font"
     fonts_changed=1
 done
 if [ "$fonts_changed" -eq 1 ]; then fc-cache -f "$FONT_DIR" >/dev/null; fi

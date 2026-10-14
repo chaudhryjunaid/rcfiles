@@ -18,6 +18,21 @@ if [ -n "${WSL_DISTRO_NAME:-}" ] || grep -qi microsoft /proc/version 2>/dev/null
 fi
 export IS_WSL
 
+FONT_DIR="$HOME/.local/share/fonts"
+
+# install_nerd_font <name>: download the Nerd Fonts release asset <name>.zip
+# (e.g. JetBrainsMono) and unpack it into $FONT_DIR/<name>. Run fc-cache
+# afterwards.
+install_nerd_font() {
+    local zip rc=0
+    zip=$(mktemp --suffix=.zip) || return
+    mkdir -p "$FONT_DIR/$1" &&
+        curl -fsSL -o "$zip" "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$1.zip" &&
+        unzip -oq "$zip" -d "$FONT_DIR/$1" || rc=$?
+    rm -f "$zip"
+    return "$rc"
+}
+
 # clone_once <repo-url> <dest> [git-clone-args...]: shallow-clone unless dest
 # already exists.
 clone_once() {
