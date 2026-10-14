@@ -42,6 +42,14 @@ Flathub, the vendor's apt/rpm repo or package, or an AppImage. AppImages need
 FUSE 2 (`libfuse2t64` on Ubuntu, `fuse-libs` on Fedora). Apps that ship with
 a stock GNOME desktop (Firefox, ...) are left out.
 
+`cli-apps.manifest.csv` does the same for command-line tools that aren't in a
+stock Ubuntu desktop and that the setup scripts and mise config don't
+install (a snapshot taken 2026-10-14 on Ubuntu 26.04), with an extra
+`install` column for how each one got here: `apt: <packages>` for the distro
+archive (Fedora names can differ), or a vendor repo, `.deb`, snap, release
+binary or installer script, whose setup steps for either distro are on the
+homepage.
+
 Fonts aren't installed by `install.sh` either. The optional
 `setup/install-fonts.sh [FOLDER]` asks for a name and searches the distro's
 packages, Nerd Fonts, Google Fonts and the font files under FOLDER (default
@@ -168,6 +176,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
   loose Google-family files over to the Google version
 - `gui-apps.manifest.csv` — GUI apps and GNOME extensions to install by
   hand
+- `cli-apps.manifest.csv` — CLI tools the setup scripts don't install, to
+  install by hand
 - `lint.sh` — shellcheck the scripts, syntax-check the rc files (shellcheck
   comes from mise)
 - `set-font.sh` — set the font family and size in the kitty, alacritty and

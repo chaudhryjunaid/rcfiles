@@ -1,0 +1,66 @@
+category,name,homepage,description,install
+Dev and cloud,GitHub CLI,https://cli.github.com,gh,"apt, from GitHub's repo: gh"
+Dev and cloud,Claude Code,https://claude.com/product/claude-code,"Anthropic's coding agent, claude",installer: curl -fsSL https://claude.ai/install.sh | bash
+Dev and cloud,Google Cloud CLI,https://cloud.google.com/sdk/docs/install,"gcloud, gsutil, bq","tarball in ~/google-cloud-sdk, sourced from ~/.zshrc.machine"
+Dev and cloud,MongoDB Shell,https://www.mongodb.com/try/download/shell,mongosh,.deb from the homepage: mongodb-mongosh
+Dev and cloud,MongoDB Database Tools,https://www.mongodb.com/try/download/database-tools,"mongodump, mongorestore, mongoimport, ...",.deb from the homepage: mongodb-database-tools
+Dev and cloud,PowerShell,https://learn.microsoft.com/powershell/,pwsh,snap --classic: powershell
+Dev and cloud,Autoconf,https://www.gnu.org/software/autoconf/,configure script generator,apt: autoconf
+Dev and cloud,Automake,https://www.gnu.org/software/automake/,Makefile generator,apt: automake
+Dev and cloud,pkg-config,http://pkgconf.org/,compile and link flags for libraries,apt: pkg-config
+Dev and cloud,pip and venv,https://pip.pypa.io,for the system Python; uv (mise) covers the rest,apt: python3-pip python3-venv
+Containers and VMs,Docker Engine,https://docs.docker.com/engine/install/ubuntu/,"docker, with the buildx and compose plugins","apt, from Docker's repo: docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin"
+Containers and VMs,Docker Sandboxes,https://docs.docker.com/sandbox/,"sbx, isolated sandboxes for AI agents","apt, from Docker's repo: docker-sbx"
+Containers and VMs,ctop,https://ctop.sh,top for containers,release binary in /usr/local/bin
+Containers and VMs,QEMU,https://www.qemu.org,"VM emulator and qemu-img, with UEFI and TPM for guests",apt: qemu-system-x86 qemu-utils ovmf swtpm
+Containers and VMs,libvirt,https://libvirt.org,VM manager daemon and virsh,apt: libvirt-daemon-system libvirt-clients
+Files and data,yq,https://github.com/kislyuk/yq,"jq for YAML, XML and TOML (a jq wrapper, not mikefarah's yq)",apt: yq
+Files and data,fx,https://fx.wtf,interactive JSON viewer,release binary in /usr/local/bin
+Files and data,GNU Recutils,https://www.gnu.org/software/recutils/,plain-text databases (recfiles),apt: recutils
+Files and data,Graphviz,https://www.graphviz.org,dot and other graph layout tools,apt: graphviz
+Files and data,FFmpeg,https://ffmpeg.org,audio/video converter,apt: ffmpeg
+Files and data,7-Zip,https://www.7-zip.org,7z archiver,apt: 7zip
+Files and data,aria2,https://aria2.github.io,"multi-connection downloader, aria2c",apt: aria2
+Files and data,broot,https://dystroy.org/broot,tree view and file navigator,apt: broot
+Files and data,ranger,https://ranger.github.io,file manager with vi keys,apt: ranger
+Files and data,tre,https://github.com/dduan/tre,tree with git awareness,apt: tre-command
+Files and data,tree,http://oldmanprogrammer.net/source.php?dir=projects/tree,directory tree,apt: tree
+Files and data,ncdu,https://dev.yorhel.nl/ncdu/,disk usage browser,apt: ncdu
+Editors,Vim,https://www.vim.org,"plain vim next to nvim, for the tracked .vimrc",apt: vim
+Editors,Zile,https://www.gnu.org/software/zile/,small Emacs-like editor,apt: zile
+Monitoring,htop,https://htop.dev,process viewer,apt: htop
+Monitoring,Glances,https://github.com/nicolargo/glances,all-in-one system monitor,apt: glances
+Monitoring,iotop,http://guichaz.free.fr/iotop/,disk I/O per process,apt: iotop
+Monitoring,iftop,https://www.ex-parrot.com/~pdw/iftop/,bandwidth per connection,apt: iftop
+Monitoring,NetHogs,https://github.com/raboof/nethogs,bandwidth per process,apt: nethogs
+Monitoring,gping,https://github.com/orf/gping,ping with a graph,apt: gping
+Monitoring,PowerTOP,https://github.com/fenrus75/powertop,power usage and tuning,apt: powertop
+Monitoring,lm-sensors,https://github.com/hramrach/lm-sensors,"temperatures, fans and voltages, sensors",apt: lm-sensors
+Hardware info and testing,inxi,https://smxi.org/docs/inxi.htm,system information report,apt: inxi
+Hardware info and testing,hwinfo,https://github.com/openSUSE/hwinfo,hardware probe,apt: hwinfo
+Hardware info and testing,fastfetch,https://github.com/fastfetch-cli/fastfetch,system info with distro logo,apt: fastfetch
+Hardware info and testing,neowofetch,https://github.com/hykilpikonna/hyfetch,neofetch fork from hyfetch,apt: neowofetch
+Hardware info and testing,cpufetch,https://github.com/Dr-Noob/cpufetch,CPU info with vendor logo,apt: cpufetch
+Hardware info and testing,linuxlogo,http://www.deater.net/weave/vmwprod/linux_logo/,ANSI distro logo,apt: linuxlogo
+Hardware info and testing,nvme-cli,https://github.com/linux-nvme/nvme-cli,"NVMe drive management, nvme",apt: nvme-cli
+Hardware info and testing,smartmontools,https://www.smartmontools.org,"drive health, smartctl",apt: smartmontools
+Hardware info and testing,perf,https://perfwiki.github.io,"kernel profiler, with cpupower",apt: linux-tools-generic
+Hardware info and testing,util-linux extras,https://github.com/util-linux/util-linux,"hwclock, lsmem, lsirq, ...",apt: util-linux-extra
+Hardware info and testing,IGT GPU Tools,https://gitlab.freedesktop.org/drm/igt-gpu-tools,intel_gpu_top and other Intel GPU tools,apt: intel-gpu-tools
+Hardware info and testing,Mesa utils,https://mesa3d.org,"glxinfo, glxgears",apt: mesa-utils
+Hardware info and testing,Vulkan tools,https://github.com/KhronosGroup/Vulkan-Tools,"vulkaninfo, vkcube",apt: vulkan-tools
+Hardware info and testing,vainfo,https://github.com/intel/libva-utils,video acceleration (VA-API) info,apt: vainfo
+Hardware info and testing,libdrm tests,https://gitlab.freedesktop.org/mesa/drm/,modetest and other DRM tools,apt: libdrm-tests
+Hardware info and testing,fio,https://github.com/axboe/fio,disk I/O benchmark,apt: fio
+Hardware info and testing,stress-ng,https://github.com/ColinIanKing/stress-ng,CPU/memory/IO stress tester,apt: stress-ng
+Network and sharing,OpenSSH server,https://www.openssh.com,"sshd, for logging in to this machine",apt: openssh-server
+Network and sharing,cifs-utils,https://wiki.samba.org/index.php/LinuxCIFS_utils,"mount Windows/Samba shares, mount.cifs",apt: cifs-utils
+Network and sharing,smbclient,https://www.samba.org,FTP-like client for SMB shares,apt: smbclient
+Network and sharing,Waypipe,https://gitlab.freedesktop.org/mstoeckl/waypipe/,run Wayland apps over SSH,apt: waypipe
+System,Flatpak,https://flatpak.org,runs the Flathub apps in gui-apps.manifest.csv,apt: flatpak
+System,Kopia,https://kopia.io,"backups, kopia; KopiaUI is in gui-apps.manifest.csv","apt, from Kopia's repo: kopia"
+System,fnt,https://github.com/alexmyczko/fnt,font downloader and manager,apt: fnt
+System,Gogh,https://gogh-co.github.io/Gogh/,terminal color schemes,"script: /usr/bin/gogh runs bash -c ""$(curl -fsSL https://gogh.website/gogh)"""
+Fun and misc,Genius,https://www.5z.com/jirka/genius.html,"calculator language, genius",apt: genius
+Fun and misc,CMatrix,https://github.com/abishekvashok/cmatrix,The Matrix rain,apt: cmatrix
+Fun and misc,pipes.sh,https://github.com/pipeseroni/pipes.sh,animated pipes screensaver,apt: pipes-sh
