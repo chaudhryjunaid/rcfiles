@@ -20,17 +20,32 @@ export IS_WSL
 
 FONT_DIR="$HOME/.local/share/fonts"
 
-# install_nerd_font <name>: download the Nerd Fonts release asset <name>.zip
-# (e.g. JetBrainsMono) and unpack it into $FONT_DIR/<name>. Run fc-cache
-# afterwards.
+# install_nerd_font <name>: download the latest Nerd Fonts release asset
+# <name>.zip (e.g. JetBrainsMono) and unpack it as $FONT_DIR/<name>, replacing
+# what was there only once that worked. Run fc-cache afterwards.
 install_nerd_font() {
-    local zip rc=0
+    local dest="$FONT_DIR/$1" zip rc=0
+    case "$1" in ''|*/*|.*) return 2 ;; esac   # $dest gets rm -rf'd
     zip=$(mktemp --suffix=.zip) || return
-    mkdir -p "$FONT_DIR/$1" &&
+    rm -rf "$dest.new" && mkdir -p "$dest.new" &&
         curl -fsSL -o "$zip" "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$1.zip" &&
-        unzip -oq "$zip" -d "$FONT_DIR/$1" || rc=$?
-    rm -f "$zip"
+        unzip -q "$zip" -d "$dest.new" &&
+        rm -rf "$dest" && mv "$dest.new" "$dest" || rc=$?
+    rm -rf "$zip" "$dest.new"
     return "$rc"
+}
+
+# nerd_catalog: print the Nerd Fonts catalog, JSON with a .fonts[] entry per
+# font (.folderName is its release asset name).
+nerd_catalog() {
+    curl -fsSL https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/bin/scripts/lib/fonts.json
+}
+
+# google_get <path>: fetch a fonts.google.com JSON endpoint, minus the )]}'
+# line some of them start with (an anti-XSSI guard). metadata/fonts lists
+# every family (.familyMetadataList[].family).
+google_get() {
+    curl -fsSL "https://fonts.google.com/$1" | sed "1{/^)]}'/d;}"
 }
 
 # clone_once <repo-url> <dest> [git-clone-args...]: shallow-clone unless dest

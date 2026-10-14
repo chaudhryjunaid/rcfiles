@@ -10,23 +10,42 @@
 #   - font files under FOLDER, searched recursively (default ~/media/fonts)
 # then installs the ones you pick: packages system-wide, the rest into
 # ~/.local/share/fonts (Nerd Fonts in <Name>/, the others in google/, local/).
+# Given --package/--nerd/--google, it installs those without asking (for
+# setup/ensure-fonts.sh). Either way, installed ones are updated to the latest.
 #
 # Usage: setup/install-fonts.sh [FOLDER]
+#        setup/install-fonts.sh [--package NAME] [--nerd NAME] [--google FAMILY]...
 
 set -euo pipefail
 
 # shellcheck source=setup/lib.sh
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-NERD_CATALOG="https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/bin/scripts/lib/fonts.json"
-GOOGLE_FONTS="https://fonts.google.com"
+usage_error() {
+    echo "$*" >&2
+    sed -n '16,17p' "$0" | sed 's/^# \{0,1\}//' >&2
+    exit 2
+}
 
-case "${1:-}" in
-    -h|--help) sed -n '3,14p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-    -*)        echo "Unknown option: $1" >&2; exit 2 ;;
-esac
-[ "$#" -le 1 ] || { echo "Usage: setup/install-fonts.sh [FOLDER]" >&2; exit 2; }
-FOLDER=${1:-$HOME/media/fonts}
+# srcs/ids: the fonts to install, by source (packages, nerd, google, local)
+# and id; given here or picked from the search below.
+FOLDER="" srcs=() ids=()
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -h|--help) sed -n '3,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        --package|--nerd|--google)
+            [ "$#" -ge 2 ] || usage_error "$1 needs a name."
+            case "$1" in --package) srcs+=(packages) ;; *) srcs+=("${1#--}") ;; esac
+            ids+=("$2")
+            shift 2 ;;
+        -*) usage_error "Unknown option: $1" ;;
+        *)  [ -z "$FOLDER" ] || usage_error "Give one FOLDER."
+            FOLDER=$1
+            shift ;;
+    esac
+done
+[ -z "$FOLDER" ] || [ "${#ids[@]}" -eq 0 ] || usage_error "FOLDER is only for searching."
+FOLDER=${FOLDER:-$HOME/media/fonts}
 FOLDER=${FOLDER%/}
 
 if command -v apt-get >/dev/null 2>&1; then PKG=apt
@@ -55,19 +74,13 @@ catalog_packages() {
 }
 
 catalog_nerd() {
-    curl -fsSL "$NERD_CATALOG" | jq -r '.fonts[]
+    nerd_catalog | jq -r '.fonts[]
         | [ "\(.unpatchedName) \(.patchedName) \(.folderName)",
             .folderName,
             "\(.patchedName) Nerd Font"
               + (if .patchedName == .unpatchedName then "" else " (\(.unpatchedName))" end)
               + " — \(.description | gsub("&amp;"; "&"))" ]
         | @tsv'
-}
-
-# google_get <path>: fetch a fonts.google.com JSON endpoint, minus the )]}'
-# line some of them start with (an anti-XSSI guard).
-google_get() {
-    curl -fsSL "$GOOGLE_FONTS/$1" | sed "1{/^)]}'/d;}"
 }
 
 catalog_google() {
@@ -82,10 +95,10 @@ catalog_local() {
     find "$FOLDER" -type f \( -iname '*.ttf' -o -iname '*.otf' -o -iname '*.ttc' -o -iname '*.otc' \) \
         -exec fc-scan --format '%{family[0]}\t%{file}\n' {} + | sort -u |
         awk -F'\t' '!seen[$2]++' > "$TMP/local-all.tsv" || true
-    # Leave out a family's variable fonts when it has static/ ones too (as
-    # Google's zips do), like install_google_font.
-    awk -F'\t' 'NR == FNR { if ($2 ~ /\/static\//) has_static[$1] = 1; next }
-                !has_static[$1] || $2 ~ /\/static\//' \
+    # Leave out a family's static/ copies when it has other files too (the
+    # variable fonts, in Google's zips), as install_google_font does.
+    awk -F'\t' 'NR == FNR { if ($2 !~ /\/static\//) has_main[$1] = 1; next }
+                !(has_main[$1] && $2 ~ /\/static\//)' \
         "$TMP/local-all.tsv" "$TMP/local-all.tsv" > "$TMP/local-files.tsv"
     ROOT="$FOLDER/" awk -F'\t' '
         {
@@ -122,22 +135,53 @@ has() {
 # Each returns non-zero on failure. They're called from if statements, where
 # set -e is off, so every step checks its own status.
 
-# install_google_font <family>: download its static font files (or the
-# variable ones, for a family with no static ones) into $FONT_DIR/google/.
+# install_google_font <family>: download its font files as
+# $FONT_DIR/google/<Family>, replacing what was there only once that worked.
+# Where a family has variable fonts plus static/ copies, only the variable ones
+# keep the family's name (Inter's static ones are "Inter 18pt", ...), so the
+# static/ copies are only taken when there is nothing else.
 install_google_font() {
     local list dest name url n=0
-    list=$(google_get "download/list?family=$(jq -rn --arg f "$1" '$f | @uri')") || return
+    case "$1" in ''|*/*|.*) return 2 ;; esac   # $dest gets rm -rf'd
     dest="$FONT_DIR/google/${1// /_}"
-    mkdir -p "$dest" || return
+    list=$(google_get "download/list?family=$(jq -rn --arg f "$1" '$f | @uri')") || return
+    rm -rf "$dest.new" && mkdir -p "$dest.new" || return
     while IFS=$'\t' read -r name url; do
-        curl -fsSL -o "$dest/$name" "$url" || return
+        curl -fsSL -o "$dest.new/$name" "$url" || { rm -rf "$dest.new"; return 1; }
         n=$((n + 1))
     done < <(jq -r '.manifest.fileRefs
-        | map(select(.filename | startswith("static/"))) as $static
-        | (if ($static | length) > 0 then $static else . end)[]
+        | map(select(.filename | startswith("static/") | not)) as $main
+        | (if ($main | length) > 0 then $main else . end)[]
         | select(.filename | test("\\.(ttf|otf)$"))
         | [(.filename | split("/") | last), .url] | @tsv' <<< "$list")
-    [ "$n" -gt 0 ]
+    if [ "$n" -eq 0 ]; then rm -rf "$dest.new"; return 1; fi
+    rm -rf "$dest" && mv "$dest.new" "$dest"
+}
+
+pkg_installed() {
+    # shellcheck disable=SC2016 # ${db:...} is a dpkg-query format, not shell
+    case "$PKG" in
+        apt) [[ "$(dpkg-query -W -f='${db:Status-Abbrev}' "$1" 2>/dev/null)" == ii* ]] ;;
+        dnf) rpm -q "$1" >/dev/null 2>&1 ;;
+    esac
+}
+
+# install_packages <name...>: install the missing ones and update the
+# installed ones to the latest version. (--only-upgrade, unlike a plain
+# install, leaves apt's automatically-installed mark alone.)
+install_packages() {
+    local pkg new=() old=()
+    for pkg in "$@"; do
+        if pkg_installed "$pkg"; then old+=("$pkg"); else new+=("$pkg"); fi
+    done
+    case "$PKG" in
+        apt) $SUDO apt-get update -qq &&
+                 { [ "${#new[@]}" -eq 0 ] || $SUDO apt-get install -y "${new[@]}"; } &&
+                 { [ "${#old[@]}" -eq 0 ] || $SUDO apt-get install -y --only-upgrade "${old[@]}"; } ;;
+        dnf) { [ "${#new[@]}" -eq 0 ] || $SUDO dnf install -y "${new[@]}"; } &&
+                 { [ "${#old[@]}" -eq 0 ] || $SUDO dnf upgrade -y "${old[@]}"; } ;;
+        *)   return 1 ;;
+    esac
 }
 
 # install_local_font <family>: copy its files from $FOLDER into $FONT_DIR/local/.
@@ -151,10 +195,6 @@ install_local_font() {
 
 # ---- load -------------------------------------------------------------------
 
-if [ "$IS_WSL" -eq 1 ]; then
-    warn "WSL: fonts installed here only reach Linux GUI apps; the terminal's fonts live on Windows"
-fi
-
 SOURCES=()
 # load <source>: build $TMP/<source>.tsv, sorted by label.
 load() {
@@ -166,12 +206,17 @@ load() {
     fi
 }
 
-log "Listing fonts"
-if [ -n "$PKG" ]; then load packages; else info "no apt or dnf: leaving out packages"; fi
-if has curl jq unzip; then load nerd; else info "needs curl, jq and unzip: leaving out Nerd Fonts"; fi
-if has curl jq; then load google; else info "needs curl and jq: leaving out Google Fonts"; fi
-if [ -d "$FOLDER" ] && has fc-scan; then load local; else info "no $FOLDER (or no fc-scan): leaving it out"; fi
-[ "${#SOURCES[@]}" -gt 0 ] || die "Nothing to search."
+load_sources() {
+    if [ "$IS_WSL" -eq 1 ]; then
+        warn "WSL: fonts installed here only reach Linux GUI apps; the terminal's fonts live on Windows"
+    fi
+    log "Listing fonts"
+    if [ -n "$PKG" ]; then load packages; else info "no apt or dnf: leaving out packages"; fi
+    if has curl jq unzip; then load nerd; else info "needs curl, jq and unzip: leaving out Nerd Fonts"; fi
+    if has curl jq; then load google; else info "needs curl and jq: leaving out Google Fonts"; fi
+    if [ -d "$FOLDER" ] && has fc-scan; then load local; else info "no $FOLDER (or no fc-scan): leaving it out"; fi
+    [ "${#SOURCES[@]}" -gt 0 ] || die "Nothing to search."
+}
 
 # ---- search and pick --------------------------------------------------------
 
@@ -209,38 +254,53 @@ ask_picks() {
     done
 }
 
-while :; do
-    echo
-    read -rp "Font to search for (Enter to quit): " query || { echo; exit 0; }
-    read -ra words <<< "$query"
-    [ "${#words[@]}" -gt 0 ] || exit 0
+# search_and_pick: ask for a query until something matches and gets picked;
+# sets srcs/ids to the matches and $picked to the chosen indexes.
+search_and_pick() {
+    local query src id label i prev
+    local -a words labels
+    while :; do
+        echo
+        read -rp "Font to search for (Enter to quit): " query || { echo; exit 0; }
+        read -ra words <<< "$query"
+        [ "${#words[@]}" -gt 0 ] || exit 0
 
-    srcs=() ids=() labels=()
-    for src in "${SOURCES[@]}"; do
-        while IFS=$'\t' read -r _ id label; do
-            srcs+=("$src") ids+=("$id") labels+=("$label")
-        done < <(filter_words "$query" < "$TMP/$src.tsv")
-    done
-    if [ "${#ids[@]}" -eq 0 ]; then
-        echo "Nothing matches '$query'."
-        continue
-    fi
-
-    prev=""
-    for i in "${!ids[@]}"; do
-        if [ "${srcs[i]}" != "$prev" ]; then
-            prev=${srcs[i]}
-            printf '\n%s:\n' "$(title "$prev")"
+        srcs=() ids=() labels=()
+        for src in "${SOURCES[@]}"; do
+            while IFS=$'\t' read -r _ id label; do
+                srcs+=("$src") ids+=("$id") labels+=("$label")
+            done < <(filter_words "$query" < "$TMP/$src.tsv")
+        done
+        if [ "${#ids[@]}" -eq 0 ]; then
+            echo "Nothing matches '$query'."
+            continue
         fi
-        printf '%4d) %s\n' "$((i + 1))" "${labels[i]}"
+
+        prev=""
+        for i in "${!ids[@]}"; do
+            if [ "${srcs[i]}" != "$prev" ]; then
+                prev=${srcs[i]}
+                printf '\n%s:\n' "$(title "$prev")"
+            fi
+            printf '%4d) %s\n' "$((i + 1))" "${labels[i]}"
+        done
+        echo
+
+        picked=$(ask_picks "${#ids[@]}") || continue
+        return
     done
-    echo
+}
 
-    picked=$(ask_picks "${#ids[@]}") || continue
-    break
-done
+# ---- main -------------------------------------------------------------------
 
-# ---- install ----------------------------------------------------------------
+if [ "${#ids[@]}" -eq 0 ]; then
+    asked=1
+    load_sources
+    search_and_pick
+else
+    asked=0
+    picked=$(seq 0 $((${#ids[@]} - 1)))
+fi
 
 pkgs=() failed=() user_fonts=0
 while IFS= read -r i; do
@@ -262,10 +322,7 @@ done <<< "$picked"
 
 if [ "${#pkgs[@]}" -gt 0 ]; then
     log "Installing ${pkgs[*]}"
-    case "$PKG" in
-        apt) $SUDO apt-get install -y "${pkgs[@]}" ;;
-        dnf) $SUDO dnf install -y "${pkgs[@]}" ;;
-    esac || failed+=("${pkgs[@]}")
+    install_packages "${pkgs[@]}" || failed+=("${pkgs[@]}")
 fi
 
 if [ "$user_fonts" -eq 1 ]; then
@@ -277,4 +334,6 @@ if [ "${#failed[@]}" -gt 0 ]; then
     warn "failed: ${failed[*]}"
     exit 1
 fi
-log "Done. To use it: ./set-font.sh APP|--all FONT SIZE (partial names work)"
+if [ "$asked" -eq 1 ]; then
+    log "Done. To use it: ./set-font.sh APP|--all FONT SIZE (partial names work)"
+fi

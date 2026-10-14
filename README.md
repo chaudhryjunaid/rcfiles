@@ -24,7 +24,10 @@ committing. GUI apps aren't installed by the scripts;
 homepage, to install by hand on either distro. For more fonts, the optional
 `setup/install-fonts.sh [FOLDER]` asks for a name and searches the distro's
 packages, Nerd Fonts, Google Fonts and the font files under FOLDER (default
-`~/media/fonts`), then installs the ones you pick.
+`~/media/fonts`), then installs the ones you pick. `setup/ensure-fonts.sh
+[--dry-run]` updates the fonts from the first three to their latest versions,
+and moves loose files in `~/.local/share/fonts` whose family is on Google
+Fonts over to the Google version (the loose files go to `~/.rcfiles-backup/`).
 
 # Dependencies
 Most config degrades gracefully when a tool is missing (commands are guarded
@@ -127,6 +130,9 @@ and the Nerd Fonts are downloaded directly.
 - `setup/install-fonts.sh` — optional: search for a font by name (packages,
   Nerd Fonts, Google Fonts, a local folder) and install the ones you pick into
   `~/.local/share/fonts` (packages system-wide)
+- `setup/ensure-fonts.sh` — optional: update every font from packages, Nerd
+  Fonts or Google Fonts to the latest version (via `install-fonts.sh`), moving
+  loose Google-family files over to the Google version
 - `lint.sh` — shellcheck the scripts, syntax-check the rc files (shellcheck
   comes from mise)
 - `set-font.sh` — set the font family and size in the kitty, alacritty and
