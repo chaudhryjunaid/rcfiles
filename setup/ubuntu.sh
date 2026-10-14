@@ -21,6 +21,7 @@ $SUDO apt-get update -y
 # neovim, node, fzf and ripgrep come from mise (see setup/common.sh).
 CORE_PKGS=(
     zsh git curl unzip ca-certificates fontconfig
+    git-crypt git-lfs
     software-properties-common  # add-apt-repository, for the mise PPA
     build-essential     # C compiler for nvim-treesitter parsers and cargo
     tmux

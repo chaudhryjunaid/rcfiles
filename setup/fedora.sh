@@ -18,6 +18,7 @@ command -v dnf >/dev/null 2>&1 || die "This script targets Fedora (dnf not found
 # node, fzf and ripgrep come from mise (see setup/common.sh).
 CORE_PKGS=(
     zsh git curl unzip ca-certificates fontconfig
+    git-crypt git-lfs
     util-linux          # chsh, missing from minimal installs
     gcc gcc-c++ make    # C compiler for nvim-treesitter parsers and cargo
     tmux

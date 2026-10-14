@@ -52,9 +52,12 @@ project's own `mise.toml` overrides these versions inside that directory.
 Terminals use `mise activate`; login files (`~/.profile`, `~/.zprofile`)
 also put mise's shims on PATH so desktop-launched apps (editors, git GUIs)
 find the same tools.
-Only things mise can't or shouldn't own come from apt/dnf: zsh, git, tmux,
-build tools and clipboard tools, plus tmuxinator on Ubuntu (Fedora doesn't
-package it). antidote and liquidprompt are cloned from GitHub into `~/sh`.
+Only things mise can't or shouldn't own come from apt/dnf: zsh, git (with
+git-crypt and git-lfs), tmux, build tools and clipboard tools,
+plus tmuxinator on Ubuntu (Fedora doesn't package it). `setup/common.sh`
+registers git-lfs's filters in `/etc/gitconfig`, so don't run a plain
+`git lfs install` (it would edit the tracked `.gitconfig`). antidote and
+liquidprompt are cloned from GitHub into `~/sh`.
 
 ## Required
 - **zsh** — shell; plugins are managed by antidote (cloned to `~/sh/antidote`

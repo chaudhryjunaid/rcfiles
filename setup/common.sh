@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# setup/common.sh — the distro-independent part of the setup: antidote,
-# liquidprompt, rustup, the mise tools, and zsh as the login shell. Run it
-# after setup/<distro>.sh has installed the system packages and mise. Safe to
-# re-run.
+# setup/common.sh — the distro-independent part of the setup: git-lfs's
+# filters, antidote, liquidprompt, rustup, the mise tools, and zsh as the
+# login shell. Run it after setup/<distro>.sh has installed the system
+# packages and mise. Safe to re-run.
 #
 # Normally run via ../install.sh.
 
@@ -17,6 +17,13 @@ REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )
 for cmd in git curl zsh mise; do
     command -v "$cmd" >/dev/null 2>&1 || die "$cmd not found; run setup/<distro>.sh first."
 done
+
+# git-lfs filters, in /etc/gitconfig: a plain `git lfs install` would write
+# them into ~/.gitconfig, which is linked to the tracked home/.gitconfig.
+if command -v git-lfs >/dev/null 2>&1; then
+    log "Registering git-lfs filters system-wide"
+    $SUDO git lfs install --system --skip-repo >/dev/null
+fi
 
 # Antidote (zsh plugin manager) — sourced from ~/sh/antidote by .zshrc.
 clone_once https://github.com/mattmc3/antidote.git "$HOME/sh/antidote"
