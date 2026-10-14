@@ -35,7 +35,7 @@ writes). Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
 committing.
 
 GUI apps aren't installed by the scripts. `gui-apps.manifest.csv` lists the
-ones I use (a snapshot of my main machine taken 2026-10-03), with columns
+ones I use (a snapshot of my main machine taken 2026-10-14), with columns
 `category,name,homepage,description`, to install by hand on a GNOME desktop.
 Install each the way its homepage recommends for the distro: distro repo,
 Flathub, the vendor's apt/rpm repo or package, or an AppImage. AppImages need
