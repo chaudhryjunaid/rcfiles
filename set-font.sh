@@ -18,8 +18,9 @@ set -euo pipefail
 REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 APPS=(kitty alacritty sublime)
 
-# Short names for the Nerd Fonts setup/common.sh installs. The -mono ones are
-# the Nerd Font Mono variants, whose icons are squeezed to one cell wide.
+# Short names for common Nerd Fonts (setup/install-fonts.sh installs them; the
+# setup scripts don't). The -mono ones are the Nerd Font Mono variants, whose
+# icons are squeezed to one cell wide.
 # Nerd Fonts renames Cascadia Code to CaskaydiaCove, hence both spellings.
 FONT_ALIASES=(
     "jetbrains=JetBrainsMono Nerd Font"

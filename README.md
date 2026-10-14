@@ -17,16 +17,21 @@ setup/common.sh          # antidote, liquidprompt, rustup, mise tools, zsh
 setup/git-identity.sh    # write your git name/email to ~/.gitconfig.local
 ```
 Use `./install.sh --skip-deps` to only relink and set the identity; that
-works on any system. Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
+works on any system. `--skip-identity` skips the identity prompt (it's only
+asked while `~/.gitconfig.local` still has the placeholder that `link.sh`
+writes). Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
 committing. GUI apps aren't installed by the scripts;
 `setup/gui-apps.manifest.txt` lists the ones I use, one per line with its
-homepage, to install by hand on either distro. For more fonts, the optional
+homepage, to install by hand on either distro.
+
+Fonts aren't installed by `install.sh` either. The optional
 `setup/install-fonts.sh [FOLDER]` asks for a name and searches the distro's
 packages, Nerd Fonts, Google Fonts and the font files under FOLDER (default
-`~/media/fonts`), then installs the ones you pick. `setup/ensure-fonts.sh
-[--dry-run] [--no-packages]` updates the fonts from the first three to their latest versions,
-and moves loose files in `~/.local/share/fonts` whose family is on Google
-Fonts over to the Google version (the loose files go to `~/.rcfiles-backup/`).
+`~/media/fonts`), then installs the ones you pick.
+`setup/ensure-fonts.sh [--dry-run] [--no-packages]` updates the fonts from
+the first three to their latest versions, and moves loose files in
+`~/.local/share/fonts` whose family is on Google Fonts over to the Google
+version (the loose files go to `~/.rcfiles-backup/`).
 
 # Dependencies
 Most config degrades gracefully when a tool is missing (commands are guarded
@@ -77,9 +82,10 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **fzf** — fuzzy finder (shell key-bindings + vim `:Files`/`:Rg`)
 - **ripgrep** (`rg`) — fzf's file source and vim's grep program
 - **zoxide** — smarter `cd`; adds `z`/`zi` (jump by frecency / fzf-pick)
-- a **Nerd Font** — for the glyphs in the tmux status bar, vim-airline and
-  kitty; not installed by the setup scripts (`setup/install-fonts.sh` finds
-  and installs them)
+- a **Nerd Font** — for the glyphs in the tmux status bar and vim-airline;
+  kitty, Alacritty and Sublime Text are set to **JetBrainsMono Nerd Font**
+  (change it with `./set-font.sh`). Not installed by the setup scripts
+  (`setup/install-fonts.sh` finds and installs them)
 
 ## zsh prompt & integrations
 - **liquidprompt** — feature-rich prompt, cloned from its `stable` branch
@@ -92,14 +98,16 @@ liquidprompt are cloned from GitHub into `~/sh`.
   completion menu with an fzf picker), **zsh-autosuggestions** and
   **zsh-syntax-highlighting** (last)
 - **node** — via mise (`node = "26"` in the mise config)
-- **bat** — `cat` with syntax highlighting (aliased to `bat --paging=never`)
+- **bat** — `cat` with syntax highlighting; `bat` is aliased to
+  `bat --paging=never` (`cat` itself is not aliased)
 - **eza** — modern `ls`; backs the `l`/`ll`/`la`/`lt` aliases when present
   (they fall back to plain `ls` otherwise; `ls` itself stays GNU `ls`) and is
   used for the `cd` completion preview in fzf-tab
 
 ## tmux
-- **tmux** 3.2+ (popup styling); `Ctrl-h/j/k/l` moves between tmux panes and
-  nvim splits alike (vim-tmux-navigator), `` `Ctrl-l `` clears the screen
+- **tmux** 3.2+ (popup styling); the prefix is `` ` `` (backtick; press it
+  twice for a literal one). `Ctrl-h/j/k/l` moves between tmux panes and nvim
+  splits alike (vim-tmux-navigator), `` `Ctrl-l `` clears the screen
 - a clipboard tool for copy-mode: **wl-clipboard** (Wayland) or **xclip** /
   **xsel** (X11)
 
@@ -107,9 +115,13 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **kitty** — terminal emulator; config is linked to `~/.config/kitty/kitty.conf`
   and expects the **JetBrainsMono Nerd Font**; not installed by the setup
   script (see `setup/gui-apps.manifest.txt`)
+- **Alacritty** — terminal emulator; config is linked to
+  `~/.config/alacritty/alacritty.toml` (colors imported from `gogh.toml`
+  next to it) and expects the **JetBrainsMono Nerd Font**; not installed by
+  the setup script (see `setup/gui-apps.manifest.txt`)
 - **Sublime Text** — settings are linked to
   `~/.config/sublime-text/Packages/User/Preferences.sublime-settings` and
-  expect the **CaskaydiaCove Nerd Font Mono**; not installed by the setup
+  expect the **JetBrainsMono Nerd Font**; not installed by the setup
   script (see `setup/gui-apps.manifest.txt`)
 - **duf** — friendlier `df`; run it as `duf` (`df` is not aliased)
 - **tmuxinator** — tmux session manager (apt on Ubuntu; on Fedora,
@@ -128,6 +140,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
   distro; `setup/common.sh` — the distro-independent rest; `setup/lib.sh`
   holds their shared helpers
 - `setup/git-identity.sh` — write your git name/email to `~/.gitconfig.local`
+- `setup/gui-apps.manifest.txt` — GUI apps and GNOME extensions to install by
+  hand
 - `setup/install-fonts.sh` — optional: search for a font by name (packages,
   Nerd Fonts, Google Fonts, a local folder) and install the ones you pick into
   `~/.local/share/fonts` (packages system-wide)
