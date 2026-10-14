@@ -32,9 +32,15 @@ Use `./install.sh --skip-deps` to only relink and set the identity; that
 works on any system. `--skip-identity` skips the identity prompt (it's only
 asked while `~/.gitconfig.local` still has the placeholder that `link.sh`
 writes). Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
-committing. GUI apps aren't installed by the scripts;
-`setup/gui-apps.manifest.txt` lists the ones I use, one per line with its
-homepage, to install by hand on either distro.
+committing.
+
+GUI apps aren't installed by the scripts. `gui-apps.manifest.csv` lists the
+ones I use (a snapshot of my main machine taken 2026-10-03), with columns
+`category,name,homepage,description`, to install by hand on a GNOME desktop.
+Install each the way its homepage recommends for the distro: distro repo,
+Flathub, the vendor's apt/rpm repo or package, or an AppImage. AppImages need
+FUSE 2 (`libfuse2t64` on Ubuntu, `fuse-libs` on Fedora). Apps that ship with
+a stock GNOME desktop (Firefox, ...) are left out.
 
 Fonts aren't installed by `install.sh` either. The optional
 `setup/install-fonts.sh [FOLDER]` asks for a name and searches the distro's
@@ -126,15 +132,15 @@ liquidprompt are cloned from GitHub into `~/sh`.
 ## Optional
 - **kitty** — terminal emulator; config is linked to `~/.config/kitty/kitty.conf`
   and expects the **JetBrainsMono Nerd Font**; not installed by the setup
-  script (see `setup/gui-apps.manifest.txt`)
+  script (see `gui-apps.manifest.csv`)
 - **Alacritty** — terminal emulator; config is linked to
   `~/.config/alacritty/alacritty.toml` (colors imported from `gogh.toml`
   next to it) and expects the **JetBrainsMono Nerd Font**; not installed by
-  the setup script (see `setup/gui-apps.manifest.txt`)
+  the setup script (see `gui-apps.manifest.csv`)
 - **Sublime Text** — settings are linked to
   `~/.config/sublime-text/Packages/User/Preferences.sublime-settings` and
   expect the **JetBrainsMono Nerd Font**; not installed by the setup
-  script (see `setup/gui-apps.manifest.txt`)
+  script (see `gui-apps.manifest.csv`)
 - **duf** — friendlier `df`; run it as `duf` (`df` is not aliased)
 - **tmuxinator** — tmux session manager (apt on Ubuntu; on Fedora,
   `gem install tmuxinator`)
@@ -154,14 +160,14 @@ liquidprompt are cloned from GitHub into `~/sh`.
   distro; `setup/common.sh` — the distro-independent rest; `setup/lib.sh`
   holds their shared helpers
 - `setup/git-identity.sh` — write your git name/email to `~/.gitconfig.local`
-- `setup/gui-apps.manifest.txt` — GUI apps and GNOME extensions to install by
-  hand
 - `setup/install-fonts.sh` — optional: search for a font by name (packages,
   Nerd Fonts, Google Fonts, a local folder) and install the ones you pick into
   `~/.local/share/fonts` (packages system-wide)
 - `setup/ensure-fonts.sh` — optional: update every font from packages, Nerd
   Fonts or Google Fonts to the latest version (via `install-fonts.sh`), moving
   loose Google-family files over to the Google version
+- `gui-apps.manifest.csv` — GUI apps and GNOME extensions to install by
+  hand
 - `lint.sh` — shellcheck the scripts, syntax-check the rc files (shellcheck
   comes from mise)
 - `set-font.sh` — set the font family and size in the kitty, alacritty and

@@ -1,0 +1,39 @@
+category,name,homepage,description
+Terminals,Alacritty,https://alacritty.org,terminal emulator (config: home/.config/alacritty)
+Terminals,kitty,https://sw.kovidgoyal.net/kitty/,terminal emulator (config: home/.config/kitty)
+Browsers,Google Chrome,https://www.google.com/chrome/,web browser
+Browsers,Google Chrome Beta,https://www.google.com/chrome/beta/,"web browser, beta channel"
+AI,Claude,https://claude.com/download,Anthropic's desktop app
+AI,ChatGPT,https://learn.chatgpt.com/docs/app,OpenAI's desktop app
+Editors and dev tools,Zed,https://zed.dev,code editor
+Editors and dev tools,Sublime Text,https://www.sublimetext.com,text editor (settings: home/.config/sublime-text)
+Editors and dev tools,Sublime Merge,https://www.sublimemerge.com,Git client
+Editors and dev tools,SmartGit,https://www.smartgit.dev,Git client
+Editors and dev tools,Bruno,https://www.usebruno.com,API client
+Editors and dev tools,TablePlus,https://tableplus.com,database client
+Editors and dev tools,MongoDB Compass,https://www.mongodb.com/products/tools/compass,MongoDB client
+Editors and dev tools,Dadroit JSON Viewer,https://dadroit.com,viewer for large JSON files
+Editors and dev tools,Prettify,https://prettify.tools,JSON/YAML/CSV/XML/Mermaid viewer and editor
+Editors and dev tools,SmoothCSV,https://smoothcsv.com,CSV editor
+Writing and documents,Obsidian,https://obsidian.md,Markdown notes
+Writing and documents,Typora,https://typora.io,Markdown editor
+Writing and documents,draw.io,https://www.drawio.com,diagram editor
+Writing and documents,ONLYOFFICE Desktop Editors,https://www.onlyoffice.com/desktop,office suite
+Writing and documents,Master PDF Editor 5,https://code-industry.net/masterpdfeditor/,PDF editor
+Writing and documents,Foliate,https://johnfactotum.github.io/foliate/,e-book reader
+Writing and documents,Liferea,https://lzone.de/liferea/,RSS reader
+Communication,Slack,https://slack.com,team chat
+Communication,WhatsApp Web,https://web.whatsapp.com,"installed from Chrome with ""Install page as app"""
+"Sync, backup and downloads",Insync,https://www.insynchq.com,Google Drive/OneDrive sync
+"Sync, backup and downloads",FolderSync Desktop,https://foldersync.io/desktop,folder sync
+"Sync, backup and downloads",KopiaUI,https://kopia.io,backups
+"Sync, backup and downloads",Duplicati,https://duplicati.com,backups
+"Sync, backup and downloads",Transmission,https://transmissionbt.com,BitTorrent client
+System,GNOME Boxes,https://apps.gnome.org/Boxes/,virtual machines
+System,GNOME Tweaks,https://gitlab.gnome.org/GNOME/gnome-tweaks,extra GNOME settings
+System,Extension Manager,https://github.com/mjakeman/extension-manager,installs the GNOME extensions below
+System,Gear Lever,https://gearlever.mijorus.it,adds AppImages (kept in ~/AppImages) to the app menu
+System,Solaar,https://pwr-solaar.github.io/Solaar/,Logitech device manager
+GNOME extensions,Just Perfection,https://extensions.gnome.org/extension/3843/just-perfection/,GNOME Shell tweaks
+GNOME extensions,Tiling Shell,https://extensions.gnome.org/extension/7065/tiling-shell/,window tiling
+GNOME extensions,Vitals,https://extensions.gnome.org/extension/1460/vitals/,system stats in the top bar
