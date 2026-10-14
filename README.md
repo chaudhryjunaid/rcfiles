@@ -123,6 +123,11 @@ and the Nerd Fonts are downloaded directly.
 - `setup/git-identity.sh` — write your git name/email to `~/.gitconfig.local`
 - `lint.sh` — shellcheck the scripts, syntax-check the rc files (shellcheck
   comes from mise)
+- `set-font.sh` — set the font family and size in the kitty, alacritty and
+  Sublime Text configs, e.g. `./set-font.sh --all jetbrains 14`; the font is
+  an alias (`--help` lists them), an installed family name, or words from one
+  (asks which if several match); prints the diff and only writes with
+  `--apply`
 
 # Notes
 - `~/.zshrc` and `~/.bashrc` both source `~/.shellrc.sh`. `~/.profile`
