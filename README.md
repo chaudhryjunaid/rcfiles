@@ -2,7 +2,19 @@
 Set of good enough system configuration/rc files for Linux (Ubuntu, Fedora).
 
 # setup
-On a fresh Ubuntu (24.04+/26.x) or Fedora (44+) system, including under WSL:
+On a fresh Ubuntu (24.04+/26.x) or Fedora (44+) system, including under WSL,
+one command does everything, without cloning first:
+```
+curl -fsSL https://raw.githubusercontent.com/chaudhryjunaid/rcfiles/master/run.sh | bash
+```
+(or `wget -qO- … | bash` where curl isn't installed). `run.sh` installs git
+if it's missing, clones the repo to `~/setup/rcfiles` (set `RCFILES_DIR` to
+put it elsewhere; it has to stay there, since the dotfiles are linked into it)
+or pulls an existing clone, then runs `install.sh`, `setup/ensure-fonts.sh`,
+installs JetBrainsMono Nerd Font if it's missing, and sets every app to it
+with `set-font.sh`. It's safe to re-run.
+
+From a clone, run the steps yourself:
 ```
 ./install.sh             # deps, then symlinks, then git identity
 ```
@@ -133,6 +145,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
   (e.g. `home/.config/nvim/init.vim` → `~/.config/nvim/init.vim`). To add a
   config, drop it in at its home path and rerun `./link.sh`.
 - `home/.shellrc.sh` — env, aliases and functions shared by bash and zsh
+- `run.sh` — bootstrap from GitHub: clone/update the repo, `install.sh`,
+  fonts, `set-font.sh` (see setup above)
 - `install.sh` — one-shot setup (deps → link → identity)
 - `link.sh` — symlink the dotfiles; existing files are moved to
   `~/.rcfiles-backup/<timestamp>/`, dangling links into the repo are pruned
