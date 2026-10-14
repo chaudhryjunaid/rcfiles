@@ -20,8 +20,8 @@ setup/git-identity.sh    # write your git name/email to ~/.gitconfig.local
 Use `./install.sh --skip-deps` to only relink and set the identity; that
 works on any system. Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
 committing. GUI apps aren't installed by the scripts;
-`setup/ubuntu-gui-apps.txt` lists the ones on my Ubuntu desktop and how to
-install each by hand.
+`setup/gui-apps.manifest.txt` lists the ones I use, one per line with its
+homepage, to install by hand on either distro.
 
 # Dependencies
 Most config degrades gracefully when a tool is missing (commands are guarded
@@ -99,11 +99,11 @@ and the Nerd Fonts are downloaded directly.
 ## Optional
 - **kitty** — terminal emulator; config is linked to `~/.config/kitty/kitty.conf`
   and expects the **JetBrainsMono Nerd Font**; not installed by the setup
-  script
+  script (see `setup/gui-apps.manifest.txt`)
 - **Sublime Text** — settings are linked to
   `~/.config/sublime-text/Packages/User/Preferences.sublime-settings` and
   expect the **CaskaydiaCove Nerd Font Mono**; not installed by the setup
-  script (see `setup/ubuntu-gui-apps.txt`)
+  script (see `setup/gui-apps.manifest.txt`)
 - **duf** — `df` alias
 - **tmuxinator** — tmux session manager (apt on Ubuntu; on Fedora,
   `gem install tmuxinator`)
