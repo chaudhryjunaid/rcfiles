@@ -10,9 +10,14 @@
 # Honour .nvmrc / .node-version, so cd-ing into a repo that pins node (the
 # CAN-Go backend's .nvmrc, which CI also reads) switches to that version.
 idiomatic_version_file_enable_tools = ["node"]
+# Leave GOBIN unset so `go install` uses ~/go/bin (on PATH via .shellrc.sh)
+# rather than the current Go version's install dir, which an upgrade drops.
+go.set_gobin = false
 
 [tools]
 node = "26"           # mason's LSP servers need node/npm
+go = "latest"         # also lets mason install gopls
+java = "25"           # current LTS; mise's default vendor is temurin
 neovim = "latest"
 tree-sitter = "latest" # nvim-treesitter (main) builds parsers with it
 fzf = "latest"

@@ -34,8 +34,9 @@ export CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=4
 export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1
 export CLAUDE_CODE_FORK_SUBAGENT=0
 
-export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$PATH"
-# mise puts the tools from ~/.config/mise/config.toml (neovim, node, fzf, ...)
+# ~/go/bin: where `go install` puts binaries (GOPATH is left at its default).
+export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$HOME/go/bin:$PATH"
+# mise puts the tools from ~/.config/mise/config.toml (neovim, node, go, ...)
 # on PATH, ahead of system ones, and switches versions per project on cd.
 # Activated before anything below that checks `command -v`.
 if command -v mise >/dev/null 2>&1; then

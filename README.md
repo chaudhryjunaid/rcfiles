@@ -32,9 +32,12 @@ written.
 Developer CLI tools are installed and versioned by
 [**mise**](https://mise.jdx.dev), from the tracked global config
 `home/.config/mise/config.toml` (linked to `~/.config/mise/config.toml`):
-neovim, tree-sitter, node, fzf, ripgrep, fd, bat, delta, zoxide, eza, duf,
-dust, btop, procs, jq, jless, jnv, miller, hyperfine, tokei, ttyper, uv,
-shellcheck and shfmt. The distro script installs mise itself (from its apt
+neovim, tree-sitter, node, go, java (Temurin, current LTS), fzf, ripgrep, fd,
+bat, delta, zoxide, eza, duf, dust, btop, procs, jq, jless, jnv, miller,
+hyperfine, tokei, ttyper, uv, shellcheck and shfmt. `mise activate` also sets
+`JAVA_HOME` and `GOROOT`; the config turns off mise's per-version `GOBIN`, so
+`go install` puts binaries in `~/go/bin` (on PATH via `.shellrc.sh`) and they
+survive Go upgrades. The distro script installs mise itself (from its apt
 PPA or rpm repo), then `setup/common.sh` installs rustup if cargo is missing
 (mise builds tokei with cargo) and runs `mise install`.
 `.shellrc.sh` runs `mise activate` for both bash and zsh. Day to day:
@@ -56,8 +59,8 @@ and the Nerd Fonts are downloaded directly.
   — editor (`EDITOR`, git's `core.editor`, and `vim`/`vi` are aliased to
   `nvim`); plugins are managed by vim-plug, which self-installs on
   first launch (needs **curl** and **git**). LSP servers (TypeScript, Python,
-  Lua, Bash, JSON, YAML; Go when `go` is present) are installed by mason on
-  first launch (needs **node**/**npm**, which mise provides), with completion
+  Lua, Bash, JSON, YAML, Go) are installed by mason on first launch (needs
+  **node**/**npm** and **go**, which mise provides), with completion
   from blink.cmp. Treesitter parsers are built by nvim-treesitter's `main`
   branch, which needs **tree-sitter-cli** 0.26+ (mise) and a **C compiler** (the
   setup script installs one). A plain-vim `vimrc` is kept too.
