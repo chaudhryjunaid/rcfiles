@@ -2,8 +2,7 @@
 Set of good enough system configuration/rc files for Linux (Ubuntu, Fedora).
 
 # setup
-On a fresh Ubuntu (24.04+/26.x) or Fedora (44+) system, including under WSL
-(where the Nerd Fonts are skipped):
+On a fresh Ubuntu (24.04+/26.x) or Fedora (44+) system, including under WSL:
 ```
 ./install.sh             # deps, then symlinks, then git identity
 ```
@@ -13,7 +12,7 @@ and usable on its own:
 ```
 setup/ubuntu.sh          # system packages and mise, via apt
 setup/fedora.sh          #   ...or via dnf
-setup/common.sh          # antidote, liquidprompt, rustup, mise tools, fonts, zsh
+setup/common.sh          # antidote, liquidprompt, rustup, mise tools, zsh
 ./link.sh                # symlink the dotfiles into $HOME (--dry-run, --unlink)
 setup/git-identity.sh    # write your git name/email to ~/.gitconfig.local
 ```
@@ -55,8 +54,7 @@ also put mise's shims on PATH so desktop-launched apps (editors, git GUIs)
 find the same tools.
 Only things mise can't or shouldn't own come from apt/dnf: zsh, git, tmux,
 build tools and clipboard tools, plus tmuxinator on Ubuntu (Fedora doesn't
-package it). antidote and liquidprompt are cloned from GitHub into `~/sh`,
-and the Nerd Fonts are downloaded directly.
+package it). antidote and liquidprompt are cloned from GitHub into `~/sh`.
 
 ## Required
 - **zsh** — shell; plugins are managed by antidote (cloned to `~/sh/antidote`
@@ -77,8 +75,8 @@ and the Nerd Fonts are downloaded directly.
 - **ripgrep** (`rg`) — fzf's file source and vim's grep program
 - **zoxide** — smarter `cd`; adds `z`/`zi` (jump by frecency / fzf-pick)
 - a **Nerd Font** — for the glyphs in the tmux status bar, vim-airline and
-  kitty; the setup script installs the JetBrains Mono, Cascadia Code and
-  Meslo Nerd Fonts
+  kitty; not installed by the setup scripts (`setup/install-fonts.sh` finds
+  and installs them)
 
 ## zsh prompt & integrations
 - **liquidprompt** — feature-rich prompt, cloned from its `stable` branch

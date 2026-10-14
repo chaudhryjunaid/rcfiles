@@ -63,8 +63,6 @@ fi
 
 cat <<'NOTE'
 
-All done. Restart your terminal (or log out/in) to pick up zsh and new fonts,
-and set the terminal font to a Nerd Font such as "JetBrainsMono Nerd Font".
-On WSL, install the Nerd Font on Windows and select it in Windows Terminal.
+All done. Restart your terminal (or log out/in) to pick up zsh.
 Machine-specific shell lines go in ~/.zshrc.machine / ~/.bashrc.machine.
 NOTE
