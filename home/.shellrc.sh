@@ -34,8 +34,13 @@ export CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=4
 export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1
 export CLAUDE_CODE_FORK_SUBAGENT=0
 
-# ~/go/bin: where `go install` puts binaries (GOPATH is left at its default).
-export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$HOME/go/bin:$PATH"
+# Go: keep GOPATH out of ~ (XDG layout). `go install` puts binaries in
+# $GOPATH/bin; the module cache is re-downloadable, so it lives under ~/.cache
+# next to Go's own build cache (~/.cache/go-build). Both are read by the
+# `go` command directly, so gopls and friends pick them up via `go env`.
+export GOPATH="$HOME/.local/share/go"
+export GOMODCACHE="$HOME/.cache/go/mod"
+export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$GOPATH/bin:$PATH"
 # mise puts the tools from ~/.config/mise/config.toml (neovim, node, go, ...)
 # on PATH, ahead of system ones, and switches versions per project on cd.
 # Activated before anything below that checks `command -v`.

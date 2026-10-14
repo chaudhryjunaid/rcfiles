@@ -10,7 +10,8 @@
 # Honour .nvmrc / .node-version, so cd-ing into a repo that pins node (the
 # CAN-Go backend's .nvmrc, which CI also reads) switches to that version.
 idiomatic_version_file_enable_tools = ["node"]
-# Leave GOBIN unset so `go install` uses ~/go/bin (on PATH via .shellrc.sh)
+# Leave GOBIN unset so `go install` uses $GOPATH/bin (~/.local/share/go/bin,
+# exported and put on PATH by .shellrc.sh)
 # rather than the current Go version's install dir, which an upgrade drops.
 go.set_gobin = false
 
