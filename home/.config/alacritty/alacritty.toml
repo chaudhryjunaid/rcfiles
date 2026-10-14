@@ -11,7 +11,7 @@ history = 10000
 multiplier = 3
 
 [font]
-size = 22.0
+size = 16.0
 
 [font.normal]
 family = "JetBrainsMono Nerd Font"
