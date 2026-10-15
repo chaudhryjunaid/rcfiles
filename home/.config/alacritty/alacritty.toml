@@ -14,15 +14,15 @@ multiplier = 3
 size = 16.0
 
 [font.normal]
-family = "JetBrainsMono Nerd Font"
+family = "Ubuntu Mono"
 style = "Regular"
 
 [font.bold]
-family = "JetBrainsMono Nerd Font"
+family = "Ubuntu Mono"
 style = "Bold"
 
 [font.italic]
-family = "JetBrainsMono Nerd Font"
+family = "Ubuntu Mono"
 style = "Italic"
 
 [cursor]
