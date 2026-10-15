@@ -46,6 +46,8 @@ if command -v mise >/dev/null 2>&1; then
     log "mise already installed"
 else
     log "Installing mise"
-    $SUDO add-apt-repository -y ppa:jdxcode/mise
-    $SUDO apt-get install -y mise
+    curl -fsSL https://mise.run | sh
+    echo "eval \"\$(/home/junaid/.local/bin/mise activate bash)\"" >> ~/.bashrc
+    source ~/.bashrc
 fi
+
