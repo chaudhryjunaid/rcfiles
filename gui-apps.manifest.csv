@@ -3,25 +3,19 @@ Terminals,kitty,https://sw.kovidgoyal.net/kitty/,terminal emulator (config: home
 Browsers,Google Chrome,https://www.google.com/chrome/,web browser,,
 AI,Claude,https://claude.com/download,Anthropic's desktop app,,
 AI,ChatGPT,https://learn.chatgpt.com/docs/app,OpenAI's desktop app,,
+Editors and dev tools,Visual Studio Code,https://code.visualstudio.com,"code editor (code, used by the git difftool/mergetool aliases)",,
 Editors and dev tools,Sublime Text,https://www.sublimetext.com,text editor (settings: home/.config/sublime-text),,
 Editors and dev tools,Sublime Merge,https://www.sublimemerge.com,Git client,,
-Editors and dev tools,SmartGit,https://www.smartgit.dev,Git client,,
-Editors and dev tools,Bruno,https://www.usebruno.com,API client,,
+Editors and dev tools,Postman,https://www.postman.com,API client (snap),,
 Editors and dev tools,MongoDB Compass,https://www.mongodb.com/products/tools/compass,MongoDB client,,
-Editors and dev tools,Dadroit JSON Viewer,https://dadroit.com,viewer for large JSON files,,
-Editors and dev tools,Prettify,https://prettify.tools,JSON/YAML/CSV/XML/Mermaid viewer and editor,,
+Editors and dev tools,Prettify,https://prettify.tools,"JSON/YAML/CSV/XML/Mermaid viewer and editor, installed from Chrome with ""Install page as app""",,
 Editors and dev tools,SmoothCSV,https://smoothcsv.com,CSV editor,,
-Writing and documents,Obsidian,https://obsidian.md,Markdown notes,,
+Writing and documents,Obsidian,https://obsidian.md,Markdown notes (snap),,
 Writing and documents,Typora,https://typora.io,Markdown editor,,
-Writing and documents,draw.io,https://www.drawio.com,diagram editor,,
-Writing and documents,ONLYOFFICE Desktop Editors,https://www.onlyoffice.com/desktop,office suite,,
-Writing and documents,Master PDF Editor 5,https://code-industry.net/masterpdfeditor/,PDF editor,,
+Writing and documents,ONLYOFFICE Desktop Editors,https://www.onlyoffice.com/desktop,office suite (snap),,
 Writing and documents,Foliate,https://johnfactotum.github.io/foliate/,e-book reader,foliate,foliate
 Media,VLC,https://www.videolan.org/vlc/,media player,vlc,vlc
-Communication,Slack,https://slack.com,team chat,,
-"Sync, backup and downloads",Insync,https://www.insynchq.com,Google Drive/OneDrive sync,,
-"Sync, backup and downloads",FolderSync Desktop,https://foldersync.io/desktop,folder sync,,
-"Sync, backup and downloads",Duplicati,https://duplicati.com,backups,,
+Communication,Slack,https://slack.com,team chat (snap),,
 "Sync, backup and downloads",Transmission,https://transmissionbt.com,BitTorrent client,transmission-gtk,transmission-gtk
 System,GNOME Boxes,https://apps.gnome.org/Boxes/,virtual machines,gnome-boxes,gnome-boxes
 System,GNOME Tweaks,https://gitlab.gnome.org/GNOME/gnome-tweaks,extra GNOME settings,gnome-tweaks,gnome-tweaks
@@ -30,7 +24,4 @@ System,Gear Lever,https://gearlever.mijorus.it,adds AppImages (kept in ~/AppImag
 System,Mission Center,https://flathub.org/apps/io.missioncenter.MissionCenter,task manager and system monitor,,
 System,CPU-X,https://github.com/TheTumultuousUnicornOfDarkness/CPU-X,"CPU, motherboard and memory details",cpu-x,cpu-x
 System,HardInfo2,https://github.com/hardinfo2/hardinfo2,system information and benchmarks,hardinfo2,hardinfo2
-System,Fedora Media Writer,https://flathub.org/apps/org.fedoraproject.MediaWriter,writes ISO images to USB drives,,mediawriter
-GNOME extensions,Just Perfection,https://extensions.gnome.org/extension/3843/just-perfection/,GNOME Shell tweaks,,gnome-shell-extension-just-perfection
-GNOME extensions,Tiling Shell,https://extensions.gnome.org/extension/7065/tiling-shell/,window tiling,,
 GNOME extensions,Vitals,https://extensions.gnome.org/extension/1460/vitals/,system stats in the top bar,,

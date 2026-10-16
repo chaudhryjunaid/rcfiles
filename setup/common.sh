@@ -14,6 +14,8 @@ set -euo pipefail
 
 REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )
 
+# mise may be in ~/.local/bin (its installer), which a fresh shell lacks.
+export PATH="$HOME/.local/bin:$PATH"
 for cmd in git curl zsh mise; do
     command -v "$cmd" >/dev/null 2>&1 || die "$cmd not found; run setup/<distro>.sh first."
 done

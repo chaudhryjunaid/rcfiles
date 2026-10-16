@@ -36,12 +36,12 @@ committing.
 
 GUI apps aren't installed by the setup scripts. `gui-apps.manifest.csv` lists
 the ones I use on a GNOME desktop (a snapshot of my main machine taken
-2026-10-14), with columns `category,name,homepage,description,ubuntu,fedora`.
+2026-10-16), with columns `category,name,homepage,description,ubuntu,fedora`.
 Apps that ship with a stock GNOME desktop (Firefox, ...) are left out.
 `cli-apps.manifest.csv` does the same for command-line tools that aren't in a
 stock Ubuntu desktop and that the setup scripts and mise config don't
 install, with an extra `install` column for how each one got onto that
-machine (Ubuntu 26.04): `apt: <packages>`, a vendor repo, `.deb`, snap,
+machine (Ubuntu 26.10): `apt: <packages>`, a vendor repo, `.deb`, snap,
 release binary or installer script.
 
 The `ubuntu` and `fedora` columns name each app's packages in that distro's
@@ -49,7 +49,7 @@ own repos (Fedora's often differ, e.g. `lm_sensors`, `vim-enhanced`), and are
 empty when it has none. `./extra-install.sh [--dry-run] [--cli-only]`
 installs those with apt or dnf (skipping apps already installed as a snap or
 Flatpak), then lists the rest, to install the way each homepage recommends:
-Flathub, the vendor's apt/rpm repo or package, or an AppImage (AppImages
+Flathub, Snap, the vendor's apt/rpm repo or package, or an AppImage (AppImages
 need FUSE 2: `libfuse2t64` on Ubuntu, `fuse-libs` on Fedora).
 
 Fonts aren't installed by `install.sh` either. The optional
@@ -71,12 +71,12 @@ Developer CLI tools are installed and versioned by
 [**mise**](https://mise.jdx.dev), from the tracked global config
 `home/.config/mise/config.toml` (linked to `~/.config/mise/config.toml`):
 neovim, tree-sitter, node, go, java (Temurin, current LTS), fzf, ripgrep, fd,
-bat, delta, zoxide, eza, duf, dust, btop, procs, jq, jless, jnv, miller,
-hyperfine, tokei, ttyper, uv, shellcheck and shfmt. `mise activate` also sets
+bat, delta, zoxide, eza, duf, dust, btop, procs, jq, hyperfine, tokei, uv,
+shellcheck and shfmt. `mise activate` also sets
 `JAVA_HOME` and `GOROOT`; the config turns off mise's per-version `GOBIN`, so
 `go install` puts binaries in `~/go/bin` (on PATH via `.shellrc.sh`) and they
-survive Go upgrades. The distro script installs mise itself (from its apt
-PPA or rpm repo), then `setup/common.sh` installs rustup if cargo is missing
+survive Go upgrades. The distro script installs mise itself (Ubuntu: its
+installer, into `~/.local/bin`; Fedora: its rpm repo), then `setup/common.sh` installs rustup if cargo is missing
 (mise builds tokei with cargo) and runs `mise install`.
 `.shellrc.sh` runs `mise activate` for both bash and zsh. Day to day:
 `mise install` (add missing tools), `mise upgrade` (bump the `latest` ones),

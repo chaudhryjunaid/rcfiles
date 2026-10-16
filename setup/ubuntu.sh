@@ -2,7 +2,7 @@
 
 # setup/ubuntu.sh — install the system packages these dotfiles need on a
 # modern Ubuntu (24.04+/26.x) system, including Ubuntu under WSL, and mise
-# from its PPA. Safe to re-run; optional packages are best-effort.
+# (into ~/.local/bin, with its installer). Safe to re-run; optional packages are best-effort.
 # setup/common.sh does the distro-independent rest.
 #
 # Normally run via ../install.sh.
@@ -22,7 +22,6 @@ $SUDO apt-get update -y
 CORE_PKGS=(
     zsh git curl unzip ca-certificates fontconfig
     git-crypt git-lfs
-    software-properties-common  # add-apt-repository, for the mise PPA
     build-essential     # C compiler for nvim-treesitter parsers and cargo
     tmux
     wl-clipboard xclip xsel
@@ -41,13 +40,14 @@ for pkg in "${OPTIONAL_PKGS[@]}"; do
     fi
 done
 
-# mise (tool version manager), from its PPA so apt keeps it updated.
+# mise (tool version manager), with its installer into ~/.local/bin (on PATH
+# via .profile and .shellrc.sh, which also run `mise activate`); update it
+# with `mise self-update`.
+export PATH="$HOME/.local/bin:$PATH"
 if command -v mise >/dev/null 2>&1; then
     log "mise already installed"
 else
     log "Installing mise"
     curl -fsSL https://mise.run | sh
-    echo "eval \"\$(/home/junaid/.local/bin/mise activate bash)\"" >> ~/.bashrc
-    source ~/.bashrc
 fi
 

@@ -1,7 +1,7 @@
 category,name,homepage,description,install,ubuntu,fedora
 Dev and cloud,GitHub CLI,https://cli.github.com,gh,"apt, from GitHub's repo: gh",gh,gh
 Dev and cloud,Claude Code,https://claude.com/product/claude-code,"Anthropic's coding agent, claude",installer: curl -fsSL https://claude.ai/install.sh | bash,,
-Dev and cloud,Google Cloud CLI,https://cloud.google.com/sdk/docs/install,"gcloud, gsutil, bq","tarball in ~/google-cloud-sdk, sourced from ~/.zshrc.machine",,
+Dev and cloud,Codex CLI,https://developers.openai.com/codex/cli,"OpenAI's coding agent, codex",installer into ~/.local/bin,,
 Dev and cloud,MongoDB Shell,https://www.mongodb.com/try/download/shell,mongosh,.deb from the homepage: mongodb-mongosh,,
 Dev and cloud,MongoDB Database Tools,https://www.mongodb.com/try/download/database-tools,"mongodump, mongorestore, mongoimport, ...",.deb from the homepage: mongodb-database-tools,,
 Dev and cloud,Autoconf,https://www.gnu.org/software/autoconf/,configure script generator,apt: autoconf,autoconf,autoconf
@@ -9,7 +9,6 @@ Dev and cloud,Automake,https://www.gnu.org/software/automake/,Makefile generator
 Dev and cloud,pkg-config,http://pkgconf.org/,compile and link flags for libraries,apt: pkg-config,pkg-config,pkgconf-pkg-config
 Dev and cloud,pip and venv,https://pip.pypa.io,for the system Python; uv (mise) covers the rest,apt: python3-pip python3-venv,python3-pip python3-venv,python3-pip
 Containers and VMs,Docker Engine,https://docs.docker.com/engine/install/ubuntu/,"docker, with the buildx and compose plugins","apt, from Docker's repo: docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",,
-Containers and VMs,Docker Sandboxes,https://docs.docker.com/sandbox/,"sbx, isolated sandboxes for AI agents","apt, from Docker's repo: docker-sbx",,
 Containers and VMs,ctop,https://ctop.sh,top for containers,release binary in /usr/local/bin,,
 Containers and VMs,QEMU,https://www.qemu.org,"VM emulator and qemu-img, with UEFI and TPM for guests",apt: qemu-system-x86 qemu-utils ovmf swtpm,qemu-system-x86 qemu-utils ovmf swtpm,qemu-system-x86 qemu-img edk2-ovmf swtpm
 Containers and VMs,libvirt,https://libvirt.org,VM manager daemon and virsh,apt: libvirt-daemon-system libvirt-clients,libvirt-daemon-system libvirt-clients,libvirt-daemon-kvm libvirt-daemon-config-network libvirt-client
@@ -47,6 +46,5 @@ Network and sharing,smbclient,https://www.samba.org,FTP-like client for SMB shar
 Network and sharing,Waypipe,https://gitlab.freedesktop.org/mstoeckl/waypipe/,run Wayland apps over SSH,apt: waypipe,waypipe,waypipe
 System,Flatpak,https://flatpak.org,runs the Flathub apps in gui-apps.manifest.csv,apt: flatpak,flatpak,flatpak
 System,fnt,https://github.com/alexmyczko/fnt,font downloader and manager,apt: fnt,fnt,
-System,Gogh,https://gogh-co.github.io/Gogh/,terminal color schemes,"script: /usr/bin/gogh runs bash -c ""$(curl -fsSL https://gogh.website/gogh)""",,
 Fun and misc,CMatrix,https://github.com/abishekvashok/cmatrix,The Matrix rain,apt: cmatrix,cmatrix,cmatrix
 Fun and misc,pipes.sh,https://github.com/pipeseroni/pipes.sh,animated pipes screensaver,apt: pipes-sh,pipes-sh,
