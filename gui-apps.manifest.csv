@@ -6,6 +6,7 @@ AI,ChatGPT,https://learn.chatgpt.com/docs/app,OpenAI's desktop app,,
 Editors and dev tools,Visual Studio Code,https://code.visualstudio.com,"code editor (code, used by the git difftool/mergetool aliases)",,
 Editors and dev tools,Sublime Text,https://www.sublimetext.com,text editor (settings: home/.config/sublime-text),,
 Editors and dev tools,Sublime Merge,https://www.sublimemerge.com,Git client,,
+Editors and dev tools,SmartGit,https://www.syntevo.com/smartgit/,Git client (Flathub),,
 Editors and dev tools,Postman,https://www.postman.com,API client (snap),,
 Editors and dev tools,MongoDB Compass,https://www.mongodb.com/products/tools/compass,MongoDB client,,
 Editors and dev tools,Prettify,https://prettify.tools,"JSON/YAML/CSV/XML/Mermaid viewer and editor, installed from Chrome with ""Install page as app""",,
@@ -16,6 +17,8 @@ Writing and documents,ONLYOFFICE Desktop Editors,https://www.onlyoffice.com/desk
 Writing and documents,Foliate,https://johnfactotum.github.io/foliate/,e-book reader,foliate,foliate
 Media,VLC,https://www.videolan.org/vlc/,media player,vlc,vlc
 Communication,Slack,https://slack.com,team chat (snap),,
+Communication,Thunderbird,https://www.thunderbird.net,email client (snap; Ubuntu's apt package installs the snap),thunderbird,thunderbird
+Communication,WhatsApp Web,https://web.whatsapp.com,"messaging, installed from Chrome with ""Install page as app""",,
 "Sync, backup and downloads",Transmission,https://transmissionbt.com,BitTorrent client,transmission-gtk,transmission-gtk
 System,GNOME Boxes,https://apps.gnome.org/Boxes/,virtual machines,gnome-boxes,gnome-boxes
 System,GNOME Tweaks,https://gitlab.gnome.org/GNOME/gnome-tweaks,extra GNOME settings,gnome-tweaks,gnome-tweaks
