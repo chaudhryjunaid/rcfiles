@@ -1,10 +1,10 @@
 // Settings in here override those in "Default/Preferences.sublime-settings",
 // and are overridden in turn by syntax-specific settings.
 {
-	"font_face": "JetBrainsMono Nerd Font",
-	"font_size": 16,
+	"font_face": "Cascadia Mono",
+	"font_size": 18,
 	// The font size set when using "Reset Size"
-	"default_font_size": 16,
+	"default_font_size": 22,
 	"theme": "Adaptive.sublime-theme",
 	"color_scheme": "Mariana.sublime-color-scheme",
 	"ignored_packages":
