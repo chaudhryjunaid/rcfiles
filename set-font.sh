@@ -4,7 +4,8 @@
 #
 # Prints the change as a diff and writes nothing unless --apply is given.
 # Apps: kitty, alacritty, sublime (Sublime Text); --all does every one. The
-# configs are symlinked into $HOME, so --apply changes the live config too.
+# configs are symlinked into $HOME, so --apply changes the live config too
+# (and signals running kitty instances to reload it).
 #
 # FONT is an alias (see --help), an installed family name, or words from one
 # ("caskaydia mono"); if several installed fonts match, it asks which.
@@ -35,7 +36,7 @@ FONT_ALIASES=(
 
 print_help() {
     local entry
-    sed -n '3,14p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'
     echo
     echo "Font aliases:"
     for entry in "${FONT_ALIASES[@]}"; do
@@ -222,6 +223,10 @@ for app in "${apps[@]}"; do
         # Overwrite in place (not mv) so the file keeps its mode.
         cat "$tmp" > "$REPO/$file"
         echo "$app: updated $file"
+        # Alacritty and Sublime reload on their own; kitty needs SIGUSR1.
+        if [ "$app" = kitty ] && pkill -USR1 -x kitty; then
+            echo "kitty: reloaded the running instances"
+        fi
     fi
     changed=$((changed + 1))
 done
