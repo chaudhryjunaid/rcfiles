@@ -2,7 +2,7 @@
 // and are overridden in turn by syntax-specific settings.
 {
 	"font_face": "Cascadia Mono",
-	"font_size": 18,
+	"font_size": 15,
 	// The font size set when using "Reset Size"
 	"default_font_size": 22,
 	"theme": "Adaptive.sublime-theme",
