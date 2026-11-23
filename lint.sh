@@ -164,7 +164,7 @@ EOF
     if [ -d "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim" ]; then
         out=$(timeout 30 nvim --headless -i NONE -u "$PWD/$nvim_init" \
             +'lua vim.defer_fn(function() if vim.v.errmsg ~= "" then io.stdout:write(vim.v.errmsg, "\n") end vim.cmd("qa!") end, 200)' \
-            </dev/null 2>&1 | grep -v '^\[ClaudeCode\]') || true
+            </dev/null 2>&1) || true
         if [ -n "$out" ]; then
             echo "$out" >&2
             fail "$nvim_init: errors on startup"

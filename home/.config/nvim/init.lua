@@ -69,6 +69,7 @@ vim.o.tabstop = 2
 vim.o.shiftwidth = 2
 vim.o.softtabstop = 2
 vim.o.shiftround = true
+vim.o.spelllang = "en_us"
 
 -- ------------------------------------------------------------
 -- Editing
@@ -152,6 +153,35 @@ autocmd("TextYankPost", {
   callback = function() vim.hl.on_yank({ timeout = 300 }) end,
 })
 
+-- Pick up edits made outside nvim (Claude Code, git): 'autoread' reloads
+-- unmodified buffers, but Neovim only checks on focus; also check on
+-- entering a buffer and when the cursor rests, and say when it happened.
+autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
+  group = augroup("user_checktime"),
+  callback = function()
+    if vim.fn.mode() ~= "c" and vim.fn.getcmdwintype() == "" then vim.cmd("checktime") end
+  end,
+})
+autocmd("FileChangedShellPost", {
+  group = augroup("user_reloaded"),
+  callback = function(args)
+    vim.notify(vim.fn.fnamemodify(args.file, ":~:.") .. " changed on disk; reloaded", vim.log.levels.INFO)
+  end,
+})
+
+-- Reopen a file at the last cursor position (not for commit messages and
+-- rebase lists, which are new each time).
+autocmd("BufReadPost", {
+  group = augroup("user_last_position"),
+  callback = function(args)
+    if vim.tbl_contains({ "gitcommit", "gitrebase" }, vim.bo[args.buf].filetype) then return end
+    local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
+    if mark[1] > 0 and mark[1] <= vim.api.nvim_buf_line_count(args.buf) then
+      pcall(vim.api.nvim_win_set_cursor, 0, mark)
+    end
+  end,
+})
+
 local ft = augroup("user_filetypes")
 local function ft_local(pattern, opts)
   autocmd("FileType", {
@@ -162,8 +192,23 @@ local function ft_local(pattern, opts)
     end,
   })
 end
-ft_local({ "markdown", "text", "gitcommit" },
-  { textwidth = 80, colorcolumn = "80,100", formatoptions = "tcqrn1" })
+ft_local({ "markdown", "text" },
+  { textwidth = 80, colorcolumn = "80,100", formatoptions = "tcqrn1", spell = true })
+-- Commit messages: body wrapped at 72, guides at 50 (subject) and 72.
+ft_local("gitcommit",
+  { textwidth = 72, colorcolumn = "51,73", formatoptions = "tcqrn1", spell = true })
+-- Prose: j/k move by screen line through long wrapped lines (5j still
+-- counts real lines).
+autocmd("FileType", {
+  group = ft,
+  pattern = { "markdown", "text" },
+  callback = function(args)
+    for _, key in ipairs({ "j", "k" }) do
+      map({ "n", "x" }, key, function() return vim.v.count == 0 and "g" .. key or key end,
+        { buffer = args.buf, expr = true, desc = "Move by screen line" })
+    end
+  end,
+})
 ft_local({ "javascript", "typescript", "json", "html", "css", "yaml" },
   { shiftwidth = 2, tabstop = 2, softtabstop = 2 })
 ft_local("lua", { shiftwidth = 2, tabstop = 2, softtabstop = 2 })
@@ -218,9 +263,9 @@ autocmd("LspAttach", {
 map("n", "<Esc>", ":nohlsearch<CR><Esc>", { silent = true })
 
 -- Save / quit
-map("n", "<leader>w", ":w<CR>")
-map("n", "<leader>q", ":q<CR>")
-map("n", "<leader>Q", ":qa<CR>")
+map("n", "<leader>w", ":w<CR>", { desc = "Save" })
+map("n", "<leader>q", ":q<CR>", { desc = "Quit window" })
+map("n", "<leader>Q", ":qa<CR>", { desc = "Quit all" })
 
 -- Window navigation: Ctrl-h/j/k/l is mapped by vim-tmux-navigator, which also
 -- crosses into tmux panes.
@@ -232,10 +277,10 @@ map("n", "<A-j>", ":resize -3<CR>")
 map("n", "<A-k>", ":resize +3<CR>")
 
 -- Buffer navigation
-map("n", "<leader>bn", ":bnext<CR>")
-map("n", "<leader>bp", ":bprevious<CR>")
-map("n", "<leader>bd", ":bdelete<CR>")
-map("n", "<leader>bl", ":buffers<CR>")
+map("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer" })
+map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer" })
+map("n", "<leader>bd", ":bdelete<CR>", { desc = "Delete buffer" })
+map("n", "<leader>bl", ":buffers<CR>", { desc = "List buffers" })
 
 -- Keep visual selection when indenting
 map("v", "<", "<gv")
@@ -246,23 +291,23 @@ map("x", "J", ":move '>+1<CR>gv=gv")
 map("x", "K", ":move '<-2<CR>gv=gv")
 
 -- Better paste over selection without overwriting unnamed register
-map("x", "<leader>p", [["_dP]])
+map("x", "<leader>p", [["_dP]], { desc = "Paste, keep register" })
 
 -- Yank to system clipboard
-map({ "n", "v" }, "<leader>y", [["+y]])
-map("n", "<leader>Y", [["+Y]])
+map({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to clipboard" })
+map("n", "<leader>Y", [["+Y]], { desc = "Yank line to clipboard" })
 
 -- Delete without yanking
-map({ "n", "v" }, "<leader>d", [["_d]])
+map({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete, no yank" })
 
 -- FZF ($FZF_DEFAULT_COMMAND comes from ~/.shellrc.sh)
-map("n", "<leader>ff", ":Files<CR>")
-map("n", "<leader>fg", ":GFiles<CR>")
-map("n", "<leader>fb", ":Buffers<CR>")
-map("n", "<leader>fr", ":Rg<CR>")
-map("n", "<leader>fh", ":History<CR>")
-map("n", "<leader>fc", ":Commands<CR>")
-map("n", "<leader>fm", ":Marks<CR>")
+map("n", "<leader>ff", ":Files<CR>", { desc = "Files" })
+map("n", "<leader>fg", ":GFiles<CR>", { desc = "Git files" })
+map("n", "<leader>fb", ":Buffers<CR>", { desc = "Buffers" })
+map("n", "<leader>fr", ":Rg<CR>", { desc = "Ripgrep text" })
+map("n", "<leader>fh", ":History<CR>", { desc = "Recent files" })
+map("n", "<leader>fc", ":Commands<CR>", { desc = "Commands" })
+map("n", "<leader>fm", ":Marks<CR>", { desc = "Marks" })
 vim.g.fzf_layout = { down = "40%" }
 
 -- File tree: netrw (built in) in a left split. <leader>e toggles it at the
@@ -275,19 +320,15 @@ map("n", "<leader>e", ":Lexplore<CR>", { silent = true, desc = "Toggle file tree
 map("n", "<leader>E", ":Lexplore %:p:h<CR>", { silent = true, desc = "File tree at this file" })
 
 -- Git (fugitive; gitsigns' hunk maps are in its spec)
-map("n", "<leader>gs", ":Git<CR>")
-map("n", "<leader>gd", ":Gdiffsplit<CR>")
-map("n", "<leader>gb", ":Git blame<CR>")
-map("n", "<leader>gc", ":Git commit<CR>")
-map("n", "<leader>gp", ":Git push<CR>")
-map("n", "<leader>gl", ":Git log<CR>")
-
--- Claude Code: send current buffer / visual selection
-map("n", "<leader>ab", ":ClaudeCodeAdd %<CR>")
-map("x", "<leader>as", ":ClaudeCodeSend<CR>")
+map("n", "<leader>gs", ":Git<CR>", { desc = "Git status (fugitive)" })
+map("n", "<leader>gd", ":Gdiffsplit<CR>", { desc = "Diff this file" })
+map("n", "<leader>gb", ":Git blame<CR>", { desc = "Blame" })
+map("n", "<leader>gc", ":Git commit<CR>", { desc = "Commit" })
+map("n", "<leader>gp", ":Git push<CR>", { desc = "Push" })
+map("n", "<leader>gl", ":Git log<CR>", { desc = "Log" })
 
 -- Terminal: double Esc leaves terminal mode; a single Esc still reaches TUIs
--- running in the terminal (Claude Code, fzf, htop, nested vim).
+-- running in the terminal (fzf, htop, nested vim, other TUIs).
 map("t", "<Esc><Esc>", [[<C-\><C-n>]])
 map("t", "<C-h>", [[<C-\><C-n><C-w>h]])
 map("t", "<C-j>", [[<C-\><C-n><C-w>j]])
@@ -333,11 +374,11 @@ map({ "n", "t" }, "<F12>", toggle_float_term, { desc = "Toggle floating terminal
 map("n", "<leader>tt", toggle_float_term, { desc = "Toggle floating terminal" })
 
 -- Quality of life
-map("n", "<leader>sv", ":source $MYVIMRC<CR>") -- options/maps only; plugins: :Lazy
-map("n", "<leader>ev", ":edit $MYVIMRC<CR>")
-map("n", "<leader>tn", ":set relativenumber!<CR>") -- (<leader>rn is LSP rename)
-map("n", "<leader>sp", ":setlocal spell! spelllang=en_us<CR>")
-map("n", "<leader>tw", [[:%s/\s\+$//e<CR>]])
+map("n", "<leader>sv", ":source $MYVIMRC<CR>", { desc = "Reload config" }) -- options/maps only; plugins: :Lazy
+map("n", "<leader>ev", ":edit $MYVIMRC<CR>", { desc = "Edit config" })
+map("n", "<leader>tn", ":set relativenumber!<CR>", { desc = "Toggle relative numbers" }) -- (<leader>rn is LSP rename)
+map("n", "<leader>sp", ":setlocal spell!<CR>", { desc = "Toggle spell check" })
+map("n", "<leader>tw", [[:%s/\s\+$//e<CR>]], { desc = "Trim trailing whitespace" })
 
 -- ------------------------------------------------------------
 -- lazy.nvim bootstrap
@@ -468,6 +509,25 @@ local plugins = {
   -- Git
   "tpope/vim-fugitive",
   {
+    -- Review every changed file (e.g. after Claude Code edits) before
+    -- committing: <leader>gv all changes, <leader>gh this file's history;
+    -- q closes either view.
+    "sindrets/diffview.nvim",
+    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory", "DiffviewToggleFiles" },
+    keys = {
+      { "<leader>gv", "<cmd>DiffviewOpen<CR>", desc = "Review changes (diffview)" },
+      { "<leader>gh", "<cmd>DiffviewFileHistory %<CR>", desc = "File history (diffview)" },
+    },
+    opts = {
+      use_icons = false, -- no nvim-web-devicons
+      keymaps = {
+        view = { { "n", "q", "<cmd>DiffviewClose<CR>", { desc = "Close diffview" } } },
+        file_panel = { { "n", "q", "<cmd>DiffviewClose<CR>", { desc = "Close diffview" } } },
+        file_history_panel = { { "n", "q", "<cmd>DiffviewClose<CR>", { desc = "Close diffview" } } },
+      },
+    },
+  },
+  {
     -- ]c/[c next/previous hunk (plain ]c/[c in diff mode),
     -- <leader>hs stage, <leader>hu reset, <leader>hp preview.
     "lewis6991/gitsigns.nvim",
@@ -506,9 +566,10 @@ local plugins = {
       -- Installs missing parsers in the background; a no-op once installed.
       if vim.fn.executable("tree-sitter") == 1 then
         require("nvim-treesitter").install({
-          "bash", "c", "cpp", "css", "dockerfile", "go", "html", "javascript",
-          "json", "lua", "markdown", "markdown_inline", "python", "regex", "tsx",
-          "typescript", "vim", "vimdoc", "yaml",
+          "bash", "c", "cpp", "css", "diff", "dockerfile", "git_rebase",
+          "gitcommit", "go", "html", "javascript", "json", "lua", "markdown",
+          "markdown_inline", "python", "regex", "toml", "tsx", "typescript",
+          "vim", "vimdoc", "yaml",
         })
       end
 
@@ -559,12 +620,23 @@ local plugins = {
   -- Ctrl-h/j/k/l across nvim splits and tmux panes (see ~/.tmux.conf)
   "christoomey/vim-tmux-navigator",
 
-  -- Claude Code bridge (the floating terminal is built in; see above)
+  -- Press <leader> (or g, ], z, ...) and wait: a popup lists the next keys.
   {
-    "coder/claudecode.nvim",
+    "folke/which-key.nvim",
+    event = "VeryLazy",
     opts = {
-      auto_start = true,
-      terminal = { provider = "none" },
+      icons = { mappings = false }, -- no icon plugin
+      spec = {
+        { "<leader>b", group = "buffer" },
+        { "<leader>c", group = "code" },
+        { "<leader>f", group = "find" },
+        { "<leader>g", group = "git" },
+        { "<leader>h", group = "hunk" },
+        { "<leader>l", group = "lsp" },
+        { "<leader>r", group = "rename" },
+        { "<leader>s", group = "source/spell" },
+        { "<leader>t", group = "terminal/toggle" },
+      },
     },
   },
 }
