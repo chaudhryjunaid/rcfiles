@@ -10,8 +10,10 @@ font-family = Aglet Mono
 font-size = 22
 
 # ── THEME ────────────────────────────────────────────────────────────────────
-# Built-in themes: `ghostty +list-themes`. Gogh themes are installed into
-# ~/.config/ghostty/themes/ by the repo's gogh script (not tracked here).
+# Default theme, used until one is picked. To switch: install with the
+# repo's gogh script, then run `ghostty +list-themes`, press w to save the
+# pick to auto/theme.ghostty (per machine, untracked; included at the end
+# of this file so it wins), and reload.
 theme = Gogh Xcode WWDC
 
 # ── WINDOW ───────────────────────────────────────────────────────────────────
@@ -57,3 +59,6 @@ notify-on-command-finish-after = 10s
 keybind = ctrl+shift+enter=new_split:auto
 keybind = ctrl+shift+d=close_surface
 keybind = ctrl+shift+z=toggle_split_zoom
+
+# Added by Gogh: the theme picked in `ghostty +list-themes`. Keep it last.
+config-file = ?auto/theme.ghostty
