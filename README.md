@@ -111,7 +111,7 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **ripgrep** (`rg`) — fzf's file source and vim's grep program
 - **zoxide** — smarter `cd`; adds `z`/`zi` (jump by frecency / fzf-pick)
 - a **Nerd Font** — for the glyphs in the tmux status bar and vim-airline;
-  kitty, Alacritty and Sublime Text are set to **JetBrainsMono Nerd Font**
+  kitty, Alacritty, Ghostty and Sublime Text use `set-font.sh`'s font
   (change it with `./set-font.sh`). Not installed by the setup scripts
   (`setup/install-fonts.sh` finds and installs them)
 
@@ -143,6 +143,11 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **kitty** — terminal emulator; config is linked to `~/.config/kitty/kitty.conf`
   and expects the **JetBrainsMono Nerd Font**; not installed by the setup
   script (see `gui-apps.manifest.csv`)
+- **Ghostty** — terminal emulator; config is linked to
+  `~/.config/ghostty/config.ghostty` (built-in `Cobalt2` theme; bundles its
+  own Nerd Font symbols, so any font works); check it with
+  `ghostty +validate-config`; not installed by the setup script (see
+  `gui-apps.manifest.csv`)
 - **Alacritty** — terminal emulator; config is linked to
   `~/.config/alacritty/alacritty.toml` (colors imported from `gogh.toml`
   next to it) and expects the **JetBrainsMono Nerd Font**; not installed by
@@ -184,11 +189,11 @@ liquidprompt are cloned from GitHub into `~/sh`.
   the distro's own repos have (their `ubuntu`/`fedora` column)
 - `lint.sh` — shellcheck the scripts, syntax-check the rc files (shellcheck
   comes from mise)
-- `set-font.sh` — set the font family and size in the kitty, alacritty and
-  Sublime Text configs, e.g. `./set-font.sh --all jetbrains 14`; the font is
-  an alias (`--help` lists them), an installed family name, or words from one
-  (asks which if several match); prints the diff and only writes with
-  `--apply`
+- `set-font.sh` — set the font family and size in the kitty, alacritty,
+  ghostty and Sublime Text configs, e.g. `./set-font.sh --all jetbrains 14`;
+  the font is an alias (`--help` lists them), an installed family name, or
+  words from one (asks which if several match); prints the diff and only
+  writes with `--apply`
 
 # Notes
 - `~/.zshrc` and `~/.bashrc` both source `~/.shellrc.sh`. `~/.profile`

@@ -3,9 +3,9 @@
 # set-font.sh — set the font family and size in the app configs under home/.
 #
 # Prints the change as a diff and writes nothing unless --apply is given.
-# Apps: kitty, alacritty, sublime (Sublime Text); --all does every one. The
-# configs are symlinked into $HOME, so --apply changes the live config too
-# (and signals running kitty instances to reload it).
+# Apps: kitty, alacritty, ghostty, sublime (Sublime Text); --all does every
+# one. The configs are symlinked into $HOME, so --apply changes the live
+# config too (and signals running kitty and ghostty instances to reload it).
 #
 # FONT is an alias (see --help), an installed family name, or words from one
 # ("caskaydia mono"); if several installed fonts match, it asks which.
@@ -17,7 +17,7 @@
 set -euo pipefail
 
 REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-APPS=(kitty alacritty sublime)
+APPS=(kitty alacritty ghostty sublime)
 
 # Short names for common Nerd Fonts (setup/install-fonts.sh installs them; the
 # setup scripts don't). The -mono ones are the Nerd Font Mono variants, whose
@@ -54,6 +54,7 @@ config_for() {
     case "$1" in
         kitty)     echo "home/.config/kitty/kitty.conf" ;;
         alacritty) echo "home/.config/alacritty/alacritty.toml" ;;
+        ghostty)   echo "home/.config/ghostty/config.ghostty" ;;
         sublime)   echo "home/.config/sublime-text/Packages/User/Preferences.sublime-settings" ;;
     esac
 }
@@ -143,6 +144,16 @@ edit_alacritty() {
     ' "$1"
 }
 
+# bold/italic families default to font-family.
+edit_ghostty() {
+    FONT_NAME=$FONT FONT_SIZE=$SIZE awk '
+        /^font-family[ \t]*=/ { match($0, /^font-family[ \t]*=[ \t]*/); $0 = substr($0, 1, RLENGTH) ENVIRON["FONT_NAME"]; f++ }
+        /^font-size[ \t]*=/   { match($0, /^font-size[ \t]*=[ \t]*/);   $0 = substr($0, 1, RLENGTH) ENVIRON["FONT_SIZE"]; s++ }
+        { print }
+        END { exit !(f && s) }
+    ' "$1"
+}
+
 # default_font_size is what "Reset Size" goes back to, so it follows font_size.
 edit_sublime() {
     FONT_NAME=$FONT FONT_SIZE=$SIZE awk '
@@ -184,7 +195,7 @@ fi
 [ "${#apps[@]}" -gt 0 ] || usage_error "Name at least one app, or use --all."
 for i in "${!apps[@]}"; do
     case "${apps[i]}" in
-        kitty|alacritty|sublime) ;;
+        kitty|alacritty|ghostty|sublime) ;;
         sublime-text) apps[i]=sublime ;;
         *) usage_error "Unknown app: ${apps[i]}" ;;
     esac
@@ -223,9 +234,13 @@ for app in "${apps[@]}"; do
         # Overwrite in place (not mv) so the file keeps its mode.
         cat "$tmp" > "$REPO/$file"
         echo "$app: updated $file"
-        # Alacritty and Sublime reload on their own; kitty needs SIGUSR1.
+        # Alacritty and Sublime reload on their own; kitty and ghostty
+        # reload their config on SIGUSR1 and SIGUSR2 respectively.
         if [ "$app" = kitty ] && pkill -USR1 -x kitty; then
             echo "kitty: reloaded the running instances"
+        fi
+        if [ "$app" = ghostty ] && pkill -USR2 -x ghostty; then
+            echo "ghostty: reloaded the running instances"
         fi
     fi
     changed=$((changed + 1))

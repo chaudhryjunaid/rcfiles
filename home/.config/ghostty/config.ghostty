@@ -1,0 +1,53 @@
+# Ghostty config. Only options that differ from Ghostty's defaults are set;
+# `ghostty +show-config --default --docs` lists them all, and
+# `ghostty +validate-config` checks this file. Reload with ctrl+shift+comma.
+
+# ── FONT ─────────────────────────────────────────────────────────────────────
+# Set font-family/font-size with the repo's set-font.sh. Ghostty bundles
+# JetBrains Mono and the Nerd Font symbols, so icons render whatever the
+# family, and a missing font falls back to JetBrains Mono.
+font-family = Aglet Mono
+font-size = 22
+
+# ── THEME ────────────────────────────────────────────────────────────────────
+# Built-in themes: `ghostty +list-themes`. Cobalt2 matches kitty's colors.
+theme = Cobalt2
+
+# ── WINDOW ───────────────────────────────────────────────────────────────────
+window-padding-x = 8
+window-padding-y = 8
+# Spread leftover space (from the grid not filling the window) evenly.
+window-padding-balance = true
+window-padding-color = extend
+
+# ── CURSOR ───────────────────────────────────────────────────────────────────
+cursor-style = block
+cursor-style-blink = false
+
+# ── SCROLLBACK ───────────────────────────────────────────────────────────────
+# Per terminal; the default is 50 MB.
+scrollback-limit-bytes = 100000000
+
+# ── MOUSE / CLIPBOARD ────────────────────────────────────────────────────────
+mouse-hide-while-typing = true
+# Selecting copies to both the primary selection and the clipboard.
+copy-on-select = clipboard
+
+# ── SHELL INTEGRATION ────────────────────────────────────────────────────────
+# no-cursor keeps the block cursor at the prompt (instead of a bar). sudo
+# keeps the terminfo under sudo; ssh-env/ssh-terminfo make `ssh` work on hosts
+# that don't know xterm-ghostty.
+shell-integration-features = no-cursor,sudo,title,ssh-env,ssh-terminfo
+
+# Desktop notification when a command taking 10s+ finishes while the
+# terminal is unfocused.
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = notify
+notify-on-command-finish-after = 10s
+
+# ── KEYBINDS ─────────────────────────────────────────────────────────────────
+# Defaults kept (ctrl+shift+t/w/n tab/close/window, ctrl+shift+o/e splits,
+# alt+1..9 tabs); these add kitty-style shortcuts.
+keybind = ctrl+shift+enter=new_split:auto
+keybind = ctrl+shift+d=close_surface
+keybind = ctrl+shift+z=toggle_split_zoom
