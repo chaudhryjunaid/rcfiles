@@ -77,7 +77,7 @@ main() {
 
     if [ "$fresh" -eq 1 ]; then
         log "Setting every app to $FONT $FONT_SIZE (set-font.sh)"
-        "$DIR/set-font.sh" --all --apply "$FONT" "$FONT_SIZE"
+        "$DIR/set-font.sh" all "$FONT" "$FONT_SIZE"
     else
         log "Leaving the font settings alone (existing clone); change them with $DIR/set-font.sh"
     fi

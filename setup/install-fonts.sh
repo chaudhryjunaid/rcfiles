@@ -335,5 +335,5 @@ if [ "${#failed[@]}" -gt 0 ]; then
     exit 1
 fi
 if [ "$asked" -eq 1 ]; then
-    log "Done. To use it: ./set-font.sh APP|--all FONT SIZE (partial names work)"
+    log "Done. To use it, run ./set-font.sh and pick it from the list"
 fi

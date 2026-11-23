@@ -1,54 +1,31 @@
 #!/bin/bash
-# shellcheck disable=SC2329 # the edit_* functions are called as "edit_$app"
+# shellcheck disable=SC2329 # the edit_*/current_* functions are called as "edit_$app"
 # set-font.sh — set the font family and size in the app configs under home/.
 #
-# Prints the change as a diff and writes nothing unless --apply is given.
-# Apps: kitty, alacritty, ghostty, sublime (Sublime Text); --all does every
-# one. The configs are symlinked into $HOME, so --apply changes the live
-# config too (and signals running kitty and ghostty instances to reload it).
+# Interactive (no arguments):
+#   1. pick the app from a numbered menu (kitty, Alacritty, Ghostty,
+#      Sublime Text, or all of them)
+#   2. pick the font in fzf from every font family installed on this system
+#      (type to filter, Enter or Tab to choose; the preview lists its styles)
+#   3. type the size (Enter keeps the current one)
 #
-# FONT is an alias (see --help), an installed family name, or words from one
-# ("caskaydia mono"); if several installed fonts match, it asks which.
+# Scripted (run.sh uses this):  ./set-font.sh APP|all FONT SIZE
+#   FONT must be the exact family name, as fc-list prints it.
 #
-# Usage: ./set-font.sh [--apply] (APP... | --all) FONT SIZE
-#   e.g. ./set-font.sh kitty jetbrains 14
-#        ./set-font.sh --all --apply "caskaydia mono" 13.5
+# The configs are symlinked into $HOME, so this changes the live config too,
+# and signals running kitty and Ghostty instances to reload it (Alacritty and
+# Sublime Text reload on their own).
 
 set -euo pipefail
 
 REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 APPS=(kitty alacritty ghostty sublime)
 
-# Short names for common Nerd Fonts (setup/install-fonts.sh installs them; the
-# setup scripts don't). The -mono ones are the Nerd Font Mono variants, whose
-# icons are squeezed to one cell wide.
-# Nerd Fonts renames Cascadia Code to CaskaydiaCove, hence both spellings.
-FONT_ALIASES=(
-    "jetbrains=JetBrainsMono Nerd Font"
-    "jetbrains-mono=JetBrainsMono Nerd Font Mono"
-    "caskaydia=CaskaydiaCove Nerd Font"
-    "caskaydia-mono=CaskaydiaCove Nerd Font Mono"
-    "cascadia=CaskaydiaCove Nerd Font"
-    "cascadia-mono=CaskaydiaCove Nerd Font Mono"
-    "meslo=MesloLGS Nerd Font"
-    "meslo-mono=MesloLGS Nerd Font Mono"
-)
-
 print_help() {
-    local entry
-    sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'
-    echo
-    echo "Font aliases:"
-    for entry in "${FONT_ALIASES[@]}"; do
-        printf '  %-15s %s\n' "${entry%%=*}" "${entry#*=}"
-    done
+    sed -n '3,17p' "$0" | sed 's/^# \{0,1\}//'
 }
 
-usage_error() {
-    echo "$*" >&2
-    echo "Usage: ./set-font.sh [--apply] (APP... | --all) FONT SIZE  (apps: ${APPS[*]})" >&2
-    exit 2
-}
+die() { echo "$*" >&2; exit 1; }
 
 config_for() {
     case "$1" in
@@ -59,53 +36,36 @@ config_for() {
     esac
 }
 
-# resolve_font <query>: print the font family <query> stands for: an alias,
-# a name fontconfig knows (as is), or else the installed family whose name has
-# every word of <query> in it, case-insensitively. Asks if several do.
-resolve_font() {
-    local query=$1 entry name word
-    local -a words matches=()
-
-    for entry in "${FONT_ALIASES[@]}"; do
-        if [ "${entry%%=*}" = "${query,,}" ]; then echo "${entry#*=}"; return; fi
-    done
-
-    if ! command -v fc-list >/dev/null 2>&1; then echo "$query"; return; fi
-    # Every name counts here, including short ones like "JetBrainsMono NF".
-    # (No grep -q: with pipefail, its early exit would fail the pipeline.)
-    if fc-list : family | tr ',' '\n' | grep -Fx -- "$query" >/dev/null; then
-        echo "$query"; return
-    fi
-
-    # Only each font's main family (the first name on its line) is offered;
-    # the rest are short names and per-weight families of the same font.
-    read -ra words <<< "${query,,}"
-    while IFS= read -r name; do
-        if [ "${name,,}" = "${query,,}" ]; then echo "$name"; return; fi
-        for word in "${words[@]}"; do
-            [[ "${name,,}" == *"$word"* ]] || continue 2
-        done
-        matches+=("$name")
-    done < <(fc-list : family | cut -d, -f1 | sort -u)
-
-    case "${#matches[@]}" in
-        0)  echo "warning: no installed font matches '$query'; using it as given" >&2
-            echo "$query" ;;
-        1)  echo "${matches[0]}" ;;
-        *)  if ! [ -t 0 ] || ! [ -t 2 ]; then
-                echo "'$query' matches ${#matches[@]} installed fonts; give more of the name:" >&2
-                printf '  %s\n' "${matches[@]}" >&2
-                return 2
-            fi
-            # select draws its menu on stderr, so only the pick reaches stdout.
-            echo "'$query' matches ${#matches[@]} installed fonts:" >&2
-            local PS3="Which one (1-${#matches[@]})? "
-            select name in "${matches[@]}"; do
-                if [ -n "$name" ]; then echo "$name"; return; fi
-            done
-            echo >&2
-            return 1 ;;  # ctrl-d at the prompt
+label_for() {
+    case "$1" in
+        kitty)     echo "kitty" ;;
+        alacritty) echo "Alacritty" ;;
+        ghostty)   echo "Ghostty" ;;
+        sublime)   echo "Sublime Text" ;;
     esac
+}
+
+# current_<app> <file>: print "<family>\t<size>" as the config has them.
+current_kitty() {
+    awk '/^font_family[ \t]/ { sub(/^font_family[ \t]+/, ""); f = $0 }
+         /^font_size[ \t]/   { sub(/^font_size[ \t]+/, "");   s = $0 }
+         END { print f "\t" s }' "$1"
+}
+current_alacritty() {
+    awk '/^[ \t]*\[/ { section = $0; gsub(/[ \t]/, "", section) }
+         section == "[font]" && /^[ \t]*size[ \t]*=/ { sub(/^[^=]*=[ \t]*/, ""); s = $0 }
+         section == "[font.normal]" && /^[ \t]*family[ \t]*=/ { sub(/^[^=]*=[ \t]*/, ""); gsub(/"/, ""); f = $0 }
+         END { print f "\t" s }' "$1"
+}
+current_ghostty() {
+    awk '/^font-family[ \t]*=/ { sub(/^[^=]*=[ \t]*/, ""); f = $0 }
+         /^font-size[ \t]*=/   { sub(/^[^=]*=[ \t]*/, ""); s = $0 }
+         END { print f "\t" s }' "$1"
+}
+current_sublime() {
+    awk '/^[ \t]*"font_face"[ \t]*:/ { sub(/^[^:]*:[ \t]*"/, ""); sub(/".*$/, ""); f = $0 }
+         /^[ \t]*"font_size"[ \t]*:/ { sub(/^[^:]*:[ \t]*/, ""); sub(/[ \t]*,?[ \t]*$/, ""); s = $0 }
+         END { print f "\t" s }' "$1"
 }
 
 # 16 -> 16.0, matching how kitty and alacritty sizes are written.
@@ -169,84 +129,137 @@ edit_sublime() {
     ' "$1"
 }
 
-APPLY=0
-ALL=0
-args=()
-for arg in "$@"; do
-    case "$arg" in
-        --apply)   APPLY=1 ;;
-        --all)     ALL=1 ;;
-        -h|--help) print_help; exit 0 ;;
-        -*)        usage_error "Unknown option: $arg" ;;
-        *)         args+=("$arg") ;;
-    esac
-done
+# Every installed font family, by its main name (fontconfig's first family
+# name; the others are short names and per-weight families of the same font).
+list_fonts() {
+    fc-list --format '%{family[0]}\n' | sort -u
+}
 
-[ "${#args[@]}" -ge 2 ] || usage_error "Missing FONT and SIZE."
-n=$(( ${#args[@]} - 2 ))
-FONT=${args[n]}
-SIZE=${args[n + 1]}
-apps=("${args[@]:0:n}")
+# pick_app: numbered menu; sets the global "apps".
+pick_app() {
+    local -a labels=()
+    local app cur choice
+    for app in "${APPS[@]}"; do
+        cur=$("current_$app" "$REPO/$(config_for "$app")")
+        labels+=("$(printf '%-13s (now: %s %s)' "$(label_for "$app")" "${cur%%$'\t'*}" "${cur#*$'\t'}")")
+    done
+    labels+=("All of them")
+    echo "Set the font for:" >&2
+    local PS3="Option (1-${#labels[@]}): "
+    select choice in "${labels[@]}"; do
+        if [ -z "$choice" ]; then echo "Pick a number from 1 to ${#labels[@]}." >&2; continue; fi
+        if [ "$REPLY" -eq "${#labels[@]}" ]; then
+            apps=("${APPS[@]}")
+        else
+            apps=("${APPS[REPLY - 1]}")
+        fi
+        return 0
+    done
+    exit 1  # ctrl-d at the prompt
+}
 
-if [ "$ALL" -eq 1 ]; then
-    [ "${#apps[@]}" -eq 0 ] || usage_error "Give app names or --all, not both."
-    apps=("${APPS[@]}")
-fi
-[ "${#apps[@]}" -gt 0 ] || usage_error "Name at least one app, or use --all."
-for i in "${!apps[@]}"; do
-    case "${apps[i]}" in
-        kitty|alacritty|ghostty|sublime) ;;
-        sublime-text) apps[i]=sublime ;;
-        *) usage_error "Unknown app: ${apps[i]}" ;;
-    esac
-done
+# pick_font <current family>: fzf over the installed families; prints the pick.
+pick_font() {
+    local current=$1
+    # The preview lists the chosen family's styles (Regular, Bold, ...).
+    list_fonts | fzf \
+        --prompt="Font> " \
+        --header="Enter or Tab to choose, Esc to cancel. Now: ${current:-?}" \
+        --height=60% --layout=reverse --border \
+        --bind 'tab:accept' \
+        --preview "fc-list --format '%{family[0]}\t%{style[0]}\n' | awk -F'\t' -v f={} '\$1 == f { print \$2 }' | sort -u" \
+        --preview-window 'right,40%,border-left' \
+        --preview-label ' styles '
+}
 
-[[ "$SIZE" =~ ^[0-9]+(\.[0-9]+)?$ ]] || usage_error "SIZE must be a number, got '$SIZE'."
-case "$FONT" in
-    *[\"\\]*)         usage_error "FONT can't contain quotes or backslashes." ;;
-    *[![:space:]]*)   ;;
-    *)                usage_error "FONT is empty." ;;
-esac
+# ask_size <current size>: prompt until a number (or Enter for the current).
+ask_size() {
+    local current=$1 size
+    while true; do
+        read -rp "Font size${current:+ [$current]}: " size || exit 1
+        size=${size:-$current}
+        if [[ "$size" =~ ^[0-9]+(\.[0-9]+)?$ ]] && [ "${size%%.*}" -gt 0 ]; then
+            echo "$size"
+            return
+        fi
+        echo "Enter a number, e.g. 14 or 13.5." >&2
+    done
+}
 
-# A typo'd name isn't an error to the apps (they silently fall back), so
-# resolve_font warns when nothing installed matches.
-query=$FONT
-FONT=$(resolve_font "$query") || exit
-[ "$FONT" = "$query" ] || echo "font: $query -> $FONT" >&2
-
-tmp=$(mktemp)
-trap 'rm -f "$tmp"' EXIT
-
-status=0 changed=0
-for app in "${apps[@]}"; do
-    file=$(config_for "$app")
-    if ! "edit_$app" "$REPO/$file" > "$tmp"; then
-        echo "$app: font settings not found in $file; left alone" >&2
-        status=1
-        continue
-    fi
-    if cmp -s "$REPO/$file" "$tmp"; then
-        echo "$app: already set ($file)"
-        continue
-    fi
-    diff -u --color=auto --label "a/$file" --label "b/$file" "$REPO/$file" "$tmp" || true
-    if [ "$APPLY" -eq 1 ]; then
+apply() {
+    local app file status=0 before
+    # Global, not local: the EXIT trap runs after this function returns.
+    tmp=$(mktemp)
+    trap 'rm -f "$tmp"' EXIT
+    for app in "${apps[@]}"; do
+        file=$(config_for "$app")
+        before=$("current_$app" "$REPO/$file")
+        if ! "edit_$app" "$REPO/$file" > "$tmp"; then
+            echo "$(label_for "$app"): font settings not found in $file; left alone" >&2
+            status=1
+            continue
+        fi
+        if cmp -s "$REPO/$file" "$tmp"; then
+            echo "$(label_for "$app"): already $FONT $SIZE"
+            continue
+        fi
         # Overwrite in place (not mv) so the file keeps its mode.
         cat "$tmp" > "$REPO/$file"
-        echo "$app: updated $file"
-        # Alacritty and Sublime reload on their own; kitty and ghostty
-        # reload their config on SIGUSR1 and SIGUSR2 respectively.
+        echo "$(label_for "$app"): ${before%%$'\t'*} ${before#*$'\t'} -> $FONT $SIZE ($file)"
+        # kitty and Ghostty reload their config on SIGUSR1 and SIGUSR2.
         if [ "$app" = kitty ] && pkill -USR1 -x kitty; then
-            echo "kitty: reloaded the running instances"
+            echo "  reloaded the running kitty instances"
         fi
         if [ "$app" = ghostty ] && pkill -USR2 -x ghostty; then
-            echo "ghostty: reloaded the running instances"
+            echo "  reloaded the running Ghostty instances"
         fi
-    fi
-    changed=$((changed + 1))
-done
+    done
+    return "$status"
+}
 
-if [ "$APPLY" -eq 0 ] && [ "$changed" -gt 0 ]; then
-    echo "(dry run: nothing was changed; re-run with --apply to write)"
-fi
-exit "$status"
+check_font_name() {
+    case "$FONT" in
+        *[\"\\]*)        die "The font name can't contain quotes or backslashes." ;;
+        *[![:space:]]*)  ;;
+        *)               die "The font name is empty." ;;
+    esac
+}
+
+apps=()
+case "${1:-}" in
+    -h|--help)
+        print_help
+        exit 0 ;;
+    "")
+        # Interactive.
+        [ -t 0 ] && [ -t 2 ] || die "Run it in a terminal, or: ./set-font.sh APP|all FONT SIZE"
+        command -v fzf >/dev/null 2>&1 || die "fzf not found (mise install)."
+        command -v fc-list >/dev/null 2>&1 || die "fc-list not found (install fontconfig)."
+        pick_app
+        # The first app's current font and size are the defaults shown.
+        cur=$("current_${apps[0]}" "$REPO/$(config_for "${apps[0]}")")
+        FONT=$(pick_font "${cur%%$'\t'*}") || die "No font chosen; nothing changed."
+        check_font_name
+        echo "Font: $FONT" >&2
+        SIZE=$(ask_size "${cur#*$'\t'}")
+        ;;
+    *)
+        # Scripted: APP|all FONT SIZE.
+        [ "$#" -eq 3 ] || die "Usage: ./set-font.sh APP|all FONT SIZE  (apps: ${APPS[*]}), or no arguments for the menus"
+        case "$1" in
+            all) apps=("${APPS[@]}") ;;
+            kitty|alacritty|ghostty|sublime) apps=("$1") ;;
+            *) die "Unknown app: $1 (apps: ${APPS[*]}, or all)" ;;
+        esac
+        FONT=$2
+        SIZE=$3
+        check_font_name
+        [[ "$SIZE" =~ ^[0-9]+(\.[0-9]+)?$ ]] || die "SIZE must be a number, got '$SIZE'."
+        # (No grep -q: with pipefail, its early exit would fail the pipeline.)
+        if command -v fc-list >/dev/null 2>&1 && ! list_fonts | grep -Fx -- "$FONT" >/dev/null; then
+            echo "warning: no installed font family is named '$FONT'; setting it anyway" >&2
+        fi
+        ;;
+esac
+
+apply

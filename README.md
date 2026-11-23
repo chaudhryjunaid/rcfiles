@@ -204,11 +204,11 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - `lint.sh` — shellcheck the scripts and rc files, parse the app configs,
   check the manifests and repo hygiene (shellcheck comes from mise)
 - `hooks/pre-commit` — runs `lint.sh` on the staged files before each commit
-- `set-font.sh` — set the font family and size in the kitty, alacritty,
-  ghostty and Sublime Text configs, e.g. `./set-font.sh --all jetbrains 14`;
-  the font is an alias (`--help` lists them), an installed family name, or
-  words from one (asks which if several match); prints the diff and only
-  writes with `--apply`
+- `set-font.sh` — set the font family and size in the kitty, Alacritty,
+  Ghostty and Sublime Text configs. Run with no arguments: pick the app from
+  a numbered menu, the font in fzf (every installed family; Enter or Tab to
+  choose), then type the size. Scripted form: `./set-font.sh APP|all FONT
+  SIZE`, with the exact family name
 
 # Notes
 - `~/.zshrc` and `~/.bashrc` both source `~/.shellrc.sh`. `~/.profile`
