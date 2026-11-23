@@ -22,21 +22,16 @@ endif
 " ------------------------------------------------------------
 call plug#begin('~/.local/share/nvim/plugged')
 
-" Theme
-Plug 'sainnhe/gruvbox-material'
-"Plug 'navarasu/onedark.nvim'
-Plug 'morhetz/gruvbox'
+" Theme (the only one used; see `colorscheme` below)
 Plug 'joshdick/onedark.vim'
-Plug 'tomasr/molokai'
-Plug 'dracula/vim'
-Plug 'sainnhe/everforest'
 
 " Statusline
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 " Fuzzy finding
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+" Just the vim glue (fzf#run); the fzf binary itself comes from mise.
+Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 
 " Git
@@ -65,9 +60,9 @@ Plug 'saghen/blink.cmp', { 'tag': 'v1.*' }
 " Ctrl-h/j/k/l across nvim splits and tmux panes (see ~/.tmux.conf)
 Plug 'christoomey/vim-tmux-navigator'
 
-" Useful UI helpers
-Plug 'Yggdroot/indentLine'
-Plug 'machakann/vim-highlightedyank'
+" Indent guides (virtual text: unlike indentLine, doesn't touch conceallevel,
+" which hid quotes in JSON and Markdown)
+Plug 'lukas-reineke/indent-blankline.nvim'
 
 " Terminal integration
 Plug 'voldikss/vim-floaterm'
@@ -335,11 +330,22 @@ let g:airline_symbols.notexists = '∄'
 let g:airline_symbols.whitespace = 'Ξ'
 
 " ------------------------------------------------------------
-" indentLine
+" Indent guides (indent-blankline) and yank highlight (built in)
 " ------------------------------------------------------------
-let g:indentLine_enabled = 1
-let g:indentLine_char = '│'
-let g:indentLine_fileTypeExclude = ['help', 'nerdtree', 'terminal']
+lua << EOF
+pcall(function()
+  -- help, terminal and other special buffers are excluded by default.
+  require("ibl").setup({
+    indent = { char = "│" },
+    exclude = { filetypes = { "nerdtree" } },
+  })
+end)
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+  group = vim.api.nvim_create_augroup("user_yank", { clear = true }),
+  callback = function() vim.hl.on_yank({ timeout = 300 }) end,
+})
+EOF
 
 " ------------------------------------------------------------
 " Floaterm
@@ -518,8 +524,16 @@ set wrap
 " Trailing whitespace
 " ----------------------------
 
+" :match is per window, so set it in every window showing a normal file
+" (not terminals or plugin panes), and redefine the color after a
+" colorscheme change clears it.
 highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
+augroup user_extra_whitespace
+  autocmd!
+  autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+  autocmd BufWinEnter,WinEnter,TermOpen *
+        \ if &buftype ==# '' | match ExtraWhitespace /\s\+$/ | else | match none | endif
+augroup END
 
 " ------------------------------------------------------------
 " Files, backup, swap

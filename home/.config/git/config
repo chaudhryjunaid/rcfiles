@@ -1,7 +1,7 @@
-# Per-machine identity (user.name/email) lives here, untracked.
-# Created empty by link.sh if missing; setup/git-identity.sh fills it in.
-[include]
-  path = ~/.gitconfig.local
+# Shared git config, linked to ~/.config/git/config by link.sh. The identity
+# (user.name/email) and anything `git config --global` or git tools write go
+# in the untracked ~/.gitconfig, which git reads after this file (so it wins).
+# link.sh creates it; setup/git-identity.sh fills in the identity.
 [user]
   useConfigOnly = true          # No identity set? Refuse to commit, don't guess one
 [core]
@@ -10,7 +10,7 @@
   pager = delta
   autocrlf = false
 [init]
-  defaultBranch = production
+  defaultBranch = dev
 [interactive]
   diffFilter = delta --color-only
 [delta]
@@ -50,7 +50,7 @@
 [difftool "cursor"]
   cmd = cursor --wait --diff $LOCAL $REMOTE
 [difftool "vim"]
-  cmd = vim -d $LOCAL $REMOTE
+  cmd = nvim -d $LOCAL $REMOTE  # nvim: setup installs no vim, and git skips shell aliases
 [merge]
   conflictstyle = zdiff3
   tool = cursor
@@ -59,7 +59,7 @@
 [mergetool "cursor"]
   cmd = cursor --wait $MERGED
 [mergetool "vim"]
-  cmd = vim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+  cmd = nvim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 # alias settings
 [alias]
   # diff/merge tool aliases

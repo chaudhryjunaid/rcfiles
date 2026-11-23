@@ -120,20 +120,29 @@ EOF
     fi
 fi
 
-# Untracked per-machine git identity (included by ~/.gitconfig); see
-# setup/git-identity.sh. No placeholder identity: with user.useConfigOnly set
-# in .gitconfig, git refuses to commit until a real one is written here.
-GITLOCAL="$HOME/.gitconfig.local"
-if [ ! -f "$GITLOCAL" ]; then
-    echo "create $GITLOCAL (no identity yet)"
-    if [ "$DRY_RUN" -eq 0 ]; then
-        cat > "$GITLOCAL" <<'EOF'
-# Per-machine git settings (untracked), included by ~/.gitconfig.
-# Set the identity with setup/git-identity.sh, which writes:
-# [user]
-# 	name = ...
-# 	email = ...
+# Untracked per-machine git config. The tracked one is linked to
+# ~/.config/git/config; git reads ~/.gitconfig after it (so this file wins)
+# and `git config --global` writes here, as long as this file exists. It
+# holds the identity (setup/git-identity.sh) and whatever git tools write, so
+# none of that lands in the repo. No placeholder identity: with
+# user.useConfigOnly set, git refuses to commit until a real one is written.
+# Older setups linked ~/.gitconfig into the repo (pruned above as dangling)
+# and kept the identity in ~/.gitconfig.local; that file moves here.
+GITLOCAL="$HOME/.gitconfig"
+OLD_GITLOCAL="$HOME/.gitconfig.local"
+if [ ! -e "$GITLOCAL" ] && [ ! -L "$GITLOCAL" ]; then
+    if [ -f "$OLD_GITLOCAL" ]; then
+        echo "move   $OLD_GITLOCAL -> $GITLOCAL"
+        run mv "$OLD_GITLOCAL" "$GITLOCAL"
+    else
+        echo "create $GITLOCAL (no identity yet)"
+        if [ "$DRY_RUN" -eq 0 ]; then
+            cat > "$GITLOCAL" <<'EOF'
+# Per-machine git settings (untracked). Read after the tracked
+# ~/.config/git/config, so settings here win; `git config --global` writes
+# here. Set the identity with setup/git-identity.sh.
 EOF
+        fi
     fi
 fi
 

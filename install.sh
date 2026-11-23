@@ -41,9 +41,9 @@ fi
 echo "### Linking dotfiles"
 "$REPO/link.sh"
 
-# Only prompt for an identity while ~/.gitconfig.local has none (or still has
-# the "Your Name" placeholder older versions of link.sh wrote).
-GITLOCAL="$HOME/.gitconfig.local"
+# Only prompt for an identity while ~/.gitconfig (untracked) has none, or
+# still has the "Your Name" placeholder older versions of link.sh wrote.
+GITLOCAL="$HOME/.gitconfig"
 git_name=$(git config -f "$GITLOCAL" user.name 2>/dev/null || true)
 git_email=$(git config -f "$GITLOCAL" user.email 2>/dev/null || true)
 if [ "$SKIP_IDENTITY" -eq 0 ] \

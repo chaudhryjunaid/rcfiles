@@ -20,8 +20,8 @@ for cmd in git curl zsh mise; do
     command -v "$cmd" >/dev/null 2>&1 || die "$cmd not found; run setup/<distro>.sh first."
 done
 
-# git-lfs filters, in /etc/gitconfig: a plain `git lfs install` would write
-# them into ~/.gitconfig, which is linked to the tracked home/.gitconfig.
+# git-lfs filters, in /etc/gitconfig, so every user and the first-run order
+# (this runs before link.sh creates ~/.gitconfig) don't matter.
 if command -v git-lfs >/dev/null 2>&1; then
     log "Registering git-lfs filters system-wide"
     $SUDO git lfs install --system --skip-repo >/dev/null

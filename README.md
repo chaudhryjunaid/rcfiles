@@ -27,13 +27,13 @@ setup/ubuntu.sh          # system packages and mise, via apt
 setup/fedora.sh          #   ...or via dnf
 setup/common.sh          # antidote, liquidprompt, rustup, mise tools, zsh
 ./link.sh                # symlink the dotfiles into $HOME (--dry-run, --unlink)
-setup/git-identity.sh    # write your git name/email to ~/.gitconfig.local
+setup/git-identity.sh    # write your git name/email to ~/.gitconfig
 ```
 Use `./install.sh --skip-deps` to only relink and set the identity; that
 works on any system. `--skip-identity` skips the identity prompt (it's only
-asked while `~/.gitconfig.local` has no identity). `.gitconfig` sets
-`user.useConfigOnly`, so git refuses to commit until one is set. Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
-committing.
+asked while `~/.gitconfig` has no identity). The tracked git config sets
+`user.useConfigOnly`, so git refuses to commit until one is set. Run
+`./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before committing.
 
 GUI apps aren't installed by the setup scripts. `gui-apps.manifest.csv` lists
 the ones I use on a GNOME desktop (a snapshot of my main machine taken
@@ -89,8 +89,7 @@ find the same tools.
 Only things mise can't or shouldn't own come from apt/dnf: zsh, git (with
 git-crypt and git-lfs), tmux, build tools and clipboard tools,
 plus tmuxinator on Ubuntu (Fedora doesn't package it). `setup/common.sh`
-registers git-lfs's filters in `/etc/gitconfig`, so don't run a plain
-`git lfs install` (it would edit the tracked `.gitconfig`). antidote and
+registers git-lfs's filters system-wide, in `/etc/gitconfig`. antidote and
 liquidprompt are cloned from GitHub into `~/sh`.
 
 ## Required
@@ -107,7 +106,7 @@ liquidprompt are cloned from GitHub into `~/sh`.
   setup script installs one). A plain-vim `vimrc` is kept too.
 - **git**
 - **delta** — git pager / diff filter (git is configured to use it for
-  `diff`/`log`; remove the `delta` lines from `.gitconfig` if you don't want it)
+  `diff`/`log`; remove the `delta` lines from `home/.config/git/config` if you don't want it)
 - **fzf** — fuzzy finder (shell key-bindings + vim `:Files`/`:Rg`)
 - **ripgrep** (`rg`) — fzf's file source and vim's grep program
 - **zoxide** — smarter `cd`; adds `z`/`zi` (jump by frecency / fzf-pick)
@@ -175,7 +174,7 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - `setup/ubuntu.sh`, `setup/fedora.sh` — system packages and mise for each
   distro; `setup/common.sh` — the distro-independent rest; `setup/lib.sh`
   holds their shared helpers
-- `setup/git-identity.sh` — write your git name/email to `~/.gitconfig.local`
+- `setup/git-identity.sh` — write your git name/email to `~/.gitconfig`
 - `setup/install-fonts.sh` — optional: search for a font by name (packages,
   Nerd Fonts, Google Fonts, a local folder) and install the ones you pick into
   `~/.local/share/fonts` (packages system-wide)
@@ -208,6 +207,12 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - `~/.ssh/config` holds only generic defaults (connection sharing,
   keepalives, agent loading), since this repo is public. Real hosts go in
   untracked `~/.ssh/config.local`, which it includes first.
+- git's shared settings are tracked as `~/.config/git/config`. `~/.gitconfig`
+  is untracked and per machine (`link.sh` creates it): git reads it last, so
+  it wins, and it holds the identity plus anything `git config --global`,
+  `git lfs install` or git GUIs write, which keeps those out of the repo.
+  (Older setups linked `~/.gitconfig` into the repo and kept the identity in
+  `~/.gitconfig.local`; `link.sh` moves that file to `~/.gitconfig`.)
 - The prompt is liquidprompt, configured by `~/.liquidpromptrc`.
 - vim plugins install automatically on first launch via vim-plug.
 
