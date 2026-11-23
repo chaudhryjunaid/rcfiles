@@ -1,7 +1,7 @@
 // Settings in here override those in "Default/Preferences.sublime-settings",
 // and are overridden in turn by syntax-specific settings.
 {
-	"font_face": "Cascadia Mono",
+	"font_face": "CaskaydiaCove Nerd Font Mono",
 	"font_size": 15,
 	// The font size set when using "Reset Size"
 	"default_font_size": 15,
