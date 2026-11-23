@@ -11,8 +11,9 @@
 # Show the error code of the last command when it failed.
 LP_ENABLE_ERROR=1
 
-# Mark when the current user can run sudo without a password prompt.
-LP_ENABLE_SUDO=1
+# Mark when the current user can run sudo without a password prompt. Off:
+# it runs `sudo -nv` before every prompt, and sudo may log each attempt.
+LP_ENABLE_SUDO=0
 
 # Filesystem permission marker on the current dir (e.g. a lock when read-only).
 LP_ENABLE_PERM=1
@@ -53,7 +54,7 @@ LP_ENABLE_VCS_ROOT=1
 LP_ENABLE_VIRTUALENV=1
 
 # Other language/tool contexts (shown only when relevant).
-LP_ENABLE_RUBY_VENV=1
+LP_ENABLE_RUBY_VENV=0
 LP_ENABLE_NODE_VENV=1
 
 # Set the terminal/tab title to user@host:dir.
@@ -63,14 +64,16 @@ LP_ENABLE_SCREEN_TITLE=1
 # Colour the hostname deterministically from its name, so each SSH box looks
 # distinct; also detach-session marker for screen/tmux.
 LP_ENABLE_SSH_COLORS=1
-LP_ENABLE_DETACHED_SESSIONS=1
+# Off: it runs `tmux ls`/`screen -ls` before every prompt; the tmux status
+# bar already shows the session.
+LP_ENABLE_DETACHED_SESSIONS=0
 
 ###############################################################################
 # Thresholds — keep the prompt quiet until something is worth noticing.
 ###############################################################################
 
 LP_BATTERY_THRESHOLD=75    # warn when battery drops below 75%
-LP_LOAD_THRESHOLD=0.30     # show load above 0.30 per core (default 0.60)
+LP_LOAD_THRESHOLD=0.60     # show load above 0.60 per core (the default)
 LP_TEMP_THRESHOLD=60       # show temperature above 60°C
 LP_RUNTIME_THRESHOLD=2     # show runtime for commands longer than 2s
 

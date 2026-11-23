@@ -8,7 +8,7 @@
   editor = nvim
   excludesfile = ~/.gitignore_global
   pager = delta
-  autocrlf = false
+  untrackedCache = true        # Cache untracked-file scans: much faster `git status`
 [init]
   defaultBranch = dev
 [interactive]
@@ -16,29 +16,32 @@
 [delta]
   navigate = true
   line-numbers = true
-  side-by-side = true
+  side-by-side = false         # Two columns wrap badly in tmux splits; `delta -s` or DELTA_FEATURES=+side-by-side for one-offs
+  hyperlinks = true            # File paths and line numbers are clickable (kitty, Ghostty)
 [log]
   abbrevCommit = true
 [fetch]
   prune = true
-  pruneTags = true
+  pruneTags = false             # true would delete local tags that aren't on the remote
+  writeCommitGraph = true       # Faster log --graph, merge-base, branch --contains
 [pull]
-	rebase = false
+  rebase = true                 # Linear history; pairs with rebase.autoStash below
 [push]
   default = current
   autoSetupRemote = true  # Auto-create remote branch on first push
   followTags = true       # Push annotated tags that point at pushed commits
-	recurseSubmodules = check
 [rebase]
   autoStash = true              # Auto-stash/unstash during rebase
   updateRefs = true             # Update dependent branches
   autoSquash = true             # Honor fixup!/squash! commits in rebase -i
 [rerere]
   enabled = true
+  autoUpdate = true             # Stage files that rerere resolved
 # difftool/mergetool settings
 [diff]
   algorithm = histogram         # Cleaner hunks than the default myers
   colorMoved = default          # Highlight moved (not changed) lines
+  colorMovedWS = allow-indentation-change  # ...even when re-indented
   tool = cursor
 [difftool]
   prompt = false
@@ -89,11 +92,10 @@
   reword = commit --amend
   # Undo last commit but keep changed files in stage
   uncommit = reset --soft HEAD~1
-  unstage = reset HEAD --          # Unstage files
+  unstage = restore --staged --   # Unstage files
   # Remove file(s) from Git but not from disk
   untrack = rm --cached --
 [commit]
-	gpgSign = false
   verbose = true                # Show the diff in the commit message editor
 [branch]
   sort = -committerdate         # `git branch` lists most recent first
@@ -103,11 +105,3 @@
   ui = auto                     # Columnar `git branch`/`git tag` output
 [help]
   autocorrect = prompt          # Offer to run the likely-intended command
-[gui]
-	pruneduringfetch = true
-[smartgit "submodule"]
-	fetchalways = false
-	update = true
-	initializenew = true
-[gc]
-	autoDetach = false

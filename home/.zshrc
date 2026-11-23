@@ -9,8 +9,9 @@ typeset -U path fpath
 # Env, aliases and functions shared with bash.
 [ -f ~/.shellrc.sh ] && source ~/.shellrc.sh
 
-# Key sequence timeout (15 = 150ms).
-KEYTIMEOUT=15
+# Key sequence timeout (1 = 10ms). Emacs mode has no Esc-prefixed vi
+# commands to wait for, and terminals send Alt/arrow sequences in one burst.
+KEYTIMEOUT=1
 
 # History settings
 HISTFILE=~/.zsh_history
@@ -19,10 +20,8 @@ SAVEHIST=100000
 
 setopt share_history        # Share history across sessions (implies append + incremental)
 setopt extended_history     # Save timestamps and durations
-setopt hist_ignore_all_dups # Remove older duplicate entries
+setopt hist_ignore_all_dups # Remove older duplicate entries (so no dups to expire or skip in search)
 setopt hist_ignore_space    # Don't store commands starting with a space
-setopt hist_expire_dups_first # Expire older duplicates first
-setopt hist_find_no_dups    # Don't show duplicate history entries in search
 setopt hist_save_no_dups    # Don't save duplicate entries
 setopt hist_reduce_blanks   # Remove extra blanks from commands
 setopt hist_verify          # Show command before executing from history
@@ -61,8 +60,16 @@ else
   zstyle ':fzf-tab:complete:(cd|z|__zoxide_z|ls):*' fzf-preview 'ls -1 --color=always $realpath'
 fi
 
+# zsh-autosuggestions: suggest from history, then completion; skip long
+# buffers (pastes); bind its widgets once instead of re-wrapping every prompt.
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+
 # Antidote plugin manager (completion, fzf-tab, autosuggestions, highlighting).
 # ~/.zsh_plugins.txt starts with ez-compinit, which runs compinit for us.
+# Autosuggestions and highlighting are kind:defer: they load just after the
+# first prompt appears.
 # Install: git clone --depth=1 https://github.com/mattmc3/antidote.git ~/sh/antidote
 if [ -f ~/sh/antidote/antidote.zsh ]; then
   source ~/sh/antidote/antidote.zsh
@@ -86,13 +93,6 @@ for key in "${terminfo[kcud1]}" '^[[B' '^[OB'; do
   [ -n "$key" ] && bindkey "$key" down-line-or-beginning-search
 done
 unset key
-
-if test -n "$KITTY_INSTALLATION_DIR"; then
-  export KITTY_SHELL_INTEGRATION="enabled"
-  autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
-  kitty-integration
-  unfunction kitty-integration
-fi
 
 # .zshrc is only sourced by interactive shells, so no interactivity guard needed.
 # liquidprompt, cloned to ~/sh/liquidprompt by setup/common.sh.

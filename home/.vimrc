@@ -1,13 +1,12 @@
 set nocompatible
 
-scriptencoding utf-8
+" encoding must be set before scriptencoding.
 set encoding=utf-8
+scriptencoding utf-8
 
 if has('termguicolors')
   set termguicolors
 endif
-
-filetype off
 
 " ==========================
 " Plugins (vim-plug)
@@ -27,20 +26,21 @@ if filereadable(s:plug_path)
   Plug 'tpope/vim-sleuth'                       " auto-detect indentation per file
   Plug 'tpope/vim-surround'                     " edit surrounding quotes/brackets/tags
   Plug 'tpope/vim-repeat'                       " make . repeat plugin maps (e.g. surround)
+  Plug 'christoomey/vim-tmux-navigator'         " Ctrl-h/j/k/l across vim splits and tmux panes
   Plug 'junegunn/fzf'                           " fzf vim plugin base (commands/runtimepath)
   Plug 'junegunn/fzf.vim'                       " :Files, :Rg, :Buffers, :Lines, ...
-  Plug 'editorconfig/editorconfig-vim'          " honor .editorconfig settings
   Plug 'reedes/vim-pencil'                      " prose-aware soft/hard wrap & motions
   Plug 'godlygeek/tabular'                       " align text / :TableFormat (vim-markdown dep)
   Plug 'preservim/vim-markdown'                 " rich Markdown: folding, :Toc, code fences
-  Plug 'morhetz/gruvbox'
   Plug 'joshdick/onedark.vim'
-  Plug 'tomasr/molokai'
-  Plug 'dracula/vim'
-  Plug 'sainnhe/everforest'
-  Plug 'sainnhe/gruvbox-material'
-  call plug#end()
+  call plug#end()                               " also turns on filetype plugins/indent and syntax
+else
+  filetype plugin indent on
+  syntax enable
 endif
+
+" Honor .editorconfig: built into Vim 9.0.1799+ (silent! on older Vims).
+silent! packadd! editorconfig
 
 " ==========================
 " vim-airline status line
@@ -78,7 +78,9 @@ augroup filetype_prose
 augroup END
 
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
-set timeoutlen=1000 ttimeoutlen=0
+" 400ms to finish a mapping (the jk/kj escapes below); 10ms for terminal
+" key codes, so Alt/arrow sequences don't split over SSH.
+set timeoutlen=400 ttimeoutlen=10
 
 " Set leader key to space
 let mapleader = " "
@@ -100,8 +102,8 @@ set number
 " Show file stats
 set ruler
 
-" Blink cursor on error instead of beeping (grr)
-set visualbell
+" No beep and no screen flash on errors.
+set belloff=all
 
 set cpoptions&vim
 
@@ -126,9 +128,6 @@ set hidden
 " Enable command completion
 set wildmenu
 set wildmode=full
-
-" Rendering
-set ttyfast
 
 " Status bar
 set laststatus=2
@@ -192,13 +191,14 @@ set showmatch
 " Don't blink when matching
 "set matchtime=0
 
-"" Change cursor shape based on the mode vim is in!
+"" Change cursor shape based on the mode vim is in (steady, not blinking,
+"" like the terminals' cursor_blink settings).
 " Insert mode - I-beam cursor
-let &t_SI = "\e[5 q"
+let &t_SI = "\e[6 q"
 " Replace mode - Underline cursor
-let &t_SR = "\e[3 q"
+let &t_SR = "\e[4 q"
 " Normal mode - Block cursor
-let &t_EI = "\e[1 q"
+let &t_EI = "\e[2 q"
 
 " Folding
 "set foldmethod=syntax
@@ -260,11 +260,8 @@ set shortmess+=I
 " Formatting
 "map <leader>q gqip
 
-" Easy window navigation
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
+" Window navigation: Ctrl-h/j/k/l is mapped by vim-tmux-navigator, which also
+" crosses into tmux panes.
 
 function! s:OpenFzf() abort
   if exists(':FZF')
@@ -287,7 +284,3 @@ command! W execute 'silent w !sudo tee % > /dev/null' | edit!
 " Quick saving with Ctrl+S
 nnoremap <C-s> :w<CR>
 inoremap <C-s> <Esc>:w<CR>a
-
-" Turn on filetype detection (plugins + indent) and syntax highlighting.
-filetype plugin indent on
-syntax enable

@@ -19,8 +19,6 @@ Session.vim
 # temporary
 .netrwhist
 *~
-# # auto-generated tag files
-tags
 
 # Webstorm
 .idea
@@ -36,6 +34,11 @@ tags
 
 # Compiled Python files
 *.pyc
+__pycache__/
+
+# mise's per-checkout overrides, meant to stay untracked
+mise.local.toml
+.mise.local.toml
 
 # Files that might appear on external disks
 .Spotlight-V100

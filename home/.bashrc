@@ -7,8 +7,10 @@ case $- in
   *) return ;;
 esac
 
-# History: ignore duplicates and space-prefixed commands, append across sessions.
-HISTCONTROL=ignoreboth
+# History: ignore space-prefixed commands, drop older duplicates, keep
+# timestamps, append across sessions.
+HISTCONTROL=ignoreboth:erasedups
+HISTTIMEFORMAT='%F %T '
 HISTSIZE=100000
 HISTFILESIZE=200000
 shopt -s histappend

@@ -9,12 +9,12 @@ general.import = ["~/.config/alacritty/gogh.toml"]
 padding = { x = 8, y = 8 }
 # Spread leftover space (from the grid not filling the window) evenly.
 dynamic_padding = true
-opacity = 1
+# Dark client-side title bar on GNOME (light by default).
+decorations_theme_variant = "Dark"
 
 [scrolling]
 # Alacritty's maximum.
 history = 100000
-multiplier = 3
 
 [font]
 size = 22.0

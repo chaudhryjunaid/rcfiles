@@ -2,6 +2,9 @@
 " Neovim daily terminal driver init.vim
 " ============================================================
 
+" Byte-compile and cache Lua modules: faster startup.
+lua vim.loader.enable()
+
 " ------------------------------------------------------------
 " Leader key: set before any <leader> mapping, which reads it when defined.
 " ------------------------------------------------------------
@@ -36,15 +39,14 @@ Plug 'junegunn/fzf.vim'
 
 " Git
 Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
+Plug 'lewis6991/gitsigns.nvim'
 
-" Editing improvements
-Plug 'tpope/vim-commentary'
+" Editing improvements (commenting, gc/gcc, is built in since Neovim 0.10)
 Plug 'tpope/vim-surround'
 Plug 'windwp/nvim-autopairs'
 
-" File navigation
-Plug 'preservim/nerdtree'
+" File navigation (loaded on first use)
+Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 
 " Better syntax / structure
 " main branch: needs Neovim 0.12+ (installed via mise), tree-sitter-cli and a
@@ -65,7 +67,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'lukas-reineke/indent-blankline.nvim'
 
 " Terminal integration
-Plug 'voldikss/vim-floaterm'
+Plug 'voldikss/vim-floaterm', { 'on': ['FloatermToggle', 'FloatermNew'] }
 Plug 'coder/claudecode.nvim'
 
 call plug#end()
@@ -91,19 +93,16 @@ nnoremap <leader>ab :ClaudeCodeAdd %<CR>
 xnoremap <leader>as :ClaudeCodeSend<CR>
 
 " ------------------------------------------------------------
-" Core behavior
+" Core behavior (hidden, autoread, history=10000, laststatus=2, ... are
+" already Neovim defaults)
 " ------------------------------------------------------------
-set nocompatible
 set cpoptions&vim
 filetype plugin indent on
 syntax enable
 
-set hidden
-set autoread
 set confirm
-set history=1000
+" Undo files go to the default ~/.local/state/nvim/undo/.
 set undofile
-set undodir=~/.local/share/nvim/undo
 set updatetime=300
 set timeoutlen=500
 set ttimeoutlen=10
@@ -117,8 +116,6 @@ silent! colorscheme onedark  " silent!: plugins aren't installed on first launch
 
 set number
 set relativenumber
-set ruler
-set laststatus=2
 set showcmd
 set noshowmode
 set cursorline
@@ -127,7 +124,6 @@ set scrolloff=5
 set sidescrolloff=8
 set colorcolumn=+1
 set pumheight=12
-set cmdheight=1
 
 " Make colorcolumn subtle
 highlight ColorColumn guibg=#222222 ctermbg=236
@@ -142,8 +138,8 @@ augroup END
 " ------------------------------------------------------------
 set ignorecase
 set smartcase
-set incsearch
-set hlsearch
+" Preview :s results live, with off-screen matches in a split.
+set inccommand=split
 
 " Clear search highlight with Esc
 nnoremap <silent> <Esc> :nohlsearch<CR><Esc>
@@ -151,8 +147,6 @@ nnoremap <silent> <Esc> :nohlsearch<CR><Esc>
 " ------------------------------------------------------------
 " Indentation
 " ------------------------------------------------------------
-set autoindent
-set smartindent
 set expandtab
 set tabstop=2
 set shiftwidth=2
@@ -162,9 +156,9 @@ set shiftround
 " ------------------------------------------------------------
 " Editing
 " ------------------------------------------------------------
-set backspace=indent,eol,start
 set mouse=a
-set clipboard=unnamedplus
+" Set after startup: finding the clipboard tool would otherwise slow it.
+lua vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 set splitbelow
 set splitright
 set virtualedit=block
@@ -178,7 +172,6 @@ set completeopt=menuone,noinsert,noselect
 " ------------------------------------------------------------
 " Wildmenu / command-line completion
 " ------------------------------------------------------------
-set wildmenu
 set wildmode=longest:full,full
 set wildignore+=*.o,*.obj,*.pyc,*.class
 set wildignore+=*/node_modules/*,*/.git/*,*/dist/*,*/build/*
@@ -187,7 +180,9 @@ set wildignore+=*/target/*,*/.next/*,*/coverage/*
 " ------------------------------------------------------------
 " Folding
 " ------------------------------------------------------------
-set foldmethod=indent
+" Treesitter folds (no folds in buffers without a parser); all open at start.
+set foldmethod=expr
+set foldexpr=v:lua.vim.treesitter.foldexpr()
 set foldlevelstart=99
 
 " ------------------------------------------------------------
@@ -245,13 +240,8 @@ nnoremap <leader>fh :History<CR>
 nnoremap <leader>fc :Commands<CR>
 nnoremap <leader>fm :Marks<CR>
 
-" FZF layout
+" FZF layout ($FZF_DEFAULT_COMMAND comes from ~/.shellrc.sh)
 let g:fzf_layout = { 'down': '40%' }
-
-" Use ripgrep if available
-if executable('rg')
-  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git/*"'
-endif
 
 " ------------------------------------------------------------
 " NERDTree
@@ -279,14 +269,29 @@ nnoremap <leader>gc :Git commit<CR>
 nnoremap <leader>gp :Git push<CR>
 nnoremap <leader>gl :Git log<CR>
 
-let g:gitgutter_enabled = 1
-let g:gitgutter_map_keys = 0
-
-nnoremap ]c :GitGutterNextHunk<CR>
-nnoremap [c :GitGutterPrevHunk<CR>
-nnoremap <leader>hs :GitGutterStageHunk<CR>
-nnoremap <leader>hu :GitGutterUndoHunk<CR>
-nnoremap <leader>hp :GitGutterPreviewHunk<CR>
+" gitsigns: ]c/[c next/previous hunk (plain ]c/[c in diff mode),
+" <leader>hs stage, <leader>hu reset, <leader>hp preview.
+lua << EOF
+pcall(function()
+  require("gitsigns").setup({
+    on_attach = function(buf)
+      local gs = require("gitsigns")
+      local map = function(lhs, rhs, desc)
+        vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
+      end
+      map("]c", function()
+        if vim.wo.diff then vim.cmd.normal({ "]c", bang = true }) else gs.nav_hunk("next") end
+      end, "Next hunk")
+      map("[c", function()
+        if vim.wo.diff then vim.cmd.normal({ "[c", bang = true }) else gs.nav_hunk("prev") end
+      end, "Previous hunk")
+      map("<leader>hs", gs.stage_hunk, "Stage hunk")
+      map("<leader>hu", gs.reset_hunk, "Reset hunk")
+      map("<leader>hp", gs.preview_hunk, "Preview hunk")
+    end,
+  })
+end)
+EOF
 
 " ------------------------------------------------------------
 " Airline: dashboard-style statusline
@@ -353,8 +358,10 @@ EOF
 let g:floaterm_width = 0.9
 let g:floaterm_height = 0.85
 let g:floaterm_position = 'center'
-let g:floaterm_keymap_toggle = '<F12>'
-
+" Mapped here, not via g:floaterm_keymap_toggle, since the plugin loads on
+" first use.
+nnoremap <silent> <F12> :FloatermToggle<CR>
+tnoremap <silent> <F12> <C-\><C-n>:FloatermToggle<CR>
 nnoremap <leader>tt :FloatermToggle<CR>
 " Double Esc leaves terminal mode; a single Esc still reaches TUIs running in
 " the terminal (Claude Code, fzf, htop, nested vim).
@@ -496,9 +503,6 @@ nnoremap <leader>ev :edit $MYVIMRC<CR>
 " Toggle relative number (<leader>rn is LSP rename)
 nnoremap <leader>tn :set relativenumber!<CR>
 
-" Toggle paste mode, useful for terminal paste issues
-nnoremap <leader>pp :set paste!<CR>
-
 " Toggle spellcheck
 nnoremap <leader>sp :setlocal spell! spelllang=en_us<CR>
 
@@ -541,4 +545,3 @@ augroup END
 "set nobackup
 "set nowritebackup
 set noswapfile
-set backupdir=~/.local/share/nvim/backup

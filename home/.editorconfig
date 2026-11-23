@@ -1,21 +1,31 @@
 root = true
 
-# Unix-style newlines with a newline ending every file
+# Every file: Unix newlines, final newline, UTF-8, no trailing whitespace,
+# 2-space indents.
 [*]
 end_of_line = lf
 insert_final_newline = true
-
-
-# Matches multiple files with brace expansion notation
-# Set default charset
-[*.{sh,lua,py,js,jsx,ts,tsx,html,css,es6,sass}]
 charset = utf-8
 trim_trailing_whitespace = true
-tab_width = 2
+indent_style = space
 indent_size = 2
+tab_width = 2
+
+# Code: wrap guide at 120.
+[*.{sh,lua,py,js,jsx,ts,tsx,html,css,es6,sass}]
 max_line_length = 120
 
 # PEP 8 indentation (overrides the 2 above).
 [*.py]
-tab_width = 4
 indent_size = 4
+tab_width = 4
+
+# Tabs where the language or tool requires them.
+[{Makefile,*.mk,*.go}]
+indent_style = tab
+indent_size = 4
+tab_width = 4
+
+# Two trailing spaces are a Markdown line break.
+[*.md]
+trim_trailing_whitespace = false

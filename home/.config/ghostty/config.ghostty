@@ -6,7 +6,7 @@
 # Set font-family/font-size with the repo's set-font.sh. Ghostty bundles
 # JetBrains Mono and the Nerd Font symbols, so icons render whatever the
 # family, and a missing font falls back to JetBrains Mono.
-font-family = JetBrains Mono
+font-family = Aglet Mono
 font-size = 20
 
 # ── THEME ────────────────────────────────────────────────────────────────────

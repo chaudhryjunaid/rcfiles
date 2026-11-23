@@ -9,14 +9,6 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
-# if running bash
-if [ -n "$BASH_VERSION" ]; then
-    # include .bashrc if it exists
-    if [ -f "$HOME/.bashrc" ]; then
-	. "$HOME/.bashrc"
-    fi
-fi
-
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
@@ -33,4 +25,13 @@ fi
 # plain POSIX export, safe for sh/dash, which may source this file.
 if command -v mise >/dev/null 2>&1; then
     eval "$(mise activate bash --shims)"
+fi
+
+# if running bash, include .bashrc last, so the PATH above is already in
+# place for its `command -v` checks and its `mise activate` runs after the
+# shims (activate must come after them to take precedence).
+if [ -n "$BASH_VERSION" ]; then
+    if [ -f "$HOME/.bashrc" ]; then
+	. "$HOME/.bashrc"
+    fi
 fi

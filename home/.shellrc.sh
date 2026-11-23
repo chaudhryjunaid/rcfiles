@@ -16,7 +16,9 @@ alias nvi='nvim'
 # category and spews setlocale warnings where en_US.UTF-8 isn't generated.
 export LANG='en_US.UTF-8'
 
-export LESS="-FRX"
+# -F quits if the text fits one screen (less >= 530 needs no -X for that),
+# -R passes colors through, -i makes search smart-case.
+export LESS="-FRi"
 export PAGER='less'
 export MANPAGER="less -R --use-color -Dd+r -Du+b"
 # disable annoying docker menu at the bottom
@@ -24,10 +26,6 @@ export COMPOSE_MENU=false
 
 export NODE_REPL_HISTORY=~/.node_history
 export NODE_REPL_HISTORY_SIZE='32768'
-export NODE_REPL_MODE='sloppy'
-
-# Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
-export PYTHONIOENCODING='UTF-8'
 
 # Go: keep GOPATH out of ~ (XDG layout). `go install` puts binaries in
 # $GOPATH/bin; the module cache is re-downloadable, so it lives under ~/.cache
@@ -38,6 +36,8 @@ export GOMODCACHE="$HOME/.cache/go/mod"
 export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$GOPATH/bin:$PATH"
 # mise puts the tools from ~/.config/mise/config.toml (neovim, node, go, ...)
 # on PATH, ahead of system ones, and switches versions per project on cd.
+# The full hook (not --shims) because it also sets JAVA_HOME and GOROOT and
+# loads mise.toml [env]; it costs ~18ms at startup.
 # Activated before anything below that checks `command -v`.
 if command -v mise >/dev/null 2>&1; then
   if [ -n "${ZSH_VERSION:-}" ]; then
@@ -53,6 +53,9 @@ command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden
 # Alt-C: fd skips what .gitignore lists (venvs, build output), unlike fzf's walker.
 command -v fd >/dev/null 2>&1 && export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border'
+# Previews: file contents for Ctrl-T, a directory tree for Alt-C.
+command -v bat >/dev/null 2>&1 && export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range=:300 {}'"
+command -v eza >/dev/null 2>&1 && export FZF_ALT_C_OPTS="--preview 'eza --tree --level=2 --color=always {}'"
 
 # git aliases (a curated subset of the oh-my-zsh `git` plugin, vendored so we
 # don't need a framework just for these).
@@ -136,7 +139,8 @@ else
   alias la='ls -lah'
 fi
 alias grep='grep --color=auto'
-alias rm='rm -i'
+# -I asks once, and only for more than 3 files or a recursive delete.
+alias rm='rm -I'
 alias cp='cp -i'
 alias mv='mv -i'
 alias ..='cd ..'
@@ -166,7 +170,18 @@ killport() {
     echo "Usage: killport <port>"
     return 1
   fi
-  lsof -ti :"$1" | xargs -r kill -9
+  local pids
+  pids=$(lsof -ti :"$1")
+  if [ -z "$pids" ]; then
+    echo "Nothing is listening on port $1"
+    return 1
+  fi
+  # SIGTERM first so servers can shut down cleanly; SIGKILL what's left.
+  echo "$pids" | xargs kill
+  sleep 1
+  pids=$(lsof -ti :"$1")
+  [ -n "$pids" ] && echo "$pids" | xargs kill -9
+  return 0
 }
 
 extract() {

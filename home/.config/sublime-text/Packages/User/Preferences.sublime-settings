@@ -4,14 +4,9 @@
 	"font_face": "Cascadia Mono",
 	"font_size": 15,
 	// The font size set when using "Reset Size"
-	"default_font_size": 22,
+	"default_font_size": 15,
 	"theme": "Adaptive.sublime-theme",
 	"color_scheme": "Mariana.sublime-color-scheme",
-	"ignored_packages":
-	[
-		"Vintage",
-	],
-	"index_files": true,
 	"hardware_acceleration": "opengl",
 	"hot_exit": "only_on_quit",
 	"hot_exit_projects": false,
@@ -24,6 +19,7 @@
 	"highlight_line": true,
 	"scroll_past_end": false,
 	"ensure_newline_at_eof_on_save": true,
+	"trim_trailing_white_space_on_save": "not_to_caret",
 	"save_on_focus_lost": true,
 	"auto_complete_commit_on_tab": true,
 }

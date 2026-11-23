@@ -135,7 +135,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **antidote** plugins, listed in `.zsh_plugins.txt` (order matters):
   zsh-completions, ez-compinit (runs compinit), **fzf-tab** (replaces the
   completion menu with an fzf picker), **zsh-autosuggestions** and
-  **zsh-syntax-highlighting** (last)
+  **fast-syntax-highlighting** (last; both deferred until after the first
+  prompt)
 - **node** — via mise (`node = "26"` in the mise config)
 - **bat** — `cat` with syntax highlighting; `bat` is aliased to
   `bat --paging=never` (`cat` itself is not aliased)
