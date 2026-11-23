@@ -6,15 +6,15 @@
 # Set font-family/font-size with the repo's set-font.sh. Ghostty bundles
 # JetBrains Mono and the Nerd Font symbols, so icons render whatever the
 # family, and a missing font falls back to JetBrains Mono.
-font-family = Aglet Mono
-font-size = 22
+font-family = JetBrains Mono
+font-size = 20
 
 # ── THEME ────────────────────────────────────────────────────────────────────
 # Default theme, used until one is picked. To switch: install with the
 # repo's gogh script, then run `ghostty +list-themes`, press w to save the
 # pick to auto/theme.ghostty (per machine, untracked; included at the end
 # of this file so it wins), and reload.
-theme = Gogh Xcode WWDC
+theme = Gogh Papercolor Dark
 
 # ── WINDOW ───────────────────────────────────────────────────────────────────
 window-padding-x = 8
@@ -29,7 +29,7 @@ cursor-style-blink = false
 
 # ── SCROLLBACK ───────────────────────────────────────────────────────────────
 # Per terminal; the default is 50 MB.
-scrollback-limit-bytes = 100000000
+scrollback-limit-bytes = 10000000
 
 # ── MOUSE / CLIPBOARD ────────────────────────────────────────────────────────
 mouse-hide-while-typing = true
