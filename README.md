@@ -11,8 +11,9 @@ curl -fsSL https://raw.githubusercontent.com/chaudhryjunaid/rcfiles/master/run.s
 if it's missing, clones the repo to `~/setup/rcfiles` (set `RCFILES_DIR` to
 put it elsewhere; it has to stay there, since the dotfiles are linked into it)
 or pulls an existing clone, then runs `install.sh`, `setup/ensure-fonts.sh`,
-installs JetBrainsMono Nerd Font if it's missing, and sets every app to it
-with `set-font.sh`. It's safe to re-run.
+installs JetBrainsMono Nerd Font if it's missing, and, on the first run (a
+fresh clone) only, sets every app to it with `set-font.sh`. It's safe to
+re-run; later runs leave each machine's font settings alone.
 
 From a clone, run the steps yourself:
 ```
@@ -30,8 +31,8 @@ setup/git-identity.sh    # write your git name/email to ~/.gitconfig.local
 ```
 Use `./install.sh --skip-deps` to only relink and set the identity; that
 works on any system. `--skip-identity` skips the identity prompt (it's only
-asked while `~/.gitconfig.local` still has the placeholder that `link.sh`
-writes). Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
+asked while `~/.gitconfig.local` has no identity). `.gitconfig` sets
+`user.useConfigOnly`, so git refuses to commit until one is set. Run `./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before
 committing.
 
 GUI apps aren't installed by the setup scripts. `gui-apps.manifest.csv` lists
@@ -144,8 +145,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
   and expects the **JetBrainsMono Nerd Font**; not installed by the setup
   script (see `gui-apps.manifest.csv`)
 - **Ghostty** — terminal emulator; config is linked to
-  `~/.config/ghostty/config.ghostty` (built-in `Cobalt2` theme; bundles its
-  own Nerd Font symbols, so any font works); check it with
+  `~/.config/ghostty/config.ghostty` (Gogh's `Papercolor Dark` theme, tracked
+  in `themes/`; bundles its own Nerd Font symbols, so any font works); check it with
   `ghostty +validate-config`; not installed by the setup script (see
   `gui-apps.manifest.csv`)
 - **Alacritty** — terminal emulator; config is linked to

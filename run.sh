@@ -2,8 +2,11 @@
 
 # run.sh — set up a machine straight from GitHub: clone this repo (or update
 # the clone), run install.sh, update the fonts (setup/ensure-fonts.sh, and
-# install JetBrainsMono Nerd Font if it's missing), then set kitty, Alacritty
-# and Sublime Text to it (set-font.sh). Safe to re-run.
+# install JetBrainsMono Nerd Font if it's missing), then, on the first run
+# only (a fresh clone), set kitty, Alacritty, Ghostty and Sublime Text to it
+# (set-font.sh). Later runs leave the font settings alone, since set-font.sh
+# edits tracked files and a machine's own pick shouldn't be reset. Safe to
+# re-run.
 #
 # The clone goes to $RCFILES_DIR (default ~/setup/rcfiles) and has to stay
 # there: link.sh symlinks the dotfiles in $HOME into it.
@@ -39,15 +42,19 @@ main() {
         fi
     fi
 
+    local fresh=0
     if [ -d "$DIR/.git" ]; then
         log "Updating $DIR"
-        git -C "$DIR" pull --ff-only || warn "couldn't update $DIR; using it as is"
+        # --autostash: local edits (a font set-font.sh picked, say) don't block
+        # the update.
+        git -C "$DIR" pull --ff-only --autostash || warn "couldn't update $DIR; using it as is"
     elif [ -e "$DIR" ] && [ -n "$(ls -A "$DIR")" ]; then
         die "$DIR is in the way; move it or set RCFILES_DIR to clone elsewhere."
     else
         log "Cloning rcfiles to $DIR"
         mkdir -p "$(dirname "$DIR")"
         git clone "$REPO_URL" "$DIR"
+        fresh=1
     fi
 
     "$DIR/install.sh"
@@ -68,8 +75,12 @@ main() {
         "$DIR/setup/install-fonts.sh" --nerd JetBrainsMono || warn "couldn't install $FONT"
     fi
 
-    log "Setting every app to $FONT $FONT_SIZE (set-font.sh)"
-    "$DIR/set-font.sh" --all --apply "$FONT" "$FONT_SIZE"
+    if [ "$fresh" -eq 1 ]; then
+        log "Setting every app to $FONT $FONT_SIZE (set-font.sh)"
+        "$DIR/set-font.sh" --all --apply "$FONT" "$FONT_SIZE"
+    else
+        log "Leaving the font settings alone (existing clone); change them with $DIR/set-font.sh"
+    fi
 }
 
 # Piped into bash, stdin is this script: give the prompts in install.sh (the

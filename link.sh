@@ -121,15 +121,18 @@ EOF
 fi
 
 # Untracked per-machine git identity (included by ~/.gitconfig); see
-# setup/git-identity.sh.
+# setup/git-identity.sh. No placeholder identity: with user.useConfigOnly set
+# in .gitconfig, git refuses to commit until a real one is written here.
 GITLOCAL="$HOME/.gitconfig.local"
 if [ ! -f "$GITLOCAL" ]; then
-    echo "create $GITLOCAL (placeholder identity)"
+    echo "create $GITLOCAL (no identity yet)"
     if [ "$DRY_RUN" -eq 0 ]; then
         cat > "$GITLOCAL" <<'EOF'
-[user]
-	name = Your Name
-	email = your.email@example.com
+# Per-machine git settings (untracked), included by ~/.gitconfig.
+# Set the identity with setup/git-identity.sh, which writes:
+# [user]
+# 	name = ...
+# 	email = ...
 EOF
     fi
 fi

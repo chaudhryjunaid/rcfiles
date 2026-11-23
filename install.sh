@@ -41,9 +41,13 @@ fi
 echo "### Linking dotfiles"
 "$REPO/link.sh"
 
-# Only prompt for an identity while ~/.gitconfig.local still has the placeholder.
+# Only prompt for an identity while ~/.gitconfig.local has none (or still has
+# the "Your Name" placeholder older versions of link.sh wrote).
+GITLOCAL="$HOME/.gitconfig.local"
+git_name=$(git config -f "$GITLOCAL" user.name 2>/dev/null || true)
+git_email=$(git config -f "$GITLOCAL" user.email 2>/dev/null || true)
 if [ "$SKIP_IDENTITY" -eq 0 ] \
-    && [ "$(git config -f "$HOME/.gitconfig.local" user.name 2>/dev/null || true)" = "Your Name" ]; then
+    && { [ -z "$git_name" ] || [ -z "$git_email" ] || [ "$git_name" = "Your Name" ]; }; then
     echo "### Setting git identity"
     "$REPO/setup/git-identity.sh"
 fi

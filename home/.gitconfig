@@ -1,7 +1,9 @@
 # Per-machine identity (user.name/email) lives here, untracked.
-# Created by link.sh from a template if missing.
+# Created empty by link.sh if missing; setup/git-identity.sh fills it in.
 [include]
   path = ~/.gitconfig.local
+[user]
+  useConfigOnly = true          # No identity set? Refuse to commit, don't guess one
 [core]
   editor = nvim
   excludesfile = ~/.gitignore_global

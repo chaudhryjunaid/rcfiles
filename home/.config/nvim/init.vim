@@ -3,6 +3,12 @@
 " ============================================================
 
 " ------------------------------------------------------------
+" Leader key: set before any <leader> mapping, which reads it when defined.
+" ------------------------------------------------------------
+let mapleader=" "
+let maplocalleader=" "
+
+" ------------------------------------------------------------
 " vim-plug bootstrap
 " ------------------------------------------------------------
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
@@ -69,14 +75,17 @@ Plug 'coder/claudecode.nvim'
 
 call plug#end()
 
+" pcall: plugins aren't installed on first launch.
 lua << EOF
-require("claudecode").setup({
-  auto_start = true,
+pcall(function()
+  require("claudecode").setup({
+    auto_start = true,
 
-  terminal = {
-    provider = "none",
-  },
-})
+    terminal = {
+      provider = "none",
+    },
+  })
+end)
 EOF
 
 
@@ -185,12 +194,6 @@ set wildignore+=*/target/*,*/.next/*,*/coverage/*
 " ------------------------------------------------------------
 set foldmethod=indent
 set foldlevelstart=99
-
-" ------------------------------------------------------------
-" Leader key
-" ------------------------------------------------------------
-let mapleader=" "
-let maplocalleader=" "
 
 " ------------------------------------------------------------
 " Basic mappings
@@ -484,8 +487,8 @@ nnoremap <leader>sv :source $MYVIMRC<CR>
 " Edit config
 nnoremap <leader>ev :edit $MYVIMRC<CR>
 
-" Toggle relative number
-nnoremap <leader>rn :set relativenumber!<CR>
+" Toggle relative number (<leader>rn is LSP rename)
+nnoremap <leader>tn :set relativenumber!<CR>
 
 " Toggle paste mode, useful for terminal paste issues
 nnoremap <leader>pp :set paste!<CR>
