@@ -567,9 +567,9 @@ local plugins = {
       if vim.fn.executable("tree-sitter") == 1 then
         require("nvim-treesitter").install({
           "bash", "c", "cpp", "css", "diff", "dockerfile", "git_rebase",
-          "gitcommit", "go", "html", "javascript", "json", "lua", "markdown",
-          "markdown_inline", "python", "regex", "toml", "tsx", "typescript",
-          "vim", "vimdoc", "yaml",
+          "gitcommit", "go", "html", "java", "javascript", "json", "lua",
+          "markdown", "markdown_inline", "python", "regex", "rust", "sql",
+          "toml", "tsx", "typescript", "vim", "vimdoc", "xml", "yaml",
         })
       end
 
