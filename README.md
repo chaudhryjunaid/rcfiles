@@ -143,8 +143,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
   **fast-syntax-highlighting** (last; both deferred until after the first
   prompt)
 - **node** — via mise (`node = "26"` in the mise config)
-- **bat** — `cat` with syntax highlighting; `bat` is aliased to
-  `bat --paging=never` (`cat` itself is not aliased)
+- **bat** — `cat` with syntax highlighting; `~/.config/bat/config` sets its
+  theme (TwoDark), style and no pager (`cat` itself is not aliased)
 - **eza** — modern `ls`; backs the `l`/`ll`/`la`/`lt` aliases when present
   (they fall back to plain `ls` otherwise; `ls` itself stays GNU `ls`) and is
   used for the `cd` completion preview in fzf-tab
@@ -183,6 +183,11 @@ liquidprompt are cloned from GitHub into `~/sh`.
   (e.g. `home/.config/nvim/init.lua` → `~/.config/nvim/init.lua`). To add a
   config, drop it in at its home path and rerun `./link.sh`.
 - `home/.shellrc.sh` — env, aliases and functions shared by bash and zsh
+- `home/.inputrc` — readline (bash): case-insensitive completion, matches
+  listed on the first Tab, Up/Down search history by the typed prefix
+- `home/.config/ripgrep/config` — smart case and hidden files for `rg`
+  typed at the prompt (via an alias; scripts and tools keep rg's defaults)
+- `home/.config/bat/config` — bat's theme, style and no pager
 - `home/.config/fontconfig/conf.d/60-hide-noto-scripts.conf` — hides
   Ubuntu's ~200 per-script Noto fonts from every font list (and from
   fallback: only US English is needed), keeping Noto Sans/Serif, the mono,

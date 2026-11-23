@@ -1,0 +1,12 @@
+# bat defaults. Symlinked to ~/.config/bat/config by link.sh; flags given on
+# the command line (like fzf's preview `bat -n`) override these.
+
+# One Dark, matching nvim and the terminal themes.
+--theme="TwoDark"
+
+# Line numbers, git change markers and the file name header.
+--style="numbers,changes,header"
+
+# Print straight to the terminal like cat (pipe into less when you want to
+# page); this replaces the old `alias bat='bat --paging=never'`.
+--paging=never

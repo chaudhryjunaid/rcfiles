@@ -162,8 +162,13 @@ alias dcl='docker compose logs -f'
 alias please='sudo'
 alias kssh="kitty +kitten ssh"
 
-command -v rg >/dev/null 2>&1 && alias rgi='rg -i'
-command -v bat >/dev/null 2>&1 && alias bat='bat --paging=never'
+# rg typed at the prompt uses ~/.config/ripgrep/config (smart case, hidden
+# files). Set per command, not exported, so tools that run rg keep its defaults.
+if command -v rg >/dev/null 2>&1; then
+  alias rg='RIPGREP_CONFIG_PATH=$HOME/.config/ripgrep/config rg'
+  alias rgi='rg -i'
+fi
+# bat's defaults (theme, style, no pager) are in ~/.config/bat/config.
 
 killport() {
   if [ -z "$1" ]; then
