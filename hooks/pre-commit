@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# hooks/pre-commit — check what's about to be committed (the staged files,
+# not the working tree):
+#   - whitespace errors and leftover conflict markers in the staged changes
+#   - no staged file over 512 KB
+#   - ./lint.sh, run on a copy of the staged tree
+# install.sh enables it (git config core.hooksPath hooks). To skip it for one
+# commit: git commit --no-verify.
+
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+# Commits from a GUI may not have mise's tools (shellcheck, ...) on PATH.
+export PATH="$HOME/.local/bin:$PATH"
+if ! command -v shellcheck >/dev/null 2>&1 && command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate bash --shims)"
+fi
+
+if git rev-parse --verify -q HEAD >/dev/null; then
+    against=HEAD
+else
+    against=$(git hash-object -t tree /dev/null)   # first commit
+fi
+
+status=0
+
+echo "==> staged changes"
+if ! git diff --cached --check "$against" --; then
+    echo "    FAIL: whitespace errors or conflict markers (above)" >&2
+    status=1
+fi
+while IFS= read -r -d '' path; do
+    size=$(git cat-file -s ":$path")
+    if [ "$size" -gt 524288 ]; then
+        echo "    FAIL: $path is $((size / 1024)) KB; keep big files out of a dotfiles repo" >&2
+        status=1
+    fi
+done < <(git diff --cached --name-only --diff-filter=AM -z "$against" --)
+
+# lint.sh checks the directory it's in, so give it the staged versions of
+# every file (and of lint.sh itself).
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+git checkout-index --all --prefix="$tmp/"
+if [ -x "$tmp/lint.sh" ]; then
+    "$tmp/lint.sh" || status=1
+else
+    echo "    FAIL: lint.sh isn't staged (or isn't executable)" >&2
+    status=1
+fi
+
+if [ "$status" -ne 0 ]; then
+    echo >&2
+    echo "pre-commit: commit aborted. Fix the above and re-stage, or skip the checks once with git commit --no-verify." >&2
+fi
+exit "$status"

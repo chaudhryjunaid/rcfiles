@@ -32,8 +32,19 @@ setup/git-identity.sh    # write your git name/email to ~/.gitconfig
 Use `./install.sh --skip-deps` to only relink and set the identity; that
 works on any system. `--skip-identity` skips the identity prompt (it's only
 asked while `~/.gitconfig` has no identity). The tracked git config sets
-`user.useConfigOnly`, so git refuses to commit until one is set. Run
-`./lint.sh` (shellcheck + `bash -n`/`zsh -n`) before committing.
+`user.useConfigOnly`, so git refuses to commit until one is set.
+
+Commits to this repo run `hooks/pre-commit` (`install.sh` sets
+`core.hooksPath`; on an older clone run `git config core.hooksPath hooks`).
+It checks the staged files, not the working tree: whitespace errors and
+conflict markers in the staged changes, no file over 512 KB, then
+`./lint.sh` on a copy of the staged tree. `lint.sh` shellchecks the scripts
+and rc files, parses the git, TOML, Sublime, tmux, Ghostty, kitty and nvim
+configs (each one only if that app is installed), checks the manifests'
+columns, and checks hygiene for a public repo: script modes, no symlinks or
+per-machine files under `home/`, no real hosts in the ssh config, no private
+keys or tokens. Run `./lint.sh` by hand any time; skip the hook once with
+`git commit --no-verify`.
 
 GUI apps aren't installed by the setup scripts. `gui-apps.manifest.csv` lists
 the ones I use on a GNOME desktop (a snapshot of my main machine taken
@@ -187,8 +198,9 @@ liquidprompt are cloned from GitHub into `~/sh`.
   install by hand
 - `extra-install.sh` — optional: install the apps from both manifests that
   the distro's own repos have (their `ubuntu`/`fedora` column)
-- `lint.sh` — shellcheck the scripts, syntax-check the rc files (shellcheck
-  comes from mise)
+- `lint.sh` — shellcheck the scripts and rc files, parse the app configs,
+  check the manifests and repo hygiene (shellcheck comes from mise)
+- `hooks/pre-commit` — runs `lint.sh` on the staged files before each commit
 - `set-font.sh` — set the font family and size in the kitty, alacritty,
   ghostty and Sublime Text configs, e.g. `./set-font.sh --all jetbrains 14`;
   the font is an alias (`--help` lists them), an installed family name, or
@@ -215,4 +227,3 @@ liquidprompt are cloned from GitHub into `~/sh`.
   `~/.gitconfig.local`; `link.sh` moves that file to `~/.gitconfig`.)
 - The prompt is liquidprompt, configured by `~/.liquidpromptrc`.
 - vim plugins install automatically on first launch via vim-plug.
-

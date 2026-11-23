@@ -2,7 +2,7 @@
 
 # install.sh — set up a machine end to end:
 #   1. install dependencies  (setup/<distro>.sh, then setup/common.sh)
-#   2. symlink the dotfiles  (link.sh)
+#   2. symlink the dotfiles  (link.sh), enable the pre-commit hook
 #   3. set the git identity  (setup/git-identity.sh), unless already set
 # Every step is safe to re-run. Step 1 supports Ubuntu and Fedora (and their
 # derivatives); with --skip-deps the rest works on any system.
@@ -40,6 +40,9 @@ fi
 
 echo "### Linking dotfiles"
 "$REPO/link.sh"
+
+# Commits to this repo run hooks/pre-commit (lint.sh on the staged files).
+git -C "$REPO" config core.hooksPath hooks
 
 # Only prompt for an identity while ~/.gitconfig (untracked) has none, or
 # still has the "Your Name" placeholder older versions of link.sh wrote.

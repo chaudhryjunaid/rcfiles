@@ -50,4 +50,3 @@ else
     log "Installing mise"
     curl -fsSL https://mise.run | sh
 fi
-

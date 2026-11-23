@@ -517,7 +517,7 @@ set shortmess+=c
 
 set linebreak
 set breakindent
-set showbreak=↪\ 
+let &showbreak = "↪ "   " (a :set would need a trailing escaped space)
 set wrap
 
 " ----------------------------
@@ -542,4 +542,3 @@ augroup END
 "set nowritebackup
 set noswapfile
 set backupdir=~/.local/share/nvim/backup
-
