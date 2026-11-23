@@ -121,7 +121,7 @@ fi
 echo "==> app configs"
 if has tmux; then
     # Parse only (-n); a throwaway server that exits right after.
-    tmux -L "lint-$$" -f /dev/null start-server \; source-file -n home/.tmux.conf </dev/null || status=1
+    tmux -L "lint-$$" -f /dev/null start-server \; source-file -n home/.config/tmux/tmux.conf </dev/null || status=1
 else
     skip "tmux not installed"
 fi

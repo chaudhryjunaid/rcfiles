@@ -139,7 +139,7 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **liquidprompt** — feature-rich prompt, cloned from its `stable` branch
   (the latest release) to `~/sh/liquidprompt` by the setup script; update it
   with `git -C ~/sh/liquidprompt pull`. Tuned in
-  `~/.liquidpromptrc` to show git/VCS state, runtime, jobs, load, battery,
+  `~/.config/liquidpromptrc` to show git/VCS state, runtime, jobs, load, battery,
   virtualenv, return code and more
 - **antidote** plugins, listed in `.zsh_plugins.txt` (order matters):
   zsh-completions, ez-compinit (runs compinit), **fzf-tab** (replaces the
@@ -243,7 +243,7 @@ liquidprompt are cloned from GitHub into `~/sh`.
   `git lfs install` or git GUIs write, which keeps those out of the repo.
   (Older setups linked `~/.gitconfig` into the repo and kept the identity in
   `~/.gitconfig.local`; `link.sh` moves that file to `~/.gitconfig`.)
-- The prompt is liquidprompt, configured by `~/.liquidpromptrc`.
+- The prompt is liquidprompt, configured by `~/.config/liquidpromptrc`.
 - nvim plugins install automatically on first launch via lazy.nvim, at the
   commits in `lazy-lock.json`. `:Lazy update` upgrades them and rewrites the
   lockfile in this checkout (commit it); `:Lazy restore` goes back to the

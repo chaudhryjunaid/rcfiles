@@ -15,11 +15,10 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- ------------------------------------------------------------
--- Core behavior (hidden, autoread, history=10000, laststatus=2, filetype
--- plugin indent on, syntax on, ... are already Neovim defaults)
+-- Core behavior (hidden, autoread, history=10000, laststatus=2, showcmd,
+-- filetype plugin indent on, syntax on, true color and dark-background
+-- detection, ... are already Neovim defaults)
 -- ------------------------------------------------------------
-vim.cmd("set cpoptions&vim")
-
 vim.o.confirm = true
 -- Undo files go to the default ~/.local/state/nvim/undo/.
 vim.o.undofile = true
@@ -31,12 +30,9 @@ vim.o.swapfile = false
 -- ------------------------------------------------------------
 -- UI
 -- ------------------------------------------------------------
-vim.o.termguicolors = true
-vim.o.background = "dark"
 
 vim.o.number = true
 vim.o.relativenumber = true
-vim.o.showcmd = true
 vim.o.showmode = false -- lualine shows the mode
 vim.o.cursorline = true
 vim.o.signcolumn = "yes"
@@ -45,7 +41,6 @@ vim.o.sidescrolloff = 8
 vim.o.colorcolumn = "+1"
 vim.o.pumheight = 12
 vim.o.showtabline = 2 -- lualine's buffer line
-vim.opt.shortmess:append("c")
 
 -- Wrapping / text files
 vim.o.linebreak = true
@@ -80,8 +75,6 @@ vim.schedule(function() vim.o.clipboard = "unnamedplus" end)
 vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.virtualedit = "block"
-vim.o.formatoptions = "crqnj"
-vim.o.completeopt = "menuone,noinsert,noselect"
 
 -- Wildmenu / command-line completion
 vim.o.wildmode = "longest:full,full"
@@ -432,10 +425,15 @@ local prose = { markdown = true, text = true, gitcommit = true, help = true, mai
 local plugins = {
   -- Theme (the only one used)
   {
-    "joshdick/onedark.vim",
+    -- Lua port of One Dark, with treesitter and LSP highlight groups.
+    "navarasu/onedark.nvim",
     lazy = false,
     priority = 1000,
-    config = function() pcall(vim.cmd.colorscheme, "onedark") end,
+    config = function()
+      local onedark = require("onedark")
+      onedark.setup({ style = "dark" })
+      onedark.load()
+    end,
   },
 
   -- Statusline and buffer line
@@ -617,7 +615,7 @@ local plugins = {
     end,
   },
 
-  -- Ctrl-h/j/k/l across nvim splits and tmux panes (see ~/.tmux.conf)
+  -- Ctrl-h/j/k/l across nvim splits and tmux panes (see ~/.config/tmux/tmux.conf)
   "christoomey/vim-tmux-navigator",
 
   -- Press <leader> (or g, ], z, ...) and wait: a popup lists the next keys.

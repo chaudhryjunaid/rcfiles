@@ -30,6 +30,7 @@
   default = current
   autoSetupRemote = true  # Auto-create remote branch on first push
   followTags = true       # Push annotated tags that point at pushed commits
+  useForceIfIncludes = true  # --force-with-lease refuses if you haven't seen the remote's commits
 [rebase]
   autoStash = true              # Auto-stash/unstash during rebase
   updateRefs = true             # Update dependent branches

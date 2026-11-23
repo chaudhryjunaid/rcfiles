@@ -12,10 +12,6 @@ alias v='nvim'
 alias nv='nvim'
 alias nvi='nvim'
 
-# Prefer US English and use UTF-8. LANG only: exporting LC_ALL overrides every
-# category and spews setlocale warnings where en_US.UTF-8 isn't generated.
-export LANG='en_US.UTF-8'
-
 # -F quits if the text fits one screen (less >= 530 needs no -X for that),
 # -R passes colors through, -i makes search smart-case.
 export LESS="-FRi"
@@ -68,7 +64,7 @@ alias gc='git commit -v'
 alias gcm='git commit -m'
 alias gca='git commit -v -a'
 alias gco='git checkout'
-alias gcb='git checkout -b'
+alias gcb='git switch -c'
 alias gsw='git switch'
 alias gb='git branch'
 alias gbd='git branch --delete'
@@ -87,7 +83,9 @@ alias glol="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgre
 alias glod="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'"
 alias glola="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all"
 alias gloda="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --all"
-alias grh='git reset HEAD'
+# grh [path...]: unstage the paths, or everything when none are given (like
+# the old `git reset HEAD`).
+grh() { git restore --staged -- "${@:-:/}"; }
 alias grhh='git reset --hard'
 alias gstash='git stash'
 alias gstp='git stash pop'
@@ -160,7 +158,7 @@ alias dcd='docker compose down'
 alias dcl='docker compose logs -f'
 
 alias please='sudo'
-alias kssh="kitty +kitten ssh"
+alias kssh="kitten ssh"
 
 # rg typed at the prompt uses ~/.config/ripgrep/config (smart case, hidden
 # files). Set per command, not exported, so tools that run rg keep its defaults.
