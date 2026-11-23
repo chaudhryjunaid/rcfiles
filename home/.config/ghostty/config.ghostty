@@ -10,8 +10,9 @@ font-family = Aglet Mono
 font-size = 22
 
 # ── THEME ────────────────────────────────────────────────────────────────────
-# Built-in themes: `ghostty +list-themes`. Cobalt2 matches kitty's colors.
-theme = Cobalt2
+# Built-in themes: `ghostty +list-themes`. Gogh themes are installed into
+# ~/.config/ghostty/themes/ by the repo's gogh script (not tracked here).
+theme = Gogh Xcode WWDC
 
 # ── WINDOW ───────────────────────────────────────────────────────────────────
 window-padding-x = 8
