@@ -86,7 +86,8 @@ neovim, tree-sitter, node, go, java (Temurin, current LTS), fzf, ripgrep, fd,
 bat, delta, zoxide, eza, duf, dust, btop, procs, jq, hyperfine, tokei, uv,
 shellcheck and shfmt. `mise activate` also sets
 `JAVA_HOME` and `GOROOT`; the config turns off mise's per-version `GOBIN`, so
-`go install` puts binaries in `~/go/bin` (on PATH via `.shellrc.sh`) and they
+`go install` puts binaries in `$GOPATH/bin` (`~/.local/share/go/bin`, set and
+put on PATH by `.shellrc.sh`) and they
 survive Go upgrades. The distro script installs mise itself (Ubuntu: its
 installer, into `~/.local/bin`; Fedora: its rpm repo), then `setup/common.sh` installs rustup if cargo is missing
 (mise builds tokei with cargo) and runs `mise install`.

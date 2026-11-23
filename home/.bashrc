@@ -34,11 +34,6 @@ command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
 # fzf key-bindings and completion.
 command -v fzf >/dev/null 2>&1 && source <(fzf --bash)
 
-if [ -n "$KITTY_INSTALLATION_DIR" ]; then
-  export KITTY_SHELL_INTEGRATION="enabled"
-  source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"
-fi
-
 # liquidprompt, cloned to ~/sh/liquidprompt by setup/common.sh.
 [ -f ~/sh/liquidprompt/liquidprompt ] && . ~/sh/liquidprompt/liquidprompt
 

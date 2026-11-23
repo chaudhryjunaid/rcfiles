@@ -78,6 +78,20 @@ while IFS=$'\t' read -r rel src; do
 done < <(list_sources)
 
 # Remove dangling links into this repo (files that were renamed or deleted).
+# Looks in ~ and two levels of ~/.config (removed apps), plus every directory
+# home/ mirrors, however deep (renamed files there). sort -u: a link can turn
+# up in more than one of those.
+candidate_links() {
+    local dir rel
+    find "$HOME" -maxdepth 1 -type l -print0
+    if [ -d "$HOME/.config" ]; then find "$HOME/.config" -maxdepth 2 -type l -print0; fi
+    while IFS= read -r -d '' dir; do
+        rel=${dir#"$HOME_DIR"}
+        if [ -d "$HOME$rel" ]; then
+            find "$HOME$rel" -mindepth 1 -maxdepth 1 -type l -print0
+        fi
+    done < <(find "$HOME_DIR" -mindepth 1 -type d -print0)
+}
 while IFS= read -r -d '' link; do
     [ -e "$link" ] && continue
     case "$(readlink "$link")" in
@@ -87,16 +101,12 @@ while IFS= read -r -d '' link; do
             removed=$((removed + 1))
             ;;
     esac
-done < <(find "$HOME" -maxdepth 1 -type l -print0
-         if [ -d "$HOME/.config" ]; then find "$HOME/.config" -maxdepth 2 -type l -print0; fi)
+done < <(candidate_links | sort -zu)
 
 if [ "$UNLINK" -eq 1 ]; then
     echo "Done: $removed removed."
     exit 0
 fi
-
-# Directories .vimrc expects.
-run mkdir -p "$HOME/.vim/backups" "$HOME/.vim/swaps" "$HOME/.vim/undo"
 
 # ssh refuses a config others can write to, and git checks files out with the
 # umask (often 002, i.e. group-writable).
