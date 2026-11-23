@@ -23,9 +23,27 @@ CORE_PKGS=(
     gcc gcc-c++ make    # C compiler for nvim-treesitter parsers and cargo
     tmux
     wl-clipboard xclip xsel
+    neovim              # system editor (root, sudo -i); you get mise's nvim
 )
 log "Installing core packages"
 $SUDO dnf install -y "${CORE_PKGS[@]}"
+
+# Make nvim the system default editor. Fedora picks it with a package that
+# provides system-default-editor (nano-default-editor by default), whose
+# /etc/profile.d script sets EDITOR in login shells; there's no neovim one,
+# so this script, sorted after nano's, takes over from it. It leaves an
+# EDITOR/VISUAL set to anything other than nano alone.
+log "Setting nvim as the default editor (/etc/profile.d/zz-nvim-default-editor.sh)"
+$SUDO tee /etc/profile.d/zz-nvim-default-editor.sh >/dev/null <<'EOF'
+# Installed by rcfiles' setup/fedora.sh: nvim as the default editor. Runs
+# after nano-default-editor.sh and overrides only nano (or nothing).
+case "${EDITOR:-}" in
+    ""|nano|/usr/bin/nano) EDITOR=/usr/bin/nvim; export EDITOR ;;
+esac
+case "${VISUAL:-}" in
+    ""|nano|/usr/bin/nano) VISUAL=/usr/bin/nvim; export VISUAL ;;
+esac
+EOF
 
 # mise (tool version manager), from its rpm repo so dnf keeps it updated.
 if command -v mise >/dev/null 2>&1; then

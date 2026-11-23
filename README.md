@@ -113,8 +113,10 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **neovim** (latest stable, via mise; pin with `mise use -g neovim@<version>`)
   — the only editor configured here: `EDITOR`/`VISUAL` in shells and, through
   `~/.config/environment.d`, the desktop session; git's `core.editor`;
-  `vim`/`vi` aliased to `nvim`; and, on Ubuntu, the distro's `neovim` set as
-  the system `editor`/`vi`/`vim` (for root, `sudo`, `visudo`, ...); plugins are managed by lazy.nvim, which self-installs on
+  `vim`/`vi` aliased to `nvim`; and system-wide (for root, `sudo -i`, ...)
+  the distro's `neovim`: on Ubuntu as the `editor`/`vi`/`vim` alternative,
+  on Fedora via `/etc/profile.d/zz-nvim-default-editor.sh`, which takes over
+  from `nano-default-editor` (Fedora has no neovim one); plugins are managed by lazy.nvim, which self-installs on
   first launch (needs **git**) and installs the versions pinned in
   `home/.config/nvim/lazy-lock.json`. LSP servers (TypeScript, Python,
   Lua, Bash, JSON, YAML, Go) are installed by mason when the first file is
