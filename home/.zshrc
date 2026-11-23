@@ -38,6 +38,7 @@ setopt extended_glob         # ^, ~, # in globs (e.g. ls ^*.bak)
 setopt numeric_glob_sort     # file9 before file10
 unsetopt correct
 unsetopt correct_all
+unsetopt flow_control        # Ctrl-S/Ctrl-Q don't freeze/unfreeze the terminal
 # Make Ctrl-W delete a single path component, not the whole path
 WORDCHARS=${WORDCHARS//[\/]}
 
@@ -92,7 +93,28 @@ done
 for key in "${terminfo[kcud1]}" '^[[B' '^[OB'; do
   [ -n "$key" ] && bindkey "$key" down-line-or-beginning-search
 done
+
+# Ctrl-Left/Right move by word. Home/End/Delete in each form terminals send:
+# terminfo's (application mode, e.g. under tmux) and the plain CSI ones
+# (kitty/Ghostty outside tmux). Ubuntu's /etc/zsh/zshrc binds some of these;
+# Fedora's doesn't.
+bindkey '^[[1;5C' forward-word
+bindkey '^[[1;5D' backward-word
+for key in "${terminfo[khome]}" '^[[H' '^[[1~' '^[OH'; do
+  [ -n "$key" ] && bindkey "$key" beginning-of-line
+done
+for key in "${terminfo[kend]}" '^[[F' '^[[4~' '^[OF'; do
+  [ -n "$key" ] && bindkey "$key" end-of-line
+done
+for key in "${terminfo[kdch1]}" '^[[3~'; do
+  [ -n "$key" ] && bindkey "$key" delete-char
+done
 unset key
+
+# Ctrl-X Ctrl-E: edit the current command in $EDITOR (as in bash).
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
 
 # .zshrc is only sourced by interactive shells, so no interactivity guard needed.
 # liquidprompt, cloned to ~/sh/liquidprompt by setup/common.sh.

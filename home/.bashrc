@@ -26,6 +26,9 @@ shopt -s checkwinsize
 
 # Make Ctrl-W delete a single path component, not the whole path.
 stty werase undef 2>/dev/null
+# Ctrl-S/Ctrl-Q don't freeze/unfreeze the terminal (Ctrl-S searches history
+# forward instead).
+stty -ixon 2>/dev/null
 bind '"\C-w": unix-filename-rubout'
 
 # zoxide

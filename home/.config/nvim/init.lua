@@ -40,6 +40,10 @@ vim.o.scrolloff = 5
 vim.o.sidescrolloff = 8
 vim.o.colorcolumn = "+1"
 vim.o.pumheight = 12
+vim.o.winborder = "rounded" -- every floating window: hover, diagnostics, signature, which-key
+vim.o.splitkeep = "screen" -- text stays put when splits open or close
+vim.o.smoothscroll = true -- scroll long wrapped lines a screen line at a time
+vim.opt.jumpoptions:append("view") -- Ctrl-O/Ctrl-I restore the scroll position too
 vim.o.showtabline = 2 -- lualine's buffer line
 
 -- Wrapping / text files
@@ -231,7 +235,7 @@ vim.lsp.config("lua_ls", {
 vim.diagnostic.config({
   virtual_text = true,
   severity_sort = true,
-  float = { border = "rounded", source = true },
+  float = { source = true }, -- border: from 'winborder'
 })
 
 autocmd("LspAttach", {
