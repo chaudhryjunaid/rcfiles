@@ -1,33 +1,45 @@
+# Kept in line with kitty and Ghostty: same font, Cobalt2 colors (gogh.toml),
+# padding, cursor and scrollback. Set the font with the repo's set-font.sh.
+# Alacritty reloads this file on save; `alacritty migrate --dry-run` checks it.
+
 # Added by Gogh
 general.import = ["~/.config/alacritty/gogh.toml"]
 
 [window]
-padding = { x = 10, y = 10 }
+padding = { x = 8, y = 8 }
+# Spread leftover space (from the grid not filling the window) evenly.
 dynamic_padding = true
 opacity = 1
 
 [scrolling]
-history = 10000
+# Alacritty's maximum.
+history = 100000
 multiplier = 3
 
 [font]
-size = 18.0
+size = 22.0
 
 [font.normal]
-family = "Ubuntu Mono"
+family = "Aglet Mono"
 style = "Regular"
 
 [font.bold]
-family = "Ubuntu Mono"
+family = "Aglet Mono"
 style = "Bold"
 
 [font.italic]
-family = "Ubuntu Mono"
+family = "Aglet Mono"
 style = "Italic"
 
 [cursor]
-style = { shape = "Block", blinking = "On" }
-blink_interval = 500
+style = { shape = "Block", blinking = "Off" }
+
+[selection]
+# Selecting copies to the clipboard too, not just the primary selection.
+save_to_clipboard = true
+
+[mouse]
+hide_when_typing = true
 
 [keyboard]
 bindings = [
@@ -36,4 +48,3 @@ bindings = [
   { key = "R", mods = "Control|Shift", mode = "~Vi|~Search", chars = "\u0015reset\r" },
   { key = "R", mods = "Control|Shift", mode = "~Vi|~Search", action = "ClearHistory" },
 ]
-
