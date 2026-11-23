@@ -29,11 +29,6 @@ export NODE_REPL_MODE='sloppy'
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
 export PYTHONIOENCODING='UTF-8'
 
-export CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=4
-export CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=10
-export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1
-export CLAUDE_CODE_FORK_SUBAGENT=0
-
 # Go: keep GOPATH out of ~ (XDG layout). `go install` puts binaries in
 # $GOPATH/bin; the module cache is re-downloadable, so it lives under ~/.cache
 # next to Go's own build cache (~/.cache/go-build). Both are read by the
