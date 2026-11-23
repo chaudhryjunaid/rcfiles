@@ -149,6 +149,24 @@ if has kitty; then
 else
     skip "kitty not installed"
 fi
+if has fc-match; then
+    # Load each fontconfig snippet on its own; fontconfig reports XML and
+    # element errors on stderr ("Fontconfig error: ...") but still exits 0.
+    for conf in home/.config/fontconfig/conf.d/*.conf; do
+        [ -e "$conf" ] || continue
+        fcfile=$(mktemp)
+        printf '<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">\n<fontconfig><include>%s</include></fontconfig>\n' \
+            "$PWD/$conf" > "$fcfile"
+        out=$(FONTCONFIG_FILE=$fcfile fc-match sans 2>&1 >/dev/null </dev/null) || true
+        rm -f "$fcfile"
+        if [ -n "$out" ]; then
+            echo "$out" >&2
+            fail "$conf"
+        fi
+    done
+else
+    skip "fontconfig not installed"
+fi
 if has nvim; then
     nvim_init=home/.config/nvim/init.lua
     # Parse init.lua and the lockfile, without running anything.

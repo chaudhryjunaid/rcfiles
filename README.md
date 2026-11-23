@@ -183,6 +183,10 @@ liquidprompt are cloned from GitHub into `~/sh`.
   (e.g. `home/.config/nvim/init.lua` → `~/.config/nvim/init.lua`). To add a
   config, drop it in at its home path and rerun `./link.sh`.
 - `home/.shellrc.sh` — env, aliases and functions shared by bash and zsh
+- `home/.config/fontconfig/conf.d/60-hide-noto-scripts.conf` — hides
+  Ubuntu's ~200 per-script Noto fonts from every font list (and from
+  fallback: only US English is needed), keeping Noto Sans/Serif, the mono,
+  math and symbol fonts, and emoji
 - `run.sh` — bootstrap from GitHub: clone/update the repo, `install.sh`,
   fonts, `set-font.sh` (see setup above)
 - `install.sh` — one-shot setup (deps → link → identity)
