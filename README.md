@@ -10,9 +10,10 @@ curl -fsSL https://raw.githubusercontent.com/chaudhryjunaid/rcfiles/master/run.s
 (or `wget -qO- … | bash` where curl isn't installed). `run.sh` installs git
 if it's missing, clones the repo to `~/setup/rcfiles` (set `RCFILES_DIR` to
 put it elsewhere; it has to stay there, since the dotfiles are linked into it)
-or pulls an existing clone, then runs `install.sh`, `setup/ensure-fonts.sh`,
-installs JetBrainsMono Nerd Font if it's missing, and, on the first run (a
-fresh clone) only, sets every app to it with `set-font.sh`. It's safe to
+or pulls an existing clone, then runs `install.sh` and
+`setup/ensure-fonts.sh` (the programming fonts, JetBrainsMono Nerd Font
+among them), and, on the first run (a fresh clone) only, sets every app to
+JetBrainsMono Nerd Font with `set-font.sh`. It's safe to
 re-run; later runs leave each machine's font settings alone.
 
 From a clone, run the steps yourself:
@@ -68,10 +69,12 @@ Fonts aren't installed by `install.sh` either. The optional
 `setup/install-fonts.sh [FOLDER]` asks for a name and searches the distro's
 packages, Nerd Fonts, Google Fonts and the font files under FOLDER (default
 `~/media/fonts`), then installs the ones you pick.
-`setup/ensure-fonts.sh [--dry-run] [--no-packages]` updates the fonts from
-the first three to their latest versions, and moves loose files in
-`~/.local/share/fonts` whose family is on Google Fonts over to the Google
-version (the loose files go to `~/.rcfiles-backup/`).
+`setup/ensure-fonts.sh [--dry-run] [--update]` (which `run.sh` runs)
+downloads ten programming fonts, the Nerd Fonts builds, from the latest Nerd
+Fonts release into `~/.local/share/fonts/<Name>/`: JetBrains Mono, Cascadia
+Code, Fira Code, Hack, Source Code Pro, Meslo LG, Ubuntu Mono, IBM Plex Mono,
+Victor Mono and Commit Mono (about 570 MB). Re-runs only download what's
+missing, or everything again once a newer release is out.
 
 # Dependencies
 Most config degrades gracefully when a tool is missing (commands are guarded
@@ -192,9 +195,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - `setup/install-fonts.sh` — optional: search for a font by name (packages,
   Nerd Fonts, Google Fonts, a local folder) and install the ones you pick into
   `~/.local/share/fonts` (packages system-wide)
-- `setup/ensure-fonts.sh` — optional: update every font from packages, Nerd
-  Fonts or Google Fonts to the latest version (via `install-fonts.sh`), moving
-  loose Google-family files over to the Google version
+- `setup/ensure-fonts.sh` — install the ten programming fonts (Nerd Fonts
+  builds) and keep them on the latest Nerd Fonts release
 - `gui-apps.manifest.csv` — GUI apps and GNOME extensions to install by
   hand
 - `cli-apps.manifest.csv` — CLI tools the setup scripts don't install, to

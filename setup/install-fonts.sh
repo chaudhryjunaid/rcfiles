@@ -10,8 +10,8 @@
 #   - font files under FOLDER, searched recursively (default ~/media/fonts)
 # then installs the ones you pick: packages system-wide, the rest into
 # ~/.local/share/fonts (Nerd Fonts in <Name>/, the others in google/, local/).
-# Given --package/--nerd/--google, it installs those without asking (for
-# setup/ensure-fonts.sh). Either way, installed ones are updated to the latest.
+# Given --package/--nerd/--google, it installs those without asking. Either
+# way, installed ones are updated to the latest.
 #
 # Usage: setup/install-fonts.sh [FOLDER]
 #        setup/install-fonts.sh [--package NAME] [--nerd NAME] [--google FAMILY]...

@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # run.sh — set up a machine straight from GitHub: clone this repo (or update
-# the clone), run install.sh, update the fonts (setup/ensure-fonts.sh, and
-# install JetBrainsMono Nerd Font if it's missing), then, on the first run
-# only (a fresh clone), set kitty, Alacritty, Ghostty and Sublime Text to it
-# (set-font.sh). Later runs leave the font settings alone, since set-font.sh
+# the clone), run install.sh, install the programming fonts
+# (setup/ensure-fonts.sh: JetBrainsMono Nerd Font and nine others), then, on
+# the first run only (a fresh clone), set kitty, Alacritty, Ghostty and
+# Sublime Text to JetBrainsMono Nerd Font (set-font.sh). Later runs leave the font settings alone, since set-font.sh
 # edits tracked files and a machine's own pick shouldn't be reset. Safe to
 # re-run.
 #
@@ -59,21 +59,16 @@ main() {
 
     "$DIR/install.sh"
 
-    # The mise tools install.sh installed (jq, for the font scripts) are only
-    # on PATH in new shells.
+    # The mise tools install.sh installed (fzf, jq, ...) are only on PATH in
+    # new shells.
     if command -v mise >/dev/null 2>&1; then
         eval "$(mise activate bash --shims)"
     fi
 
-    # A font that won't download (a site being down, say) shouldn't stop the
-    # rest.
-    log "Updating fonts (setup/ensure-fonts.sh)"
-    "$DIR/setup/ensure-fonts.sh" || warn "some fonts didn't update"
-    # ensure-fonts.sh only updates fonts that are already installed.
-    if [ -z "$(fc-list "$FONT" family 2>/dev/null)" ]; then
-        log "Installing $FONT"
-        "$DIR/setup/install-fonts.sh" --nerd JetBrainsMono || warn "couldn't install $FONT"
-    fi
+    # The programming fonts (JetBrainsMono Nerd Font among them). A font that
+    # won't download (GitHub being down, say) shouldn't stop the rest.
+    log "Installing fonts (setup/ensure-fonts.sh)"
+    "$DIR/setup/ensure-fonts.sh" || warn "some fonts didn't install"
 
     if [ "$fresh" -eq 1 ]; then
         log "Setting every app to $FONT $FONT_SIZE (set-font.sh)"
