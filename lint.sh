@@ -149,18 +149,31 @@ if has kitty; then
 else
     skip "kitty not installed"
 fi
-# Only once vim-plug is installed: before that, loading init.vim would
-# download it and every plugin.
-if has nvim && [ -f "$HOME/.local/share/nvim/site/autoload/plug.vim" ]; then
-    out=$(timeout 30 nvim --headless -i NONE -u "$PWD/home/.config/nvim/init.vim" \
-        +'lua vim.defer_fn(function() if vim.v.errmsg ~= "" then io.stdout:write(vim.v.errmsg, "\n") end vim.cmd("qa!") end, 200)' \
-        </dev/null 2>&1 | grep -v '^\[ClaudeCode\]') || true
-    if [ -n "$out" ]; then
-        echo "$out" >&2
-        fail "home/.config/nvim/init.vim: errors on startup"
+if has nvim; then
+    nvim_init=home/.config/nvim/init.lua
+    # Parse init.lua and the lockfile, without running anything.
+    out=$(nvim --clean --headless -i NONE -l /dev/stdin "$nvim_init" home/.config/nvim/lazy-lock.json 2>&1 <<'EOF'
+local _, err = loadfile(arg[1])
+if err then io.stderr:write(err, "\n") os.exit(1) end
+local ok, lock = pcall(vim.json.decode, table.concat(vim.fn.readfile(arg[2]), "\n"))
+if not ok then io.stderr:write(arg[2], ": ", lock, "\n") os.exit(1) end
+EOF
+    ) || { echo "$out" >&2; fail "nvim config doesn't parse"; }
+    # Startup, only once lazy.nvim is installed: before that, loading init.lua
+    # would download it and every plugin.
+    if [ -d "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim" ]; then
+        out=$(timeout 30 nvim --headless -i NONE -u "$PWD/$nvim_init" \
+            +'lua vim.defer_fn(function() if vim.v.errmsg ~= "" then io.stdout:write(vim.v.errmsg, "\n") end vim.cmd("qa!") end, 200)' \
+            </dev/null 2>&1 | grep -v '^\[ClaudeCode\]') || true
+        if [ -n "$out" ]; then
+            echo "$out" >&2
+            fail "$nvim_init: errors on startup"
+        fi
+    else
+        skip "nvim startup (lazy.nvim not installed)"
     fi
 else
-    skip "nvim (or its plugins) not installed"
+    skip "nvim not installed"
 fi
 
 echo "==> repo hygiene"

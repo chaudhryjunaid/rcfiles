@@ -4,7 +4,7 @@
 #
 # home/ mirrors the layout of $HOME: every file in it is linked to the same
 # relative path under $HOME, e.g.
-#   home/.config/nvim/init.vim -> ~/.config/nvim/init.vim
+#   home/.config/nvim/init.lua -> ~/.config/nvim/init.lua
 # Existing files are moved to ~/.rcfiles-backup/<timestamp>/ first. Safe to
 # re-run.
 #

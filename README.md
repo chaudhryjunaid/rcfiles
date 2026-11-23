@@ -109,11 +109,12 @@ liquidprompt are cloned from GitHub into `~/sh`.
   by the setup script)
 - **neovim** (latest stable, via mise; pin with `mise use -g neovim@<version>`)
   — editor (`EDITOR`, git's `core.editor`, and `vim`/`vi` are aliased to
-  `nvim`); plugins are managed by vim-plug, which self-installs on
-  first launch (needs **curl** and **git**). LSP servers (TypeScript, Python,
-  Lua, Bash, JSON, YAML, Go) are installed by mason on first launch (needs
-  **node**/**npm** and **go**, which mise provides), with completion
-  from blink.cmp. Treesitter parsers are built by nvim-treesitter's `main`
+  `nvim`); plugins are managed by lazy.nvim, which self-installs on
+  first launch (needs **git**) and installs the versions pinned in
+  `home/.config/nvim/lazy-lock.json`. LSP servers (TypeScript, Python,
+  Lua, Bash, JSON, YAML, Go) are installed by mason when the first file is
+  opened (needs **node**/**npm** and **go**, which mise provides), with
+  completion from blink.cmp. Treesitter parsers are built by nvim-treesitter's `main`
   branch, which needs **tree-sitter-cli** 0.26+ (mise) and a **C compiler** (the
   setup script installs one). A plain-vim `vimrc` is kept too.
 - **git**
@@ -122,7 +123,7 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **fzf** — fuzzy finder (shell key-bindings + vim `:Files`/`:Rg`)
 - **ripgrep** (`rg`) — fzf's file source and vim's grep program
 - **zoxide** — smarter `cd`; adds `z`/`zi` (jump by frecency / fzf-pick)
-- a **Nerd Font** — for the glyphs in the tmux status bar and vim-airline;
+- a **Nerd Font** — for the glyphs in the tmux status bar and nvim's lualine;
   kitty, Alacritty, Ghostty and Sublime Text use `set-font.sh`'s font
   (change it with `./set-font.sh`). Not installed by the setup scripts
   (`setup/install-fonts.sh` finds and installs them)
@@ -176,7 +177,7 @@ liquidprompt are cloned from GitHub into `~/sh`.
 
 # Layout
 - `home/` — mirrors `$HOME`: every file is symlinked to the same relative path
-  (e.g. `home/.config/nvim/init.vim` → `~/.config/nvim/init.vim`). To add a
+  (e.g. `home/.config/nvim/init.lua` → `~/.config/nvim/init.lua`). To add a
   config, drop it in at its home path and rerun `./link.sh`.
 - `home/.shellrc.sh` — env, aliases and functions shared by bash and zsh
 - `run.sh` — bootstrap from GitHub: clone/update the repo, `install.sh`,
@@ -228,4 +229,10 @@ liquidprompt are cloned from GitHub into `~/sh`.
   (Older setups linked `~/.gitconfig` into the repo and kept the identity in
   `~/.gitconfig.local`; `link.sh` moves that file to `~/.gitconfig`.)
 - The prompt is liquidprompt, configured by `~/.liquidpromptrc`.
-- vim plugins install automatically on first launch via vim-plug.
+- nvim plugins install automatically on first launch via lazy.nvim, at the
+  commits in `lazy-lock.json`. `:Lazy update` upgrades them and rewrites the
+  lockfile in this checkout (commit it); `:Lazy restore` goes back to the
+  pinned versions. Coming from the old vim-plug `init.vim`, rerun
+  `./link.sh` (it prunes the dangling `init.vim` link, which Neovim would
+  otherwise report as a conflicting config) and delete
+  `~/.local/share/nvim/plugged`.
