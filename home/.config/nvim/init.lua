@@ -122,6 +122,31 @@ autocmd({ "BufWinEnter", "WinEnter", "TermOpen" }, {
   end,
 })
 
+-- Indent guides, built in: 'list' draws a │ at every indent level of the
+-- leading spaces (and tabs), sized to the buffer's shiftwidth. Only in
+-- normal file buffers; terminals, help and plugin panes stay clean. Blank
+-- lines get no guide (unlike indent-blankline).
+local function update_indent_guides()
+  -- netrw sets its buftype only after BufWinEnter, so check it by filetype.
+  if vim.bo.buftype ~= "" or vim.bo.filetype == "netrw" then
+    vim.opt_local.list = false
+    return
+  end
+  local sw = vim.fn.shiftwidth()
+  vim.opt_local.list = true
+  vim.opt_local.listchars = {
+    tab = "│ ",
+    nbsp = "␣",
+    leadmultispace = "│" .. (" "):rep(math.max(sw - 1, 0)),
+  }
+end
+autocmd({ "BufWinEnter", "FileType" }, { group = augroup("user_indent_guides"), callback = update_indent_guides })
+autocmd("OptionSet", {
+  group = augroup("user_indent_guides_opt"),
+  pattern = { "shiftwidth", "tabstop" },
+  callback = update_indent_guides,
+})
+
 autocmd("TextYankPost", {
   group = augroup("user_yank"),
   callback = function() vim.hl.on_yank({ timeout = 300 }) end,
@@ -150,6 +175,7 @@ autocmd("TermOpen", {
     vim.opt_local.number = false
     vim.opt_local.relativenumber = false
     vim.opt_local.signcolumn = "no"
+    vim.opt_local.list = false
   end,
 })
 
@@ -239,6 +265,15 @@ map("n", "<leader>fc", ":Commands<CR>")
 map("n", "<leader>fm", ":Marks<CR>")
 vim.g.fzf_layout = { down = "40%" }
 
+-- File tree: netrw (built in) in a left split. <leader>e toggles it at the
+-- working directory, <leader>E opens it at the current file's directory.
+vim.g.netrw_banner = 0
+vim.g.netrw_liststyle = 3 -- tree view
+vim.g.netrw_winsize = 25 -- percent of the width
+vim.g.netrw_list_hide = [[^\.git/$,^node_modules/$,^dist/$,^build/$,^\.next/$]]
+map("n", "<leader>e", ":Lexplore<CR>", { silent = true, desc = "Toggle file tree" })
+map("n", "<leader>E", ":Lexplore %:p:h<CR>", { silent = true, desc = "File tree at this file" })
+
 -- Git (fugitive; gitsigns' hunk maps are in its spec)
 map("n", "<leader>gs", ":Git<CR>")
 map("n", "<leader>gd", ":Gdiffsplit<CR>")
@@ -258,6 +293,44 @@ map("t", "<C-h>", [[<C-\><C-n><C-w>h]])
 map("t", "<C-j>", [[<C-\><C-n><C-w>j]])
 map("t", "<C-k>", [[<C-\><C-n><C-w>k]])
 map("t", "<C-l>", [[<C-\><C-n><C-w>l]])
+
+-- Floating terminal on F12 / <leader>tt (from normal or terminal mode). One
+-- shell, hidden and shown again by each toggle; when it exits, the next
+-- toggle starts a new one.
+local float_term = { buf = -1, win = -1 }
+local function toggle_float_term()
+  if vim.api.nvim_win_is_valid(float_term.win) then
+    vim.api.nvim_win_hide(float_term.win)
+    return
+  end
+  local new = not vim.api.nvim_buf_is_valid(float_term.buf)
+  if new then float_term.buf = vim.api.nvim_create_buf(false, true) end
+  local width = math.floor(vim.o.columns * 0.9)
+  local height = math.floor(vim.o.lines * 0.85)
+  float_term.win = vim.api.nvim_open_win(float_term.buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = math.floor((vim.o.lines - height) / 2),
+    col = math.floor((vim.o.columns - width) / 2),
+    style = "minimal",
+    border = "rounded",
+  })
+  if new then
+    local buf = float_term.buf
+    vim.fn.jobstart(vim.o.shell, {
+      term = true,
+      on_exit = function()
+        vim.schedule(function()
+          if vim.api.nvim_buf_is_valid(buf) then vim.api.nvim_buf_delete(buf, { force = true }) end
+        end)
+      end,
+    })
+  end
+  vim.cmd.startinsert()
+end
+map({ "n", "t" }, "<F12>", toggle_float_term, { desc = "Toggle floating terminal" })
+map("n", "<leader>tt", toggle_float_term, { desc = "Toggle floating terminal" })
 
 -- Quality of life
 map("n", "<leader>sv", ":source $MYVIMRC<CR>") -- options/maps only; plugins: :Lazy
@@ -384,7 +457,7 @@ local plugins = {
           { "tabs", cond = function() return vim.fn.tabpagenr("$") > 1 end },
         },
       },
-      extensions = { "fugitive", "fzf", "lazy", "mason", "nerdtree", "quickfix" },
+      extensions = { "fugitive", "fzf", "lazy", "mason", "quickfix" },
     },
   },
 
@@ -417,24 +490,9 @@ local plugins = {
     },
   },
 
-  -- Editing improvements (commenting, gc/gcc, is built in since Neovim 0.10)
+  -- Editing improvements (commenting, gc/gcc, is built in since Neovim 0.10;
+  -- blink.cmp adds brackets when accepting a function completion)
   "tpope/vim-surround",
-  { "windwp/nvim-autopairs", event = "InsertEnter", opts = {} },
-
-  -- File tree
-  {
-    "preservim/nerdtree",
-    cmd = { "NERDTreeToggle", "NERDTreeFind" },
-    keys = {
-      { "<leader>e", ":NERDTreeToggle<CR>" },
-      { "<leader>E", ":NERDTreeFind<CR>" },
-    },
-    init = function()
-      vim.g.NERDTreeShowHidden = 1
-      vim.g.NERDTreeMinimalUI = 1
-      vim.g.NERDTreeIgnore = { [[\.git$]], "node_modules$", "dist$", "build$", ".next$" }
-    end,
-  },
 
   -- Better syntax / structure
   -- main branch: needs Neovim 0.12+ (installed via mise), tree-sitter-cli and
@@ -501,33 +559,7 @@ local plugins = {
   -- Ctrl-h/j/k/l across nvim splits and tmux panes (see ~/.tmux.conf)
   "christoomey/vim-tmux-navigator",
 
-  -- Indent guides (virtual text: unlike indentLine, doesn't touch
-  -- conceallevel, which hid quotes in JSON and Markdown). help, terminal and
-  -- other special buffers are excluded by default.
-  {
-    "lukas-reineke/indent-blankline.nvim",
-    main = "ibl",
-    opts = {
-      indent = { char = "│" },
-      exclude = { filetypes = { "nerdtree" } },
-    },
-  },
-
-  -- Terminal integration
-  {
-    "voldikss/vim-floaterm",
-    cmd = { "FloatermToggle", "FloatermNew" },
-    keys = {
-      { "<F12>", ":FloatermToggle<CR>", silent = true },
-      { "<F12>", [[<C-\><C-n>:FloatermToggle<CR>]], mode = "t", silent = true },
-      { "<leader>tt", ":FloatermToggle<CR>" },
-    },
-    init = function()
-      vim.g.floaterm_width = 0.9
-      vim.g.floaterm_height = 0.85
-      vim.g.floaterm_position = "center"
-    end,
-  },
+  -- Claude Code bridge (the floating terminal is built in; see above)
   {
     "coder/claudecode.nvim",
     opts = {
