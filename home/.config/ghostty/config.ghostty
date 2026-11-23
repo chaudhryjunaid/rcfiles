@@ -35,9 +35,14 @@ copy-on-select = clipboard
 
 # ── SHELL INTEGRATION ────────────────────────────────────────────────────────
 # no-cursor keeps the block cursor at the prompt (instead of a bar). sudo
-# keeps the terminfo under sudo; ssh-env/ssh-terminfo make `ssh` work on hosts
-# that don't know xterm-ghostty.
-shell-integration-features = no-cursor,sudo,title,ssh-env,ssh-terminfo
+# keeps the terminfo under sudo. ssh-env makes `ssh` send
+# TERM=xterm-256color, which every host knows.
+#
+# ssh-terminfo is left off on purpose: it copies xterm-ghostty into the
+# remote ~/.terminfo, but on SELinux hosts (Fedora, RHEL) the login shell
+# sshd starts runs in secure mode (AT_SECURE) and ignores ~/.terminfo. zsh
+# then can't move the cursor, so every keystroke reprints the line.
+shell-integration-features = no-cursor,sudo,title,ssh-env
 
 # Desktop notification when a command taking 10s+ finishes while the
 # terminal is unfocused.
