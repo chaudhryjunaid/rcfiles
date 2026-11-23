@@ -25,9 +25,22 @@ CORE_PKGS=(
     build-essential     # C compiler for nvim-treesitter parsers and cargo
     tmux
     wl-clipboard xclip xsel
+    neovim              # system editor (root, sudo, visudo); you get mise's nvim
 )
 log "Installing core packages"
 $SUDO apt-get install -y "${CORE_PKGS[@]}"
+
+# Make the distro's nvim the system default for `editor`, `vi` and `vim`
+# (Ubuntu's default editor is nano), used where $EDITOR isn't: root shells,
+# visudo, programs that call /usr/bin/editor. In your own shells and the
+# desktop session, EDITOR=nvim (and PATH) pick mise's newer nvim instead.
+for name in editor vi vim; do
+    # (No grep -q: with pipefail, its early exit could fail the pipeline.)
+    if update-alternatives --list "$name" 2>/dev/null | grep -x /usr/bin/nvim >/dev/null; then
+        $SUDO update-alternatives --set "$name" /usr/bin/nvim >/dev/null
+    fi
+done
+log "Default editor: nvim"
 
 # Optional packages — install each best-effort so a missing one doesn't abort.
 OPTIONAL_PKGS=(tmuxinator)

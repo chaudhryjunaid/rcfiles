@@ -111,20 +111,22 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **zsh** — shell; plugins are managed by antidote (cloned to `~/sh/antidote`
   by the setup script)
 - **neovim** (latest stable, via mise; pin with `mise use -g neovim@<version>`)
-  — editor (`EDITOR`, git's `core.editor`, and `vim`/`vi` are aliased to
-  `nvim`); plugins are managed by lazy.nvim, which self-installs on
+  — the only editor configured here: `EDITOR`/`VISUAL` in shells and, through
+  `~/.config/environment.d`, the desktop session; git's `core.editor`;
+  `vim`/`vi` aliased to `nvim`; and, on Ubuntu, the distro's `neovim` set as
+  the system `editor`/`vi`/`vim` (for root, `sudo`, `visudo`, ...); plugins are managed by lazy.nvim, which self-installs on
   first launch (needs **git**) and installs the versions pinned in
   `home/.config/nvim/lazy-lock.json`. LSP servers (TypeScript, Python,
   Lua, Bash, JSON, YAML, Go) are installed by mason when the first file is
   opened (needs **node**/**npm** and **go**, which mise provides), with
   completion from blink.cmp. Treesitter parsers are built by nvim-treesitter's `main`
   branch, which needs **tree-sitter-cli** 0.26+ (mise) and a **C compiler** (the
-  setup script installs one). A plain-vim `vimrc` is kept too.
+  setup script installs one).
 - **git**
 - **delta** — git pager / diff filter (git is configured to use it for
   `diff`/`log`; remove the `delta` lines from `home/.config/git/config` if you don't want it)
-- **fzf** — fuzzy finder (shell key-bindings + vim `:Files`/`:Rg`)
-- **ripgrep** (`rg`) — fzf's file source and vim's grep program
+- **fzf** — fuzzy finder (shell key-bindings + nvim `:Files`/`:Rg`)
+- **ripgrep** (`rg`) — fzf's file source and nvim's `:Rg`
 - **zoxide** — smarter `cd`; adds `z`/`zi` (jump by frecency / fzf-pick)
 - a **Nerd Font** — for the glyphs in the tmux status bar and nvim's lualine;
   kitty, Alacritty, Ghostty and Sublime Text use `set-font.sh`'s font
@@ -246,4 +248,6 @@ liquidprompt are cloned from GitHub into `~/sh`.
   pinned versions. Coming from the old vim-plug `init.vim`, rerun
   `./link.sh` (it prunes the dangling `init.vim` link, which Neovim would
   otherwise report as a conflicting config) and delete
-  `~/.local/share/nvim/plugged`.
+  `~/.local/share/nvim/plugged`, then run `:TSInstall! <lang>...` for the
+  parsers it had installed: their highlight queries are symlinks into
+  `plugged/` and break with it.

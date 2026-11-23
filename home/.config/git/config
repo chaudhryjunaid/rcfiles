@@ -52,8 +52,8 @@
   cmd = code --wait --diff $LOCAL $REMOTE
 [difftool "cursor"]
   cmd = cursor --wait --diff $LOCAL $REMOTE
-[difftool "vim"]
-  cmd = nvim -d $LOCAL $REMOTE  # nvim: setup installs no vim, and git skips shell aliases
+[difftool "nvim"]
+  cmd = nvim -d $LOCAL $REMOTE
 [merge]
   conflictstyle = zdiff3
   tool = cursor
@@ -61,17 +61,17 @@
   cmd = code --wait $MERGED
 [mergetool "cursor"]
   cmd = cursor --wait $MERGED
-[mergetool "vim"]
+[mergetool "nvim"]
   cmd = nvim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 # alias settings
 [alias]
   # diff/merge tool aliases
   diffv = difftool --tool=vscode
   diffc = difftool --tool=cursor
-  diffvi = difftool --tool=vim
+  diffvi = difftool --tool=nvim
   mergev = mergetool --tool=vscode
   mergec = mergetool --tool=cursor
-  mergevi = mergetool --tool=vim
+  mergevi = mergetool --tool=nvim
   # Quick status
   s = status --short --branch
   # Branch management
