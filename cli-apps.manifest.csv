@@ -6,7 +6,8 @@ Dev and cloud,Autoconf,https://www.gnu.org/software/autoconf/,configure script g
 Dev and cloud,Automake,https://www.gnu.org/software/automake/,Makefile generator,apt: automake,automake,automake
 Dev and cloud,pkg-config,http://pkgconf.org/,compile and link flags for libraries,apt: pkg-config,pkg-config,pkgconf-pkg-config
 Dev and cloud,pip and venv,https://pip.pypa.io,for the system Python; uv (mise) covers the rest,apt: python3-pip python3-venv,python3-pip python3-venv,python3-pip
-Dev and cloud,diff_cover,https://pypi.org/project/diff_cover/,run coverage and linting reports on diffs,pip install --user diff_cover,,
+Dev and cloud,diff_cover,https://pypi.org/project/diff_cover/,"coverage and lint reports for only the lines a diff changes, diff-cover",pip install --user diff_cover,,
+Dev and cloud,google-cloud-cli,https://docs.cloud.google.com/sdk/gcloud,"Google Cloud's command-line tools, gcloud","apt, from packages.cloud.google.com's repo: google-cloud-cli",,
 Containers and VMs,Docker Engine,https://docs.docker.com/engine/install/ubuntu/,"docker, with the buildx and compose plugins","apt, from Docker's repo: docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",,
 Files and data,FFmpeg,https://ffmpeg.org,audio/video converter,apt: ffmpeg,ffmpeg,ffmpeg-free
 Files and data,aria2,https://aria2.github.io,"multi-connection downloader, aria2c",apt: aria2,aria2,aria2
@@ -27,6 +28,5 @@ Hardware info and testing,vainfo,https://github.com/intel/libva-utils,video acce
 Network and sharing,cifs-utils,https://wiki.samba.org/index.php/LinuxCIFS_utils,"mount Windows/Samba shares, mount.cifs",apt: cifs-utils,cifs-utils,cifs-utils
 Network and sharing,smbclient,https://www.samba.org,FTP-like client for SMB shares,apt: smbclient,smbclient,samba-client
 Network and sharing,Waypipe,https://gitlab.freedesktop.org/mstoeckl/waypipe/,run Wayland apps over SSH,apt: waypipe,waypipe,waypipe
-Network and sharing,traceroute,https://traceroute.sourceforge.net/,traces the route taken by packets over an IPv4/IPv6 network,apt: traceroute,traceroute,
+Network and sharing,traceroute,https://traceroute.sourceforge.net/,"show the network path to a host, traceroute",apt: traceroute,traceroute,
 System,Flatpak,https://flatpak.org,runs the Flathub apps in gui-apps.manifest.csv,apt: flatpak,flatpak,flatpak
-Uncategorized,google-cloud-cli,https://docs.cloud.google.com/sdk/gcloud,utilities for the Google Cloud Platform,"apt, from packages.cloud.google.com's repo: google-cloud-cli",,
