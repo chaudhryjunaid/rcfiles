@@ -77,12 +77,6 @@
   uncommit = reset --soft HEAD~1
 [commit]
   verbose = true                # Show the diff in the commit message editor
-# Signing uses an SSH key. Which key, and turning it on (commit/tag.gpgSign),
-# is per machine: setup/git-identity.sh writes both to ~/.gitconfig.
-[gpg]
-  format = ssh
-[gpg "ssh"]
-  allowedSignersFile = ~/.config/git/allowed_signers  # Keys `git log --show-signature` trusts (untracked)
 [branch]
   sort = -committerdate         # `git branch` lists most recent first
 [tag]

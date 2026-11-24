@@ -564,7 +564,7 @@ local plugins = {
     build = ":TSUpdate",
     config = function()
       -- Installs missing parsers in the background; a no-op once installed.
-      if vim.fn.executable("tree-sitter") == 1 then
+      if not vim.g.rcfiles_check and vim.fn.executable("tree-sitter") == 1 then
         require("nvim-treesitter").install({
           "bash", "c", "cpp", "css", "diff", "dockerfile", "git_rebase",
           "gitcommit", "go", "html", "java", "javascript", "json", "lua",
@@ -648,7 +648,8 @@ if not vim.g.lazy_did_setup then
     -- Pinned versions, committed next to this file (resolved through
     -- link.sh's symlink, so updates land in the repo).
     lockfile = vim.fs.dirname(vim.fn.resolve(debug.getinfo(1, "S").source:sub(2))) .. "/lazy-lock.json",
-    install = { colorscheme = { "onedark" } },
+    -- Validation loads installed plugins without downloading missing ones.
+    install = { missing = not vim.g.rcfiles_check, colorscheme = { "onedark" } },
     change_detection = { notify = false },
   })
 end

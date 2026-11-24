@@ -205,10 +205,14 @@ EOF
     # Startup, only once lazy.nvim is installed: before that, loading init.lua
     # would download it and every plugin.
     if [ -d "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim" ]; then
-        out=$(timeout 30 nvim --headless -i NONE -u "$PWD/$nvim_init" \
+        # Validate startup without installing plugins or Treesitter parsers.
+        if ! out=$(timeout 30 nvim --headless -i NONE \
+            --cmd 'let g:rcfiles_check = v:true' -u "$PWD/$nvim_init" \
             +'lua vim.defer_fn(function() if vim.v.errmsg ~= "" then io.stdout:write(vim.v.errmsg, "\n") end vim.cmd("qa!") end, 200)' \
-            </dev/null 2>&1) || true
-        if [ -n "$out" ]; then
+            </dev/null 2>&1); then
+            echo "$out" >&2
+            fail "$nvim_init: startup failed or timed out"
+        elif [ -n "$out" ]; then
             echo "$out" >&2
             fail "$nvim_init: errors on startup"
         fi
