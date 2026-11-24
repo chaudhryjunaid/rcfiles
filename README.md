@@ -202,7 +202,6 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **duf** — friendlier `df`; run it as `duf` (`df` is not aliased)
 - **tmuxinator** — tmux session manager (apt on Ubuntu; on Fedora,
   `gem install tmuxinator`)
-- **code** / **cursor** — git difftool/mergetool aliases (`git diffc`, etc.)
 
 # Layout
 - `home/` — mirrors `$HOME`: every file is symlinked to the same relative path

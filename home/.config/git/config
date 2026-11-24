@@ -38,64 +38,22 @@
 [rerere]
   enabled = true
   autoUpdate = true             # Stage files that rerere resolved
-# difftool/mergetool settings
 [diff]
   algorithm = histogram         # Cleaner hunks than the default myers
   colorMoved = default          # Highlight moved (not changed) lines
   colorMovedWS = allow-indentation-change  # ...even when re-indented
-  tool = cursor
-[difftool]
-  prompt = false
-[mergetool]
-  prompt = false
-  keepBackup = false
-[difftool "vscode"]
-  cmd = code --wait --diff $LOCAL $REMOTE
-[difftool "cursor"]
-  cmd = cursor --wait --diff $LOCAL $REMOTE
-[difftool "nvim"]
-  cmd = nvim -d $LOCAL $REMOTE
 [merge]
-  conflictstyle = zdiff3
-  tool = cursor
-[mergetool "vscode"]
-  cmd = code --wait $MERGED
-[mergetool "cursor"]
-  cmd = cursor --wait $MERGED
-[mergetool "nvim"]
-  cmd = nvim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
-# alias settings
+  conflictstyle = zdiff3        # Conflict markers include the base, for humans and AI alike
 [alias]
-  # diff/merge tool aliases
-  diffv = difftool --tool=vscode
-  diffc = difftool --tool=cursor
-  diffvi = difftool --tool=nvim
-  mergev = mergetool --tool=vscode
-  mergec = mergetool --tool=cursor
-  mergevi = mergetool --tool=nvim
-  # Quick status
   s = status --short --branch
-  # Branch management
-  recent = branch --sort=-committerdate -10
-  gone = !git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {print $1}' | xargs -r git branch -D
-  # Stash with message
-  save = stash push -m
-  # Show files in last commit
-  last = show --name-only
-  # List available aliases
-  aliases = !git config --get-regexp alias | sed -re 's/alias\\.(\\S*)\\s(.*)$/\\1 = \\2/g'
-  # Display tree-like log, because default log is a pain…
+  # Graph log; lazygit and fzf-git (Ctrl-G Ctrl-H) for anything more
   lg = log --graph --date=relative --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ad)%Creset'
-  # Useful when you have to update your last commit
-  # with staged files without editing the commit message.
+  # Delete local branches whose upstream is gone (after fetch.prune)
+  gone = !git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {print $1}' | xargs -r git branch -D
+  # Fold staged changes into the last commit, keeping its message
   recommit = commit --amend --no-edit
-  # Edit last commit message
-  reword = commit --amend
-  # Undo last commit but keep changed files in stage
+  # Undo the last commit, keeping its changes staged
   uncommit = reset --soft HEAD~1
-  unstage = restore --staged --   # Unstage files
-  # Remove file(s) from Git but not from disk
-  untrack = rm --cached --
 [commit]
   verbose = true                # Show the diff in the commit message editor
 [branch]

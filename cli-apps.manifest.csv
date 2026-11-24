@@ -1,6 +1,5 @@
 category,name,homepage,description,install,ubuntu,fedora
 Dev and cloud,Claude Code,https://claude.com/product/claude-code,"Anthropic's coding agent, claude",installer: curl -fsSL https://claude.ai/install.sh | bash,,
-Dev and cloud,Codex CLI,https://developers.openai.com/codex/cli,"OpenAI's coding agent, codex",installer into ~/.local/bin,,
 Dev and cloud,MongoDB Shell,https://www.mongodb.com/try/download/shell,mongosh,.deb from the homepage: mongodb-mongosh,,
 Dev and cloud,MongoDB Database Tools,https://www.mongodb.com/try/download/database-tools,"mongodump, mongorestore, mongoimport, ...",.deb from the homepage: mongodb-database-tools,,
 Dev and cloud,Autoconf,https://www.gnu.org/software/autoconf/,configure script generator,apt: autoconf,autoconf,autoconf
@@ -9,14 +8,8 @@ Dev and cloud,pkg-config,http://pkgconf.org/,compile and link flags for librarie
 Dev and cloud,pip and venv,https://pip.pypa.io,for the system Python; uv (mise) covers the rest,apt: python3-pip python3-venv,python3-pip python3-venv,python3-pip
 Dev and cloud,diff_cover,https://pypi.org/project/diff_cover/,run coverage and linting reports on diffs,pip install --user diff_cover,,
 Containers and VMs,Docker Engine,https://docs.docker.com/engine/install/ubuntu/,"docker, with the buildx and compose plugins","apt, from Docker's repo: docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",,
-Containers and VMs,ctop,https://ctop.sh,top for containers,release binary in /usr/local/bin,,
-Containers and VMs,QEMU,https://www.qemu.org,"VM emulator and qemu-img, with UEFI and TPM for guests",apt: qemu-system-x86 qemu-utils ovmf swtpm,qemu-system-x86 qemu-utils ovmf swtpm,qemu-system-x86 qemu-img edk2-ovmf swtpm
-Containers and VMs,libvirt,https://libvirt.org,VM manager daemon and virsh,apt: libvirt-daemon-system libvirt-clients,libvirt-daemon-system libvirt-clients,libvirt-daemon-kvm libvirt-daemon-config-network libvirt-client
-Files and data,yq,https://github.com/kislyuk/yq,"jq for YAML, XML and TOML (a jq wrapper, not mikefarah's yq)",apt: yq,yq,
 Files and data,FFmpeg,https://ffmpeg.org,audio/video converter,apt: ffmpeg,ffmpeg,ffmpeg-free
 Files and data,aria2,https://aria2.github.io,"multi-connection downloader, aria2c",apt: aria2,aria2,aria2
-Files and data,tree,http://oldmanprogrammer.net/source.php?dir=projects/tree,directory tree,apt: tree,tree,tree
-Files and data,ncdu,https://dev.yorhel.nl/ncdu/,disk usage browser,apt: ncdu,ncdu,ncdu
 Editors,Zile,https://www.gnu.org/software/zile/,small Emacs-like editor,apt: zile,zile,zile
 Monitoring,Glances,https://github.com/nicolargo/glances,all-in-one system monitor,apt: glances,glances,glances
 Monitoring,iotop,http://guichaz.free.fr/iotop/,disk I/O per process,apt: iotop,iotop,iotop-c
@@ -25,28 +18,16 @@ Monitoring,NetHogs,https://github.com/raboof/nethogs,bandwidth per process,apt: 
 Monitoring,gping,https://github.com/orf/gping,ping with a graph,apt: gping,gping,
 Monitoring,PowerTOP,https://github.com/fenrus75/powertop,power usage and tuning,apt: powertop,powertop,powertop
 Monitoring,lm-sensors,https://github.com/hramrach/lm-sensors,"temperatures, fans and voltages, sensors",apt: lm-sensors,lm-sensors,lm_sensors
-Hardware info and testing,inxi,https://smxi.org/docs/inxi.htm,system information report,apt: inxi,inxi,inxi
-Hardware info and testing,hwinfo,https://github.com/openSUSE/hwinfo,hardware probe,apt: hwinfo,hwinfo,hwinfo
-Hardware info and testing,fastfetch,https://github.com/fastfetch-cli/fastfetch,system info with distro logo,apt: fastfetch,fastfetch,fastfetch
-Hardware info and testing,cpufetch,https://github.com/Dr-Noob/cpufetch,CPU info with vendor logo,apt: cpufetch,cpufetch,cpufetch
-Hardware info and testing,linuxlogo,http://www.deater.net/weave/vmwprod/linux_logo/,ANSI distro logo,apt: linuxlogo,linuxlogo,
 Hardware info and testing,nvme-cli,https://github.com/linux-nvme/nvme-cli,"NVMe drive management, nvme",apt: nvme-cli,nvme-cli,nvme-cli
 Hardware info and testing,smartmontools,https://www.smartmontools.org,"drive health, smartctl",apt: smartmontools,smartmontools,smartmontools
 Hardware info and testing,perf,https://perfwiki.github.io,"kernel profiler, with cpupower",apt: linux-tools-generic,linux-tools-generic,perf kernel-tools
-Hardware info and testing,util-linux extras,https://github.com/util-linux/util-linux,"hwclock, lsmem, lsirq, ...",apt: util-linux-extra,util-linux-extra,util-linux
 Hardware info and testing,IGT GPU Tools,https://gitlab.freedesktop.org/drm/igt-gpu-tools,intel_gpu_top and other Intel GPU tools,apt: intel-gpu-tools,intel-gpu-tools,igt-gpu-tools
 Hardware info and testing,Mesa utils,https://mesa3d.org,"glxinfo, glxgears",apt: mesa-utils,mesa-utils,glx-utils
 Hardware info and testing,Vulkan tools,https://github.com/KhronosGroup/Vulkan-Tools,"vulkaninfo, vkcube",apt: vulkan-tools,vulkan-tools,vulkan-tools
 Hardware info and testing,vainfo,https://github.com/intel/libva-utils,video acceleration (VA-API) info,apt: vainfo,vainfo,libva-utils
-Hardware info and testing,libdrm tests,https://gitlab.freedesktop.org/mesa/drm/,modetest and other DRM tools,apt: libdrm-tests,libdrm-tests,drm-utils
-Hardware info and testing,fio,https://github.com/axboe/fio,disk I/O benchmark,apt: fio,fio,fio
-Hardware info and testing,stress-ng,https://github.com/ColinIanKing/stress-ng,CPU/memory/IO stress tester,apt: stress-ng,stress-ng,stress-ng
 Network and sharing,cifs-utils,https://wiki.samba.org/index.php/LinuxCIFS_utils,"mount Windows/Samba shares, mount.cifs",apt: cifs-utils,cifs-utils,cifs-utils
 Network and sharing,smbclient,https://www.samba.org,FTP-like client for SMB shares,apt: smbclient,smbclient,samba-client
 Network and sharing,Waypipe,https://gitlab.freedesktop.org/mstoeckl/waypipe/,run Wayland apps over SSH,apt: waypipe,waypipe,waypipe
 Network and sharing,traceroute,https://traceroute.sourceforge.net/,traces the route taken by packets over an IPv4/IPv6 network,apt: traceroute,traceroute,
 System,Flatpak,https://flatpak.org,runs the Flathub apps in gui-apps.manifest.csv,apt: flatpak,flatpak,flatpak
-System,fnt,https://github.com/alexmyczko/fnt,font downloader and manager,apt: fnt,fnt,
-Fun and misc,CMatrix,https://github.com/abishekvashok/cmatrix,The Matrix rain,apt: cmatrix,cmatrix,cmatrix
-Fun and misc,pipes.sh,https://github.com/pipeseroni/pipes.sh,animated pipes screensaver,apt: pipes-sh,pipes-sh,
 Uncategorized,google-cloud-cli,https://docs.cloud.google.com/sdk/gcloud,utilities for the Google Cloud Platform,"apt, from packages.cloud.google.com's repo: google-cloud-cli",,
