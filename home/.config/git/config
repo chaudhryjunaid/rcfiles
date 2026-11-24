@@ -16,13 +16,13 @@
 [delta]
   navigate = true
   line-numbers = true
-  side-by-side = false         # Two columns wrap badly in tmux splits; `delta -s` or DELTA_FEATURES=+side-by-side for one-offs
+  # Single column (delta's default): two wrap badly in tmux splits. For one
+  # side-by-side diff: `delta -s` or DELTA_FEATURES=+side-by-side
   hyperlinks = true            # File paths and line numbers are clickable (kitty, Ghostty)
 [log]
   abbrevCommit = true
 [fetch]
-  prune = true
-  pruneTags = false             # true would delete local tags that aren't on the remote
+  prune = true                  # Tags aren't pruned (fetch.pruneTags): local-only tags stay
   writeCommitGraph = true       # Faster log --graph, merge-base, branch --contains
 [pull]
   rebase = true                 # Linear history; pairs with rebase.autoStash below
