@@ -40,9 +40,24 @@
   colorMoved = default          # Highlight moved (not changed) lines
   colorMovedWS = allow-indentation-change  # ...even when re-indented
   mnemonicPrefix = true         # i/ index, w/ working tree, c/ commit, instead of a/ b/
+  tool = nvimdiff               # `git difftool`
+[difftool]
+  prompt = false
 [merge]
   conflictstyle = zdiff3        # Conflict markers include the base, for humans and AI alike
   autoStash = true              # Stash/unstash around `git merge`, like rebase.autoStash
+  # `git mergetool` opens Sublime Merge in a desktop session and nvimdiff
+  # elsewhere (ssh, a TTY); -t nvimdiff or -t smerge picks one.
+  tool = nvimdiff
+  guitool = smerge
+[mergetool]
+  guiDefault = auto             # Use merge.guitool when $DISPLAY is set
+  prompt = false
+  keepBackup = false            # No *.orig files left after resolving
+  hideResolved = true           # Pre-apply what git merged cleanly; show only the conflicts
+[mergetool "smerge"]
+  cmd = smerge mergetool \"$BASE\" \"$LOCAL\" \"$REMOTE\" -o \"$MERGED\"
+  trustExitCode = true
 [status]
   showStash = true              # Say how many stash entries there are
 [transfer]
