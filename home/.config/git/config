@@ -6,7 +6,6 @@
   useConfigOnly = true          # No identity set? Refuse to commit, don't guess one
 [core]
   editor = nvim
-  excludesfile = ~/.gitignore_global
   pager = delta
   untrackedCache = true        # Cache untracked-file scans: much faster `git status`
 [init]
@@ -16,13 +15,11 @@
 [delta]
   navigate = true
   line-numbers = true
-  # Single column (delta's default): two wrap badly in tmux splits. For one
-  # side-by-side diff: `delta -s` or DELTA_FEATURES=+side-by-side
   hyperlinks = true            # File paths and line numbers are clickable (kitty, Ghostty)
 [log]
   abbrevCommit = true
 [fetch]
-  prune = true                  # Tags aren't pruned (fetch.pruneTags): local-only tags stay
+  prune = true
   writeCommitGraph = true       # Faster log --graph, merge-base, branch --contains
 [pull]
   rebase = true                 # Linear history; pairs with rebase.autoStash below
@@ -42,8 +39,17 @@
   algorithm = histogram         # Cleaner hunks than the default myers
   colorMoved = default          # Highlight moved (not changed) lines
   colorMovedWS = allow-indentation-change  # ...even when re-indented
+  mnemonicPrefix = true         # i/ index, w/ working tree, c/ commit, instead of a/ b/
 [merge]
   conflictstyle = zdiff3        # Conflict markers include the base, for humans and AI alike
+  autoStash = true              # Stash/unstash around `git merge`, like rebase.autoStash
+[status]
+  showStash = true              # Say how many stash entries there are
+[transfer]
+  fsckObjects = true            # Reject corrupt or malformed objects on fetch, clone and push
+[blame]
+  coloring = highlightRecent    # Color lines by age
+  markIgnoredLines = true       # Mark lines blamed past an ignored revision with ?
 [alias]
   s = status --short --branch
   # Graph log; lazygit and fzf-git (Ctrl-G Ctrl-H) for anything more
@@ -68,5 +74,3 @@
   sort = version:refname        # v1.10 after v1.9
 [column]
   ui = auto                     # Columnar `git branch`/`git tag` output
-[help]
-  autocorrect = prompt          # Offer to run the likely-intended command
