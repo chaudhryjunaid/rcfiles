@@ -10,13 +10,13 @@
 #umask 022
 
 # set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+if [ -d "$HOME/bin" ]; then
+  PATH="$HOME/bin:$PATH"
 fi
 
 # set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
+if [ -d "$HOME/.local/bin" ]; then
+  PATH="$HOME/.local/bin:$PATH"
 fi
 
 # mise shims: put the mise tools (nvim, node, delta, ...) on PATH for the
@@ -24,14 +24,14 @@ fi
 # rc files takes over from these in terminals. The bash flavour prints a
 # plain POSIX export, safe for sh/dash, which may source this file.
 if command -v mise >/dev/null 2>&1; then
-    eval "$(mise activate bash --shims)"
+  eval "$(mise activate bash --shims)"
 fi
 
 # if running bash, include .bashrc last, so the PATH above is already in
 # place for its `command -v` checks and its `mise activate` runs after the
 # shims (activate must come after them to take precedence).
 if [ -n "$BASH_VERSION" ]; then
-    if [ -f "$HOME/.bashrc" ]; then
-	. "$HOME/.bashrc"
-    fi
+  if [ -f "$HOME/.bashrc" ]; then
+    . "$HOME/.bashrc"
+  fi
 fi

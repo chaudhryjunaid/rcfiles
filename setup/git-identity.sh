@@ -21,8 +21,11 @@ echo "  user.email = $EMAIL"
 printf "Write to %s? [y/N] " "$GITLOCAL"
 read -r reply || reply=""
 case "$reply" in
-    [yY]|[yY][eE][sS]) ;;
-    *) echo "Aborted; nothing written. git won't commit until an identity is set (rerun this script)."; exit 0 ;;
+    [yY] | [yY][eE][sS]) ;;
+    *)
+        echo "Aborted; nothing written. git won't commit until an identity is set (rerun this script)."
+        exit 0
+        ;;
 esac
 
 git config -f "$GITLOCAL" user.name "$NAME"

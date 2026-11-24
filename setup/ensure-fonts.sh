@@ -15,7 +15,7 @@
 
 set -euo pipefail
 
-SETUP=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SETUP=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 # shellcheck source=setup/lib.sh
 . "$SETUP/lib.sh"
 
@@ -38,10 +38,16 @@ DRY_RUN=0
 UPDATE=0
 for arg in "$@"; do
     case "$arg" in
-        -n|--dry-run) DRY_RUN=1 ;;
-        -u|--update)  UPDATE=1 ;;
-        -h|--help)    sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-        *)            echo "Unknown option: $arg" >&2; exit 2 ;;
+        -n | --dry-run) DRY_RUN=1 ;;
+        -u | --update) UPDATE=1 ;;
+        -h | --help)
+            sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $arg" >&2
+            exit 2
+            ;;
     esac
 done
 
@@ -64,7 +70,7 @@ for entry in "${FONTS[@]}"; do
     name=${entry%%=*}
     dir="$FONT_DIR/$name"
     have=""
-    [ -r "$dir/$STAMP" ] && have=$(< "$dir/$STAMP")
+    [ -r "$dir/$STAMP" ] && have=$(<"$dir/$STAMP")
     if [ ! -d "$dir" ]; then
         reason="not installed"
     elif [ "$UPDATE" -eq 1 ]; then
@@ -94,7 +100,7 @@ for name in "${todo[@]}"; do
     if install_nerd_font "$name"; then
         # The release the latest/download URL served (the tag looked up above,
         # barring a release in between).
-        [ -z "$latest" ] || echo "$latest" > "$FONT_DIR/$name/$STAMP"
+        [ -z "$latest" ] || echo "$latest" >"$FONT_DIR/$name/$STAMP"
     else
         warn "couldn't install $name"
         failed+=("$name")

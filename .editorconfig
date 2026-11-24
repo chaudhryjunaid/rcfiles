@@ -1,0 +1,23 @@
+# This checkout's own conventions (the dotfiles under home/ follow
+# home/.editorconfig, the one linked to ~/.editorconfig). lint.sh's shfmt
+# check uses the same indentation.
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# The scripts (some have no extension).
+[{*.sh,gogh,hooks/*}]
+indent_size = 4
+
+[*.{md,yml,yaml,json,toml}]
+indent_size = 2
+
+# Two trailing spaces are a Markdown line break.
+[*.md]
+trim_trailing_whitespace = false

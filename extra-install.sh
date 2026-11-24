@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 # shellcheck source=setup/lib.sh
 . "$REPO/setup/lib.sh"
 
@@ -19,10 +19,16 @@ DRY_RUN=0
 MANIFESTS=("$REPO/cli-apps.manifest.csv" "$REPO/gui-apps.manifest.csv")
 for arg in "$@"; do
     case "$arg" in
-        -n|--dry-run) DRY_RUN=1 ;;
-        --cli-only)   MANIFESTS=("$REPO/cli-apps.manifest.csv") ;;
-        -h|--help)    sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-        *)            echo "Unknown option: $arg" >&2; exit 2 ;;
+        -n | --dry-run) DRY_RUN=1 ;;
+        --cli-only) MANIFESTS=("$REPO/cli-apps.manifest.csv") ;;
+        -h | --help)
+            sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $arg" >&2
+            exit 2
+            ;;
     esac
 done
 
@@ -34,10 +40,12 @@ case "$DISTRO" in
         is_installed() { [ "$(dpkg-query -W -f='${db:Status-Abbrev}' "$1" 2>/dev/null)" = "ii " ]; }
         # --no-remove: fail rather than remove a package that conflicts, such
         # as one from a vendor repo.
-        pkg_install() { $SUDO apt-get install -y --no-remove "$@"; } ;;
+        pkg_install() { $SUDO apt-get install -y --no-remove "$@"; }
+        ;;
     fedora)
         is_installed() { rpm -q --quiet "$1"; }
-        pkg_install() { $SUDO dnf install -y "$@"; } ;;
+        pkg_install() { $SUDO dnf install -y "$@"; }
+        ;;
 esac
 
 # join <array...>: print the arguments separated by ", ".
@@ -52,12 +60,15 @@ join() {
 declare -A elsewhere=()
 while read -r name; do
     [ -n "$name" ] && elsewhere[$name]=1
-done < <({ snap list 2>/dev/null | awk 'NR > 1 { print $1 }'
-           flatpak list --app --columns=application 2>/dev/null |
-               awk -F. '{ print tolower($NF) }'; } || true)
+done < <({
+    snap list 2>/dev/null | awk 'NR > 1 { print $1 }'
+    flatpak list --app --columns=application 2>/dev/null |
+        awk -F. '{ print tolower($NF) }'
+} || true)
 
 # Each manifest row as "name<TAB>packages for this distro".
-rows=$(python3 -I - "$DISTRO" "${MANIFESTS[@]}" <<'EOF'
+rows=$(
+    python3 -I - "$DISTRO" "${MANIFESTS[@]}" <<'EOF'
 import csv, sys
 distro, *paths = sys.argv[1:]
 for path in paths:
@@ -71,20 +82,29 @@ todo_apps=() todo_pkgs=() by_hand=() as_other=()
 present=0
 while IFS=$'\t' read -r name pkgs; do
     [ -n "$name" ] || continue
-    if [ -z "$pkgs" ]; then by_hand+=("$name"); continue; fi
-    read -ra pkg_list <<< "$pkgs"
+    if [ -z "$pkgs" ]; then
+        by_hand+=("$name")
+        continue
+    fi
+    read -ra pkg_list <<<"$pkgs"
     key=${name,,}
     for n in "${key// /}" "${pkg_list[@]}"; do
-        if [ -n "${elsewhere[$n]:-}" ]; then as_other+=("$name"); continue 2; fi
+        if [ -n "${elsewhere[$n]:-}" ]; then
+            as_other+=("$name")
+            continue 2
+        fi
     done
     missing=()
     for p in "${pkg_list[@]}"; do
         is_installed "$p" || missing+=("$p")
     done
-    if [ "${#missing[@]}" -eq 0 ]; then present=$((present + 1)); continue; fi
+    if [ "${#missing[@]}" -eq 0 ]; then
+        present=$((present + 1))
+        continue
+    fi
     todo_apps+=("$name")
     todo_pkgs+=("${missing[*]}")
-done <<< "$rows"
+done <<<"$rows"
 
 log "Apps from the manifests ($DISTRO)"
 info "already installed: $present"
@@ -115,7 +135,7 @@ fi
 
 all=()
 for pkgs in "${todo_pkgs[@]}"; do
-    read -ra pkg_list <<< "$pkgs"
+    read -ra pkg_list <<<"$pkgs"
     all+=("${pkg_list[@]}")
 done
 log "Installing ${#all[@]} package$([ "${#all[@]}" -eq 1 ] || echo s)"
@@ -131,7 +151,7 @@ if [ "${#todo_apps[@]}" -eq 1 ]; then
 else
     warn "installing them together failed; trying one app at a time"
     for i in "${!todo_apps[@]}"; do
-        read -ra pkg_list <<< "${todo_pkgs[i]}"
+        read -ra pkg_list <<<"${todo_pkgs[i]}"
         log "Installing ${todo_apps[i]}"
         pkg_install "${pkg_list[@]}" || failed+=("${todo_apps[i]}")
     done

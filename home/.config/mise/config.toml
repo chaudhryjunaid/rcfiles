@@ -37,5 +37,7 @@ btop = "latest"
 dust = "latest"
 uv = "latest"
 tokei = "latest"      # built with cargo (rustup): no release binaries past 12.x
+lazygit = "latest"    # git TUI (config: ~/.config/lazygit/config.yml)
+tealdeer = "latest"   # `tldr <command>`: short examples instead of the man page
 # Not in mise's registry: prebuilt GitHub release binaries.
 "github:dalance/procs" = "latest"

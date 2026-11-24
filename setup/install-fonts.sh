@@ -32,25 +32,34 @@ usage_error() {
 FOLDER="" srcs=() ids=()
 while [ "$#" -gt 0 ]; do
     case "$1" in
-        -h|--help) sed -n '3,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-        --package|--nerd|--google)
+        -h | --help)
+            sed -n '3,17p' "$0" | sed 's/^# \{0,1\}//'
+            exit 0
+            ;;
+        --package | --nerd | --google)
             [ "$#" -ge 2 ] || usage_error "$1 needs a name."
             case "$1" in --package) srcs+=(packages) ;; *) srcs+=("${1#--}") ;; esac
             ids+=("$2")
-            shift 2 ;;
+            shift 2
+            ;;
         -*) usage_error "Unknown option: $1" ;;
-        *)  [ -z "$FOLDER" ] || usage_error "Give one FOLDER."
+        *)
+            [ -z "$FOLDER" ] || usage_error "Give one FOLDER."
             FOLDER=$1
-            shift ;;
+            shift
+            ;;
     esac
 done
 [ -z "$FOLDER" ] || [ "${#ids[@]}" -eq 0 ] || usage_error "FOLDER is only for searching."
 FOLDER=${FOLDER:-$HOME/media/fonts}
 FOLDER=${FOLDER%/}
 
-if command -v apt-get >/dev/null 2>&1; then PKG=apt
-elif command -v dnf >/dev/null 2>&1; then PKG=dnf
-else PKG=""
+if command -v apt-get >/dev/null 2>&1; then
+    PKG=apt
+elif command -v dnf >/dev/null 2>&1; then
+    PKG=dnf
+else
+    PKG=""
 fi
 
 TMP=$(mktemp -d)
@@ -64,12 +73,14 @@ catalog_packages() {
     case "$PKG" in
         apt)
             apt-cache search --names-only '^(fonts|ttf|otf)-' |
-                awk '{ name = $1; sub(/^[^ ]+ - /, ""); print name "\t" name "\t" name " — " $0 }' ;;
+                awk '{ name = $1; sub(/^[^ ]+ - /, ""); print name "\t" name "\t" name " — " $0 }'
+            ;;
         dnf)
             # A real tab: dnf5 doesn't expand "\t" in --qf (dnf4 also adds a
             # newline of its own, hence NF to skip the blank lines).
             dnf -q repoquery --qf $'%{name}\t%{summary}\n' '*fonts*' | sort -u |
-                awk -F'\t' 'NF { print $1 "\t" $1 "\t" $1 " — " $2 }' ;;
+                awk -F'\t' 'NF { print $1 "\t" $1 "\t" $1 " — " $2 }'
+            ;;
     esac
 }
 
@@ -94,12 +105,12 @@ catalog_google() {
 catalog_local() {
     find "$FOLDER" -type f \( -iname '*.ttf' -o -iname '*.otf' -o -iname '*.ttc' -o -iname '*.otc' \) \
         -exec fc-scan --format '%{family[0]}\t%{file}\n' {} + | sort -u |
-        awk -F'\t' '!seen[$2]++' > "$TMP/local-all.tsv" || true
+        awk -F'\t' '!seen[$2]++' >"$TMP/local-all.tsv" || true
     # Leave out a family's static/ copies when it has other files too (the
     # variable fonts, in Google's zips), as install_google_font does.
     awk -F'\t' 'NR == FNR { if ($2 !~ /\/static\//) has_main[$1] = 1; next }
                 !(has_main[$1] && $2 ~ /\/static\//)' \
-        "$TMP/local-all.tsv" "$TMP/local-all.tsv" > "$TMP/local-files.tsv"
+        "$TMP/local-all.tsv" "$TMP/local-all.tsv" >"$TMP/local-files.tsv"
     ROOT="$FOLDER/" awk -F'\t' '
         {
             rel = substr($2, length(ENVIRON["ROOT"]) + 1)
@@ -120,9 +131,9 @@ catalog_local() {
 title() {
     case "$1" in
         packages) echo "$PKG packages" ;;
-        nerd)     echo "Nerd Fonts" ;;
-        google)   echo "Google Fonts" ;;
-        local)    echo "${FOLDER/#$HOME/\~}" ;;
+        nerd) echo "Nerd Fonts" ;;
+        google) echo "Google Fonts" ;;
+        local) echo "${FOLDER/#$HOME/\~}" ;;
     esac
 }
 
@@ -142,19 +153,25 @@ has() {
 # static/ copies are only taken when there is nothing else.
 install_google_font() {
     local list dest name url n=0
-    case "$1" in ''|*/*|.*) return 2 ;; esac   # $dest gets rm -rf'd
+    case "$1" in '' | */* | .*) return 2 ;; esac # $dest gets rm -rf'd
     dest="$FONT_DIR/google/${1// /_}"
     list=$(google_get "download/list?family=$(jq -rn --arg f "$1" '$f | @uri')") || return
     rm -rf "$dest.new" && mkdir -p "$dest.new" || return
     while IFS=$'\t' read -r name url; do
-        curl -fsSL -o "$dest.new/$name" "$url" || { rm -rf "$dest.new"; return 1; }
+        curl -fsSL -o "$dest.new/$name" "$url" || {
+            rm -rf "$dest.new"
+            return 1
+        }
         n=$((n + 1))
     done < <(jq -r '.manifest.fileRefs
         | map(select(.filename | startswith("static/") | not)) as $main
         | (if ($main | length) > 0 then $main else . end)[]
         | select(.filename | test("\\.(ttf|otf)$"))
-        | [(.filename | split("/") | last), .url] | @tsv' <<< "$list")
-    if [ "$n" -eq 0 ]; then rm -rf "$dest.new"; return 1; fi
+        | [(.filename | split("/") | last), .url] | @tsv' <<<"$list")
+    if [ "$n" -eq 0 ]; then
+        rm -rf "$dest.new"
+        return 1
+    fi
     rm -rf "$dest" && mv "$dest.new" "$dest"
 }
 
@@ -176,11 +193,11 @@ install_packages() {
     done
     case "$PKG" in
         apt) $SUDO apt-get update -qq &&
-                 { [ "${#new[@]}" -eq 0 ] || $SUDO apt-get install -y "${new[@]}"; } &&
-                 { [ "${#old[@]}" -eq 0 ] || $SUDO apt-get install -y --only-upgrade "${old[@]}"; } ;;
+            { [ "${#new[@]}" -eq 0 ] || $SUDO apt-get install -y "${new[@]}"; } &&
+            { [ "${#old[@]}" -eq 0 ] || $SUDO apt-get install -y --only-upgrade "${old[@]}"; } ;;
         dnf) { [ "${#new[@]}" -eq 0 ] || $SUDO dnf install -y "${new[@]}"; } &&
-                 { [ "${#old[@]}" -eq 0 ] || $SUDO dnf upgrade -y "${old[@]}"; } ;;
-        *)   return 1 ;;
+            { [ "${#old[@]}" -eq 0 ] || $SUDO dnf upgrade -y "${old[@]}"; } ;;
+        *) return 1 ;;
     esac
 }
 
@@ -198,8 +215,8 @@ install_local_font() {
 SOURCES=()
 # load <source>: build $TMP/<source>.tsv, sorted by label.
 load() {
-    if "catalog_$1" | sort -t $'\t' -k3,3f > "$TMP/$1.tsv"; then
-        info "$(title "$1"): $(wc -l < "$TMP/$1.tsv") fonts"
+    if "catalog_$1" | sort -t $'\t' -k3,3f >"$TMP/$1.tsv"; then
+        info "$(title "$1"): $(wc -l <"$TMP/$1.tsv") fonts"
         SOURCES+=("$1")
     else
         warn "couldn't list the $(title "$1"); leaving them out"
@@ -235,7 +252,7 @@ ask_picks() {
     local -a toks picks
     while :; do
         read -rp "Install which (e.g. 1 3 5-7; Enter to search again)? " answer || return 1
-        read -ra toks <<< "${answer//,/ }"
+        read -ra toks <<<"${answer//,/ }"
         [ "${#toks[@]}" -gt 0 ] || return 1
         picks=()
         for tok in "${toks[@]}"; do
@@ -261,15 +278,18 @@ search_and_pick() {
     local -a words labels
     while :; do
         echo
-        read -rp "Font to search for (Enter to quit): " query || { echo; exit 0; }
-        read -ra words <<< "$query"
+        read -rp "Font to search for (Enter to quit): " query || {
+            echo
+            exit 0
+        }
+        read -ra words <<<"$query"
         [ "${#words[@]}" -gt 0 ] || exit 0
 
         srcs=() ids=() labels=()
         for src in "${SOURCES[@]}"; do
             while IFS=$'\t' read -r _ id label; do
                 srcs+=("$src") ids+=("$id") labels+=("$label")
-            done < <(filter_words "$query" < "$TMP/$src.tsv")
+            done < <(filter_words "$query" <"$TMP/$src.tsv")
         done
         if [ "${#ids[@]}" -eq 0 ]; then
             echo "Nothing matches '$query'."
@@ -307,18 +327,22 @@ while IFS= read -r i; do
     id=${ids[i]}
     case "${srcs[i]}" in
         packages)
-            pkgs+=("$id") ;;
+            pkgs+=("$id")
+            ;;
         nerd)
             log "Installing $id Nerd Font"
-            if install_nerd_font "$id"; then user_fonts=1; else failed+=("$id Nerd Font"); fi ;;
+            if install_nerd_font "$id"; then user_fonts=1; else failed+=("$id Nerd Font"); fi
+            ;;
         google)
             log "Installing $id from Google Fonts"
-            if install_google_font "$id"; then user_fonts=1; else failed+=("$id (Google Fonts)"); fi ;;
+            if install_google_font "$id"; then user_fonts=1; else failed+=("$id (Google Fonts)"); fi
+            ;;
         local)
             log "Copying $id from $(title local)"
-            if install_local_font "$id"; then user_fonts=1; else failed+=("$id ($(title local))"); fi ;;
+            if install_local_font "$id"; then user_fonts=1; else failed+=("$id ($(title local))"); fi
+            ;;
     esac
-done <<< "$picked"
+done <<<"$picked"
 
 if [ "${#pkgs[@]}" -gt 0 ]; then
     log "Installing ${pkgs[*]}"

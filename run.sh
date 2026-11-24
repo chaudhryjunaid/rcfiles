@@ -21,9 +21,12 @@ DIR=${RCFILES_DIR:-$HOME/setup/rcfiles}
 FONT="JetBrainsMono Nerd Font"
 FONT_SIZE=16
 
-log()  { echo "==> $*"; }
+log() { echo "==> $*"; }
 warn() { echo "    WARN: $*" >&2; }
-die()  { echo "$*" >&2; exit 1; }
+die() {
+    echo "$*" >&2
+    exit 1
+}
 
 # Everything runs from main, called on the last line, so bash has read the
 # whole script before running any of it: a download cut short runs nothing.

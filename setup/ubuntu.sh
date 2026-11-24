@@ -22,10 +22,10 @@ $SUDO apt-get update -y
 CORE_PKGS=(
     zsh git curl unzip ca-certificates fontconfig
     git-crypt git-lfs
-    build-essential     # C compiler for nvim-treesitter parsers and cargo
+    build-essential # C compiler for nvim-treesitter parsers and cargo
     tmux
     wl-clipboard xclip xsel
-    neovim              # system editor (root, sudo, visudo); you get mise's nvim
+    neovim # system editor (root, sudo, visudo); you get mise's nvim
 )
 log "Installing core packages"
 $SUDO apt-get install -y "${CORE_PKGS[@]}"

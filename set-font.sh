@@ -18,30 +18,33 @@
 
 set -euo pipefail
 
-REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 APPS=(kitty alacritty ghostty sublime)
 
 print_help() {
     sed -n '3,17p' "$0" | sed 's/^# \{0,1\}//'
 }
 
-die() { echo "$*" >&2; exit 1; }
+die() {
+    echo "$*" >&2
+    exit 1
+}
 
 config_for() {
     case "$1" in
-        kitty)     echo "home/.config/kitty/kitty.conf" ;;
+        kitty) echo "home/.config/kitty/kitty.conf" ;;
         alacritty) echo "home/.config/alacritty/alacritty.toml" ;;
-        ghostty)   echo "home/.config/ghostty/config.ghostty" ;;
-        sublime)   echo "home/.config/sublime-text/Packages/User/Preferences.sublime-settings" ;;
+        ghostty) echo "home/.config/ghostty/config.ghostty" ;;
+        sublime) echo "home/.config/sublime-text/Packages/User/Preferences.sublime-settings" ;;
     esac
 }
 
 label_for() {
     case "$1" in
-        kitty)     echo "kitty" ;;
+        kitty) echo "kitty" ;;
         alacritty) echo "Alacritty" ;;
-        ghostty)   echo "Ghostty" ;;
-        sublime)   echo "Sublime Text" ;;
+        ghostty) echo "Ghostty" ;;
+        sublime) echo "Sublime Text" ;;
     esac
 }
 
@@ -147,7 +150,10 @@ pick_app() {
     echo "Set the font for:" >&2
     local PS3="Option (1-${#labels[@]}): "
     select choice in "${labels[@]}"; do
-        if [ -z "$choice" ]; then echo "Pick a number from 1 to ${#labels[@]}." >&2; continue; fi
+        if [ -z "$choice" ]; then
+            echo "Pick a number from 1 to ${#labels[@]}." >&2
+            continue
+        fi
         if [ "$REPLY" -eq "${#labels[@]}" ]; then
             apps=("${APPS[@]}")
         else
@@ -155,7 +161,7 @@ pick_app() {
         fi
         return 0
     done
-    exit 1  # ctrl-d at the prompt
+    exit 1 # ctrl-d at the prompt
 }
 
 # pick_font <current family>: fzf over the installed families; prints the pick.
@@ -194,7 +200,7 @@ apply() {
     for app in "${apps[@]}"; do
         file=$(config_for "$app")
         before=$("current_$app" "$REPO/$file")
-        if ! "edit_$app" "$REPO/$file" > "$tmp"; then
+        if ! "edit_$app" "$REPO/$file" >"$tmp"; then
             echo "$(label_for "$app"): font settings not found in $file; left alone" >&2
             status=1
             continue
@@ -204,7 +210,7 @@ apply() {
             continue
         fi
         # Overwrite in place (not mv) so the file keeps its mode.
-        cat "$tmp" > "$REPO/$file"
+        cat "$tmp" >"$REPO/$file"
         echo "$(label_for "$app"): ${before%%$'\t'*} ${before#*$'\t'} -> $FONT $SIZE ($file)"
         # kitty and Ghostty reload their config on SIGUSR1 and SIGUSR2.
         if [ "$app" = kitty ] && pkill -USR1 -x kitty; then
@@ -219,17 +225,18 @@ apply() {
 
 check_font_name() {
     case "$FONT" in
-        *[\"\\]*)        die "The font name can't contain quotes or backslashes." ;;
-        *[![:space:]]*)  ;;
-        *)               die "The font name is empty." ;;
+        *[\"\\]*) die "The font name can't contain quotes or backslashes." ;;
+        *[![:space:]]*) ;;
+        *) die "The font name is empty." ;;
     esac
 }
 
 apps=()
 case "${1:-}" in
-    -h|--help)
+    -h | --help)
         print_help
-        exit 0 ;;
+        exit 0
+        ;;
     "")
         # Interactive.
         [ -t 0 ] && [ -t 2 ] || die "Run it in a terminal, or: ./set-font.sh APP|all FONT SIZE"
@@ -248,7 +255,7 @@ case "${1:-}" in
         [ "$#" -eq 3 ] || die "Usage: ./set-font.sh APP|all FONT SIZE  (apps: ${APPS[*]}), or no arguments for the menus"
         case "$1" in
             all) apps=("${APPS[@]}") ;;
-            kitty|alacritty|ghostty|sublime) apps=("$1") ;;
+            kitty | alacritty | ghostty | sublime) apps=("$1") ;;
             *) die "Unknown app: $1 (apps: ${APPS[*]}, or all)" ;;
         esac
         FONT=$2

@@ -21,7 +21,7 @@ fi
 if git rev-parse --verify -q HEAD >/dev/null; then
     against=HEAD
 else
-    against=$(git hash-object -t tree /dev/null)   # first commit
+    against=$(git hash-object -t tree /dev/null) # first commit
 fi
 
 status=0

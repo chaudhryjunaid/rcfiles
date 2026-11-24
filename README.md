@@ -87,7 +87,7 @@ Developer CLI tools are installed and versioned by
 `home/.config/mise/config.toml` (linked to `~/.config/mise/config.toml`):
 neovim, tree-sitter, node, go, java (Temurin, current LTS), fzf, ripgrep, fd,
 bat, delta, zoxide, eza, duf, dust, btop, procs, jq, hyperfine, tokei, uv,
-shellcheck and shfmt. `mise activate` also sets
+shellcheck, shfmt, lazygit and tealdeer. `mise activate` also sets
 `JAVA_HOME` and `GOROOT`; the config turns off mise's per-version `GOBIN`, so
 `go install` puts binaries in `$GOPATH/bin` (`~/.local/share/go/bin`, set and
 put on PATH by `.shellrc.sh`) and they
@@ -143,9 +143,15 @@ liquidprompt are cloned from GitHub into `~/sh`.
   virtualenv, return code and more
 - **antidote** plugins, listed in `.zsh_plugins.txt` (order matters):
   zsh-completions, ez-compinit (runs compinit), **fzf-tab** (replaces the
-  completion menu with an fzf picker), **zsh-autosuggestions** and
-  **fast-syntax-highlighting** (last; both deferred until after the first
-  prompt)
+  completion menu with an fzf picker), **fzf-git.sh** (`Ctrl-G` then
+  `Ctrl-F`/`B`/`T`/`R`/`H`/`S`/`L`/`E`/`W` picks git files, branches, tags,
+  remotes, commit hashes, stashes, reflog, refs or worktrees),
+  **zsh-autosuggestions** and **fast-syntax-highlighting** (last; these
+  three deferred until after the first prompt)
+- **lazygit** — git TUI (stage hunks, commit, browse history); diffs go
+  through delta, `e` opens nvim (`~/.config/lazygit/config.yml`)
+- **tldr** (tealdeer) — short command examples, `tldr tar`; pages download
+  on first use and refresh monthly (`~/.config/tealdeer/config.toml`)
 - **node** — via mise (`node = "26"` in the mise config)
 - **bat** — `cat` with syntax highlighting; `~/.config/bat/config` sets its
   theme (TwoDark), style and no pager (`cat` itself is not aliased)
@@ -157,6 +163,11 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **tmux** 3.2+ (popup styling); the prefix is `` ` `` (backtick; press it
   twice for a literal one). `Ctrl-h/j/k/l` moves between tmux panes and nvim
   splits alike (vim-tmux-navigator), `` `Ctrl-l `` clears the screen
+- **tmux-resurrect** + **tmux-continuum** (cloned to
+  `~/.config/tmux/plugins` by `setup/common.sh`, loaded without a plugin
+  manager): sessions are saved every 15 minutes to
+  `~/.local/state/tmux/resurrect` and restored when the tmux server starts;
+  `` `Ctrl-s `` saves now, `` `Ctrl-r `` restores
 - a clipboard tool for copy-mode: **wl-clipboard** (Wayland) or **xclip** /
   **xsel** (X11)
 
@@ -216,8 +227,10 @@ liquidprompt are cloned from GitHub into `~/sh`.
   install by hand
 - `extra-install.sh` — optional: install the apps from both manifests that
   the distro's own repos have (their `ubuntu`/`fedora` column)
-- `lint.sh` — shellcheck the scripts and rc files, parse the app configs,
-  check the manifests and repo hygiene (shellcheck comes from mise)
+- `lint.sh` — shellcheck and shfmt the scripts and rc files (formatting:
+  `shfmt -w` with the flags in `lint.sh`; `.editorconfig` matches), parse
+  the app configs, check the manifests and repo hygiene (both tools come
+  from mise)
 - `hooks/pre-commit` — runs `lint.sh` on the staged files before each commit
 - `set-font.sh` — set the font family and size in the kitty, Alacritty,
   Ghostty and Sublime Text configs. Run with no arguments: pick the app from

@@ -1,0 +1,25 @@
+# lazygit config (only what differs from the defaults; `lazygit -c` prints
+# them all). Symlinked to ~/.config/lazygit/config.yml by link.sh.
+
+gui:
+  # Icons in the file and branch lists (kitty and Ghostty bundle the Nerd
+  # Font symbols).
+  nerdFontsVersion: "3"
+
+git:
+  # Diffs through delta, like `git diff` in the shell. --no-gitconfig skips
+  # the [delta] section of the git config: its `navigate` breaks in lazygit
+  # and its side-by-side is decided here by the panel width. Line numbers
+  # are clickable and open that line in nvim. `|` cycles to git's plain diff.
+  diffRenderers:
+    - command: >-
+        delta --no-gitconfig --{{colorScheme}} --paging=never --line-numbers
+        {{if gt .width 160}}--side-by-side{{end}}
+        --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+      name: delta
+    - type: rawGit
+      name: plain
+
+os:
+  # `e` opens the file in nvim (at the selected line).
+  editPreset: nvim

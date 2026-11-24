@@ -96,7 +96,7 @@ git_main_branch() {
   command git rev-parse --git-dir >/dev/null 2>&1 || return
   local ref
   for ref in refs/heads/{main,trunk,mainline,default,stable,master} \
-             refs/remotes/{origin,upstream}/{main,trunk,mainline,default,stable,master}; do
+    refs/remotes/{origin,upstream}/{main,trunk,mainline,default,stable,master}; do
     if command git show-ref -q --verify "$ref"; then
       echo "${ref##*/}"
       return 0
@@ -191,15 +191,15 @@ extract() {
   if [ -f "$1" ]; then
     case "$1" in
       # GNU tar auto-detects the compression (gz, bz2, xz, zst, ...).
-      *.tar|*.tar.*|*.tgz|*.tbz2|*.txz) tar xf "$1" ;;
-      *.bz2)     bunzip2 "$1" ;;
-      *.rar)     unrar x "$1" ;;
-      *.gz)      gunzip "$1" ;;
-      *.xz)      unxz "$1" ;;
-      *.zst)     unzstd "$1" ;;
-      *.zip)     unzip "$1" ;;
-      *.7z)      7z x "$1" ;;
-      *)         echo "Unknown archive format: $1" ;;
+      *.tar | *.tar.* | *.tgz | *.tbz2 | *.txz) tar xf "$1" ;;
+      *.bz2) bunzip2 "$1" ;;
+      *.rar) unrar x "$1" ;;
+      *.gz) gunzip "$1" ;;
+      *.xz) unxz "$1" ;;
+      *.zst) unzstd "$1" ;;
+      *.zip) unzip "$1" ;;
+      *.7z) 7z x "$1" ;;
+      *) echo "Unknown archive format: $1" ;;
     esac
   else
     echo "Not a file: $1"

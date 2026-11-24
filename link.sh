@@ -12,7 +12,7 @@
 
 set -euo pipefail
 
-REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 HOME_DIR="$REPO/home"
 BACKUP_DIR="$HOME/.rcfiles-backup/$(date +%Y%m%d-%H%M%S)"
 
@@ -20,10 +20,16 @@ DRY_RUN=0
 UNLINK=0
 for arg in "$@"; do
     case "$arg" in
-        -n|--dry-run) DRY_RUN=1 ;;
-        -u|--unlink)  UNLINK=1 ;;
-        -h|--help)    sed -n '3,11p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-        *)            echo "Unknown option: $arg" >&2; exit 2 ;;
+        -n | --dry-run) DRY_RUN=1 ;;
+        -u | --unlink) UNLINK=1 ;;
+        -h | --help)
+            sed -n '3,11p' "$0" | sed 's/^# \{0,1\}//'
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $arg" >&2
+            exit 2
+            ;;
     esac
 done
 
@@ -118,7 +124,7 @@ SSHLOCAL="$HOME/.ssh/config.local"
 if [ ! -f "$SSHLOCAL" ]; then
     echo "create $SSHLOCAL (placeholder)"
     if [ "$DRY_RUN" -eq 0 ]; then
-        cat > "$SSHLOCAL" <<'EOF'
+        cat >"$SSHLOCAL" <<'EOF'
 # Per-machine ssh hosts (untracked). Included first by ~/.ssh/config, so
 # settings here override its Host * defaults.
 #
@@ -147,7 +153,7 @@ if [ ! -e "$GITLOCAL" ] && [ ! -L "$GITLOCAL" ]; then
     else
         echo "create $GITLOCAL (no identity yet)"
         if [ "$DRY_RUN" -eq 0 ]; then
-            cat > "$GITLOCAL" <<'EOF'
+            cat >"$GITLOCAL" <<'EOF'
 # Per-machine git settings (untracked). Read after the tracked
 # ~/.config/git/config, so settings here win; `git config --global` writes
 # here. Set the identity with setup/git-identity.sh.

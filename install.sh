@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 # shellcheck source=setup/lib.sh
 . "$REPO/setup/lib.sh"
 
@@ -19,10 +19,16 @@ SKIP_DEPS=0
 SKIP_IDENTITY=0
 for arg in "$@"; do
     case "$arg" in
-        --skip-deps)     SKIP_DEPS=1 ;;
+        --skip-deps) SKIP_DEPS=1 ;;
         --skip-identity) SKIP_IDENTITY=1 ;;
-        -h|--help)       sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-        *)               echo "Unknown option: $arg" >&2; exit 2 ;;
+        -h | --help)
+            sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $arg" >&2
+            exit 2
+            ;;
     esac
 done
 
@@ -49,8 +55,8 @@ git -C "$REPO" config core.hooksPath hooks
 GITLOCAL="$HOME/.gitconfig"
 git_name=$(git config -f "$GITLOCAL" user.name 2>/dev/null || true)
 git_email=$(git config -f "$GITLOCAL" user.email 2>/dev/null || true)
-if [ "$SKIP_IDENTITY" -eq 0 ] \
-    && { [ -z "$git_name" ] || [ -z "$git_email" ] || [ "$git_name" = "Your Name" ]; }; then
+if [ "$SKIP_IDENTITY" -eq 0 ] &&
+    { [ -z "$git_name" ] || [ -z "$git_email" ] || [ "$git_name" = "Your Name" ]; }; then
     echo "### Setting git identity"
     "$REPO/setup/git-identity.sh"
 fi

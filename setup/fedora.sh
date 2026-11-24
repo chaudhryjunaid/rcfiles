@@ -19,11 +19,11 @@ command -v dnf >/dev/null 2>&1 || die "This script targets Fedora (dnf not found
 CORE_PKGS=(
     zsh git curl unzip ca-certificates fontconfig
     git-crypt git-lfs
-    util-linux          # chsh, missing from minimal installs
-    gcc gcc-c++ make    # C compiler for nvim-treesitter parsers and cargo
+    util-linux       # chsh, missing from minimal installs
+    gcc gcc-c++ make # C compiler for nvim-treesitter parsers and cargo
     tmux
     wl-clipboard xclip xsel
-    neovim              # system editor (root, sudo -i); you get mise's nvim
+    neovim # system editor (root, sudo -i); you get mise's nvim
 )
 log "Installing core packages"
 $SUDO dnf install -y "${CORE_PKGS[@]}"
@@ -50,8 +50,8 @@ if command -v mise >/dev/null 2>&1; then
     log "mise already installed"
 else
     log "Installing mise"
-    curl -fsSL https://mise.jdx.dev/rpm/mise.repo \
-        | $SUDO tee /etc/yum.repos.d/mise.repo >/dev/null
+    curl -fsSL https://mise.jdx.dev/rpm/mise.repo |
+        $SUDO tee /etc/yum.repos.d/mise.repo >/dev/null
     $SUDO dnf install -y mise
 fi
 

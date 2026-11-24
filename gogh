@@ -11,8 +11,8 @@ set -euo pipefail
 GOGH_URL="https://raw.githubusercontent.com/Gogh-Co/Gogh/master/gogh.sh"
 
 GOGH_SCRIPT="$(curl -fsSL "$GOGH_URL")" || {
-  echo "gogh: failed to download $GOGH_URL" >&2
-  exit 1
+    echo "gogh: failed to download $GOGH_URL" >&2
+    exit 1
 }
 
 exec bash -c "$GOGH_SCRIPT" -- "$@"

@@ -13,12 +13,15 @@
 
 set -euo pipefail
 
-cd -- "$( dirname -- "${BASH_SOURCE[0]}" )"
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 status=0
-fail() { echo "    FAIL: $*" >&2; status=1; }
+fail() {
+    echo "    FAIL: $*" >&2
+    status=1
+}
 skip() { echo "    skip: $*"; }
-has()  { command -v "$1" >/dev/null 2>&1; }
+has() { command -v "$1" >/dev/null 2>&1; }
 
 echo "==> shellcheck"
 if has shellcheck; then
@@ -27,6 +30,19 @@ if has shellcheck; then
     shellcheck -s bash -e SC1090,SC1091 home/.shellrc.sh home/.bashrc home/.profile || status=1
 else
     fail "shellcheck not found (mise install)"
+fi
+
+echo "==> shfmt"
+# Formatting: scripts indent 4, rc files 2 (as .editorconfig and
+# home/.editorconfig say), case branches indented.
+# zsh files aren't checked (shfmt doesn't fully support zsh). Fix with the
+# same flags and -w instead of -d.
+if has shfmt; then
+    shfmt -d -i 4 -ci ./*.sh setup/*.sh hooks/* gogh || status=1
+    shfmt -d -ln bash -i 2 -ci home/.shellrc.sh home/.bashrc || status=1
+    shfmt -d -ln posix -i 2 -ci home/.profile || status=1
+else
+    fail "shfmt not found (mise install)"
 fi
 
 echo "==> bash -n, zsh -n"
@@ -156,7 +172,7 @@ if has fc-match; then
         [ -e "$conf" ] || continue
         fcfile=$(mktemp)
         printf '<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">\n<fontconfig><include>%s</include></fontconfig>\n' \
-            "$PWD/$conf" > "$fcfile"
+            "$PWD/$conf" >"$fcfile"
         out=$(FONTCONFIG_FILE=$fcfile fc-match sans 2>&1 >/dev/null </dev/null) || true
         rm -f "$fcfile"
         if [ -n "$out" ]; then
@@ -170,13 +186,17 @@ fi
 if has nvim; then
     nvim_init=home/.config/nvim/init.lua
     # Parse init.lua and the lockfile, without running anything.
-    out=$(nvim --clean --headless -i NONE -l /dev/stdin "$nvim_init" home/.config/nvim/lazy-lock.json 2>&1 <<'EOF'
+    out=$(
+        nvim --clean --headless -i NONE -l /dev/stdin "$nvim_init" home/.config/nvim/lazy-lock.json 2>&1 <<'EOF'
 local _, err = loadfile(arg[1])
 if err then io.stderr:write(err, "\n") os.exit(1) end
 local ok, lock = pcall(vim.json.decode, table.concat(vim.fn.readfile(arg[2]), "\n"))
 if not ok then io.stderr:write(arg[2], ": ", lock, "\n") os.exit(1) end
 EOF
-    ) || { echo "$out" >&2; fail "nvim config doesn't parse"; }
+    ) || {
+        echo "$out" >&2
+        fail "nvim config doesn't parse"
+    }
     # Startup, only once lazy.nvim is installed: before that, loading init.lua
     # would download it and every plugin.
     if [ -d "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim" ]; then
@@ -196,7 +216,7 @@ fi
 
 echo "==> repo hygiene"
 for f in ./*.sh setup/*.sh hooks/* gogh; do
-    case "$f" in setup/lib.sh) continue ;; esac   # sourced, not run
+    case "$f" in setup/lib.sh) continue ;; esac # sourced, not run
     [ -x "$f" ] || fail "$f isn't executable (chmod +x, or git update-index --chmod=+x)"
 done
 # link.sh only links regular files.

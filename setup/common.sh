@@ -12,7 +12,7 @@ set -euo pipefail
 # shellcheck source=setup/lib.sh
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-REPO=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )
+REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." &>/dev/null && pwd)
 
 # mise may be in ~/.local/bin (its installer), which a fresh shell lacks.
 export PATH="$HOME/.local/bin:$PATH"
@@ -35,14 +35,20 @@ clone_once https://github.com/mattmc3/antidote.git "$HOME/sh/antidote"
 clone_once https://github.com/liquidprompt/liquidprompt.git \
     "$HOME/sh/liquidprompt" --branch stable
 
+# tmux session save/restore plugins, loaded by ~/.config/tmux/tmux.conf.
+clone_once https://github.com/tmux-plugins/tmux-resurrect.git \
+    "$HOME/.config/tmux/plugins/tmux-resurrect"
+clone_once https://github.com/tmux-plugins/tmux-continuum.git \
+    "$HOME/.config/tmux/plugins/tmux-continuum"
+
 # rustup, for the cargo that mise builds tokei with (it has no release
 # binaries past 12.x).
 if command -v cargo >/dev/null 2>&1 || [ -x "$HOME/.cargo/bin/cargo" ]; then
     log "cargo already installed"
 else
     log "Installing rustup"
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
-        | sh -s -- -y --no-modify-path --profile minimal
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs |
+        sh -s -- -y --no-modify-path --profile minimal
 fi
 export PATH="$HOME/.cargo/bin:$PATH"
 
@@ -58,7 +64,7 @@ case "$(getent passwd "$(id -un)" | cut -d: -f7)" in
     *)
         ZSH_BIN=$(grep -m1 '/zsh$' /etc/shells || command -v zsh)
         log "Setting zsh as the default shell"
-        $SUDO chsh -s "$ZSH_BIN" "$(id -un)" \
-            || warn "could not change shell; run: chsh -s $ZSH_BIN"
+        $SUDO chsh -s "$ZSH_BIN" "$(id -un)" ||
+            warn "could not change shell; run: chsh -s $ZSH_BIN"
         ;;
 esac

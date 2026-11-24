@@ -1,0 +1,9 @@
+# tealdeer (`tldr`) config: only what differs from the defaults
+# (`tldr --seed-config` writes them all). Symlinked to
+# ~/.config/tealdeer/config.toml by link.sh.
+
+[updates]
+# Download the pages on first use and refresh them monthly, instead of
+# requiring `tldr --update` by hand.
+auto_update = true
+auto_update_interval_hours = 720

@@ -2,10 +2,13 @@
 #   . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 # shellcheck shell=bash
 
-log()  { echo "==> $*"; }
+log() { echo "==> $*"; }
 info() { echo "    $*"; }
 warn() { echo "    WARN: $*" >&2; }
-die()  { echo "$*" >&2; exit 1; }
+die() {
+    echo "$*" >&2
+    exit 1
+}
 
 # Use sudo only when not already root.
 SUDO=""
@@ -29,7 +32,10 @@ detect_distro() {
     ids=$(. /etc/os-release && echo "${ID:-} ${ID_LIKE:-}")
     for id in $ids; do
         case "$id" in
-            ubuntu|fedora) echo "$id"; return 0 ;;
+            ubuntu | fedora)
+                echo "$id"
+                return 0
+                ;;
         esac
     done
     return 1
@@ -40,7 +46,7 @@ detect_distro() {
 # what was there only once that worked. Run fc-cache afterwards.
 install_nerd_font() {
     local dest="$FONT_DIR/$1" zip rc=0
-    case "$1" in ''|*/*|.*) return 2 ;; esac   # $dest gets rm -rf'd
+    case "$1" in '' | */* | .*) return 2 ;; esac # $dest gets rm -rf'd
     zip=$(mktemp --suffix=.zip) || return
     rm -rf "$dest.new" && mkdir -p "$dest.new" &&
         curl -fsSL -o "$zip" "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$1.zip" &&
