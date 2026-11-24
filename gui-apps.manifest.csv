@@ -13,12 +13,10 @@ Editors and dev tools,SmoothCSV,https://smoothcsv.com,CSV editor,,
 Editors and dev tools,TablePlus,https://tableplus.com,database management,,
 Writing and documents,Obsidian,https://obsidian.md,Markdown notes (snap),,
 Writing and documents,Typora,https://typora.io,Markdown editor,,
-Writing and documents,ONLYOFFICE Desktop Editors,https://www.onlyoffice.com/desktop,office suite (snap),,
 Writing and documents,Foliate,https://johnfactotum.github.io/foliate/,e-book reader,foliate,foliate
 Writing and documents,Stirling-PDF,https://github.com/Stirling-Tools/Stirling-PDF,locally hosted web application that allows you to perform various operations on PDF files,,
 Writing and documents,Super Productivity,https://github.com/super-productivity/super-productivity,"to-do list and time tracker with timeboxing, Pomodoro and Jira/GitHub sync (snap)",,
 Communication,Slack,https://slack.com,team chat (snap),,
-Communication,Thunderbird,https://www.thunderbird.net,email client (snap; Ubuntu's apt package installs the snap),thunderbird,thunderbird
 Communication,WhatsApp Web,https://web.whatsapp.com,"messaging, installed from Chrome with ""Install page as app""",,
 "Sync, backup and downloads",Dropbox,https://www.dropbox.com/,sync your files across computers and to the web,,
 System,GNOME Tweaks,https://gitlab.gnome.org/GNOME/gnome-tweaks,extra GNOME settings,gnome-tweaks,gnome-tweaks

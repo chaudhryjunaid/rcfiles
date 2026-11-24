@@ -413,12 +413,14 @@ def row_packages(row):
 
 
 def row_commands(row):
-    """Commands a row could be: its name, or the last word of its
-    description, which for CLI rows is the command ("..., claude")."""
+    """Commands a row could be: its name, or the command a CLI row's
+    description ends with after a comma ("..., claude"), or that the whole
+    description is ("mongosh"). Only then: a description's last word is
+    otherwise just a word ("... editor"), and often a command too."""
     cmds = {row["name"].lower().replace(" ", "-"), row["name"].lower().replace(" ", "")}
-    words = re.findall(r"[A-Za-z0-9_.-]+", row.get("description", ""))
-    if words:
-        cmds.add(words[-1])
+    m = re.search(r"(?:^|,\s*)([A-Za-z0-9_.-]+)$", row.get("description", "").strip())
+    if m:
+        cmds.add(m.group(1))
     return cmds
 
 

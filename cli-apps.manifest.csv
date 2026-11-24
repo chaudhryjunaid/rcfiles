@@ -10,7 +10,6 @@ Dev and cloud,diff_cover,https://pypi.org/project/diff_cover/,run coverage and l
 Containers and VMs,Docker Engine,https://docs.docker.com/engine/install/ubuntu/,"docker, with the buildx and compose plugins","apt, from Docker's repo: docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",,
 Files and data,FFmpeg,https://ffmpeg.org,audio/video converter,apt: ffmpeg,ffmpeg,ffmpeg-free
 Files and data,aria2,https://aria2.github.io,"multi-connection downloader, aria2c",apt: aria2,aria2,aria2
-Editors,Zile,https://www.gnu.org/software/zile/,small Emacs-like editor,apt: zile,zile,zile
 Monitoring,Glances,https://github.com/nicolargo/glances,all-in-one system monitor,apt: glances,glances,glances
 Monitoring,iotop,http://guichaz.free.fr/iotop/,disk I/O per process,apt: iotop,iotop,iotop-c
 Monitoring,iftop,https://www.ex-parrot.com/~pdw/iftop/,bandwidth per connection,apt: iftop,iftop,iftop
