@@ -101,7 +101,7 @@ fi
 section "Tools"
 missing=()
 for cmd in zsh git curl unzip tmux cc mise nvim tree-sitter fzf rg fd bat delta eza \
-    zoxide jq lazygit tldr shellcheck shfmt; do
+    zoxide jq lazygit tldr gh jless edit shellcheck shfmt; do
     has "$cmd" || missing+=("$cmd")
 done
 if [ "${#missing[@]}" -eq 0 ]; then

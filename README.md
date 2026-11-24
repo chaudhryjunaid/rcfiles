@@ -95,7 +95,8 @@ Developer CLI tools are installed and versioned by
 `home/.config/mise/config.toml` (linked to `~/.config/mise/config.toml`):
 neovim, tree-sitter, node, go, java (Temurin, current LTS), fzf, ripgrep, fd,
 bat, delta, zoxide, eza, duf, dust, btop, procs, jq, hyperfine, tokei, uv,
-shellcheck, shfmt, lazygit and tealdeer. `mise activate` also sets
+shellcheck, shfmt, lazygit, tealdeer, gh (GitHub CLI), jless (JSON viewer)
+and edit (Microsoft Edit, a simple terminal editor). `mise activate` also sets
 `JAVA_HOME` and `GOROOT`; the config turns off mise's per-version `GOBIN`, so
 `go install` puts binaries in `$GOPATH/bin` (`~/.local/share/go/bin`, set and
 put on PATH by `.shellrc.sh`) and they

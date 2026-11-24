@@ -39,5 +39,8 @@ uv = "latest"
 tokei = "latest"      # built with cargo (rustup): no release binaries past 12.x
 lazygit = "latest"    # git TUI (config: ~/.config/lazygit/config.yml)
 tealdeer = "latest"   # `tldr <command>`: short examples instead of the man page
+gh = "latest"         # GitHub CLI (auth and settings in ~/.config/gh)
+jless = "latest"      # interactive JSON viewer: `jless file.json`, `curl ... | jless`
+edit = "latest"       # Microsoft Edit: simple terminal editor with menus and mouse
 # Not in mise's registry: prebuilt GitHub release binaries.
 "github:dalance/procs" = "latest"

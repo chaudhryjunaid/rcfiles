@@ -1,5 +1,4 @@
 category,name,homepage,description,install,ubuntu,fedora
-Dev and cloud,GitHub CLI,https://cli.github.com,gh,"apt, from GitHub's repo: gh",gh,gh
 Dev and cloud,Claude Code,https://claude.com/product/claude-code,"Anthropic's coding agent, claude",installer: curl -fsSL https://claude.ai/install.sh | bash,,
 Dev and cloud,Codex CLI,https://developers.openai.com/codex/cli,"OpenAI's coding agent, codex",installer into ~/.local/bin,,
 Dev and cloud,MongoDB Shell,https://www.mongodb.com/try/download/shell,mongosh,.deb from the homepage: mongodb-mongosh,,
