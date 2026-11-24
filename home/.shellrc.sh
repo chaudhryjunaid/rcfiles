@@ -8,9 +8,6 @@ export VISUAL=nvim
 
 alias vim='nvim'
 alias vi='nvim'
-alias v='nvim'
-alias nv='nvim'
-alias nvi='nvim'
 
 # -F quits if the text fits one screen (less >= 530 needs no -X for that),
 # -R passes colors through, -i makes search smart-case, --mouse scrolls with
@@ -60,91 +57,7 @@ command -v bat >/dev/null 2>&1 && export FZF_CTRL_T_OPTS="--preview 'bat -n --co
 command -v eza >/dev/null 2>&1 && export FZF_ALT_C_OPTS="--preview 'eza --tree --level=2 --color=always {}'"
 export FZF_CTRL_R_OPTS="--preview 'echo {2..}' --preview-window=up:3:hidden:wrap"
 
-# git aliases (a curated subset of the oh-my-zsh `git` plugin, vendored so we
-# don't need a framework just for these).
-alias g='git'
-alias gst='git status'
-alias gss='git status -s'
-alias ga='git add'
-alias gaa='git add --all'
-alias gc='git commit -v'
-alias gcm='git commit -m'
-alias gca='git commit -v -a'
-alias gco='git checkout'
-alias gcb='git switch -c'
-alias gsw='git switch'
-alias gb='git branch'
-alias gbd='git branch --delete'
-alias gbD='git branch --delete --force'
-alias gd='git diff'
-alias gds='git diff --staged'
-alias gdca='git diff --cached'
-alias gl='git pull'
-alias gp='git push'
-alias gf='git fetch'
-alias gcl='git clone'
-alias glog='git log --oneline --graph --decorate'
-alias glga='git log --oneline --graph --decorate --all'
-alias glo='git log --oneline --decorate'
-alias glol="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'"
-alias glod="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'"
-alias glola="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all"
-alias gloda="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --all"
-# grh [path...]: unstage the paths, or everything when none are given (like
-# the old `git reset HEAD`).
-grh() { git restore --staged -- "${@:-:/}"; }
-alias grhh='git reset --hard'
-alias gstash='git stash'
-alias gstp='git stash pop'
-
-# oh-my-zsh helpers required by gbda: resolve the repo's trunk/develop branch
-# so we never try to delete them when pruning merged branches.
-git_main_branch() {
-  command git rev-parse --git-dir >/dev/null 2>&1 || return
-  local ref
-  for ref in refs/heads/{main,trunk,mainline,default,stable,master} \
-    refs/remotes/{origin,upstream}/{main,trunk,mainline,default,stable,master}; do
-    if command git show-ref -q --verify "$ref"; then
-      echo "${ref##*/}"
-      return 0
-    fi
-  done
-  echo master
-  return 1
-}
-
-git_develop_branch() {
-  command git rev-parse --git-dir >/dev/null 2>&1 || return
-  local branch
-  for branch in dev devel develop development; do
-    if command git show-ref -q --verify "refs/heads/$branch"; then
-      echo "$branch"
-      return 0
-    fi
-  done
-  echo develop
-  return 1
-}
-
-# gbda: delete all local branches that have already been merged, skipping the
-# main and develop branches.
-gbda() {
-  git branch --no-color --merged | command grep -vE "^([+*]|\s*($(git_main_branch)|$(git_develop_branch))\s*$)" | command xargs -r git branch --delete
-}
-
 alias ls='ls --color=auto'
-# Use eza for the ls shortcuts when available, else fall back to plain ls.
-# --icons=auto and --hyperlink (clickable names in kitty and Ghostty) apply
-# only on a terminal, not when piped.
-if command -v eza >/dev/null 2>&1; then
-  alias l='eza -1 --group-directories-first --icons=auto --hyperlink'
-  alias ll='eza -lh --group-directories-first --git --icons=auto --hyperlink'
-  alias la='eza -lah --group-directories-first --git --icons=auto --hyperlink'
-  alias lt='eza --tree --level=2 --group-directories-first --icons=auto --hyperlink'
-else
-  alias ll='ls -lh'
-  alias la='ls -lah'
-fi
 alias grep='grep --color=auto'
 alias diff='diff --color=auto'
 alias ip='ip -color=auto'
@@ -160,13 +73,6 @@ alias c='clear'
 alias r='reset'
 alias ports='ss -tulpn'
 alias myip='curl ifconfig.me'
-
-alias d='docker'
-alias dc='docker compose'
-alias dps='docker ps'
-alias dcu='docker compose up -d'
-alias dcd='docker compose down'
-alias dcl='docker compose logs -f'
 
 alias please='sudo'
 alias kssh="kitten ssh"

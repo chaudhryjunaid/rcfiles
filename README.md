@@ -172,9 +172,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **node** — via mise (`node = "26"` in the mise config)
 - **bat** — `cat` with syntax highlighting; `~/.config/bat/config` sets its
   theme (TwoDark), style and no pager (`cat` itself is not aliased)
-- **eza** — modern `ls`; backs the `l`/`ll`/`la`/`lt` aliases when present
-  (they fall back to plain `ls` otherwise; `ls` itself stays GNU `ls`) and is
-  used for the `cd` completion preview in fzf-tab
+- **eza** — modern `ls`, run as `eza` (`ls` itself stays GNU `ls`); used for
+  fzf's Alt-C preview and the `cd` completion preview in fzf-tab
 
 ## tmux
 - **tmux** 3.2+ (popup styling); the prefix is `` ` `` (backtick; press it
