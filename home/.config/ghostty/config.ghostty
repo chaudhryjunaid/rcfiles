@@ -59,6 +59,8 @@ notify-on-command-finish-after = 10s
 keybind = ctrl+shift+enter=new_split:auto
 keybind = ctrl+shift+d=close_surface
 keybind = ctrl+shift+z=toggle_split_zoom
+# Wipe the scrollback and clear the screen; the prompt is redrawn.
+keybind = ctrl+shift+k=clear_screen
 
 # Added by Gogh: the theme picked in `ghostty +list-themes`. Keep it last.
 config-file = ?auto/theme.ghostty
