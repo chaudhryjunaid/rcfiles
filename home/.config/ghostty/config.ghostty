@@ -32,6 +32,9 @@ scrollback-limit-bytes = 10000000
 mouse-hide-while-typing = true
 # Selecting copies to both the primary selection and the clipboard.
 copy-on-select = clipboard
+# With copy-on-select, the "Copied to clipboard" toast fires on every
+# selection; keep only the config-reload one.
+app-notifications = no-clipboard-copy
 
 # ── SHELL INTEGRATION ────────────────────────────────────────────────────────
 # no-cursor keeps the block cursor at the prompt (instead of a bar). sudo
