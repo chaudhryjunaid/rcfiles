@@ -325,12 +325,10 @@ map("n", "<leader>gp", ":Git push<CR>", { desc = "Push" })
 map("n", "<leader>gl", ":Git log<CR>", { desc = "Log" })
 
 -- Terminal: double Esc leaves terminal mode; a single Esc still reaches TUIs
--- running in the terminal (fzf, htop, nested vim, other TUIs).
+-- running in the terminal (fzf, htop, nested vim, other TUIs). Then Ctrl-h/j/k/l
+-- moves to another split. Ctrl-h/j/k/l aren't mapped in terminal mode: the
+-- shell needs them (Backspace, accept-line, kill-line, clear screen).
 map("t", "<Esc><Esc>", [[<C-\><C-n>]])
-map("t", "<C-h>", [[<C-\><C-n><C-w>h]])
-map("t", "<C-j>", [[<C-\><C-n><C-w>j]])
-map("t", "<C-k>", [[<C-\><C-n><C-w>k]])
-map("t", "<C-l>", [[<C-\><C-n><C-w>l]])
 
 -- Floating terminal on F12 / <leader>tt (from normal or terminal mode). One
 -- shell, hidden and shown again by each toggle; when it exits, the next

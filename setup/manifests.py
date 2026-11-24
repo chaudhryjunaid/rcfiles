@@ -33,6 +33,7 @@ import re
 import shutil
 import subprocess
 import sys
+from datetime import datetime, timezone
 from urllib.parse import quote, urlparse
 
 GUI_COLUMNS = ["category", "name", "homepage", "description", "install", "ubuntu", "fedora"]
@@ -262,14 +263,31 @@ class Machine:
             for block in text.split("\n\n"):
                 date = re.search(r"^Start-Date: (.+)$", block, re.M)
                 inst = re.search(r"^Install: (.+)$", block, re.M)
-                if date and inst:
-                    pkgs = {p.split(":")[0].strip() for p in re.split(r"\),\s*", inst.group(1))}
-                    entries.append((date.group(1), pkgs))
-        entries.sort()
-        # The earliest transaction is the installer laying down the OS. Of
-        # the rest, only what's still marked manual (not pulled in as a dep).
-        after = set().union(*(p for _, p in entries[1:])) if len(entries) > 1 else set()
-        return after & set(run("apt-mark", "showmanual"))
+                if not (date and inst):
+                    continue
+                try:
+                    when = datetime.strptime(" ".join(date.group(1).split()), "%Y-%m-%d %H:%M:%S")
+                except ValueError:
+                    continue
+                pkgs = {p.split(":")[0].strip() for p in re.split(r"\),\s*", inst.group(1))}
+                entries.append((when, pkgs))
+        entries.sort(key=lambda e: e[0])
+        # Leave out the OS install: the transactions that ran up to the end
+        # of the installer, whose /var/log/installer (subiquity, ubiquity)
+        # was last written then. The installer runs in UTC; later
+        # transactions are logged in local time, so one in the first hours
+        # after the install, west of UTC, may count as the OS's. Without
+        # /var/log/installer, the earliest transaction stands in for the
+        # install, which only holds while apt's logs (rotated monthly, 12
+        # kept) still go back that far.
+        try:
+            done = os.stat("/var/log/installer").st_mtime
+            cutoff = datetime.fromtimestamp(done, timezone.utc).replace(tzinfo=None)
+            after_os = [p for when, p in entries if when > cutoff]
+        except OSError:
+            after_os = [p for _, p in entries[1:]]
+        # Of those, only what's still marked manual (not pulled in as a dep).
+        return set().union(*after_os) & set(run("apt-mark", "showmanual"))
 
     def owners(self, paths):
         """path -> owning distro package."""
@@ -356,9 +374,18 @@ class Machine:
                             if m:
                                 deps.add(m.group(1))
         else:
+            # rpm lists capabilities (libc.so.6()(64bit), /bin/sh, ...), not
+            # packages: resolve them to the packages that provide them.
+            caps = set()
             for chunk in chunks(pkgs):
-                for line in run("rpm", "-q", "--requires", *chunk):
-                    deps.add(line.split()[0])
+                caps.update(run("rpm", "-q", "--qf", "[%{REQUIRENAME}\n][%{RECOMMENDNAME}\n]",
+                                *chunk, check=False))
+            caps = {c for c in caps if c and not c.startswith("rpmlib(")}
+            for chunk in chunks(sorted(caps)):
+                for line in run("rpm", "-q", "--whatprovides", "--qf", "%{NAME}\n", *chunk,
+                                check=False):
+                    if line and " " not in line:  # not "no package provides ..."
+                        deps.add(line)
         return deps
 
     def setup_packages(self):
@@ -369,7 +396,8 @@ class Machine:
                 text = f.read()
         except OSError:
             return pkgs
-        for body in re.findall(r"^\s*[A-Z_]*PKGS=\(([^)]*)\)", text, re.M):
+        # Up to the line that's just ")": a comment in the list may hold one.
+        for body in re.findall(r"^\s*[A-Z_]*PKGS=\((.*?)^\s*\)\s*$", text, re.M | re.S):
             for line in body.splitlines():
                 pkgs.update(line.split("#")[0].split())
         return pkgs
@@ -616,7 +644,9 @@ def candidates(m):
         add_cli(name, f"https://pkg.go.dev/{mod}" if mod else "", "",
                 f"go install {mod}@latest" if mod else "go install", "go",
                 cmds=[name], category="Dev and cloud")
-    npm = run("npm", "-g", "ls", "--depth=0", "--json")
+    # npm ls exits 1 over any extraneous or invalid dependency, but still
+    # prints the full list.
+    npm = run("npm", "-g", "ls", "--depth=0", "--json", check=False)
     try:
         deps = json.loads("\n".join(npm) or "{}").get("dependencies", {})
     except ValueError:

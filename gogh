@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
-# Official Gogh installer bootstrapper, served at https://gogh.website/gogh
+# Gogh theme installer (https://gogh-co.github.io/Gogh/), pinned: runs
+# gogh.sh from the Gogh-Co/Gogh commit below and has it fetch its themes and
+# apply-colors.sh from the same commit, instead of whatever is on master at
+# the time. Adapted from the bootstrapper served at https://gogh.website/gogh.
 #
-#   bash -c "$(curl -fsSL https://gogh.website/gogh)"
-#   bash -c "$(curl -fsSL https://gogh.website/gogh)" -- Dracula
+#   ./gogh                  # pick themes from the menu
+#   ./gogh Dracula          # install one by name
 #
-# Fetches and runs the real installer from Gogh-Co/Gogh@master so there is
-# a single source of truth for install logic (this file never duplicates it).
+# To move to a newer Gogh, set GOGH_REF to its latest commit (read what
+# changed first):
+#   curl -fsSL https://api.github.com/repos/Gogh-Co/Gogh/commits/master | grep -m1 '"sha"'
+# GOGH_REF=<commit> in the environment overrides it for one run.
 set -euo pipefail
 
-GOGH_URL="https://raw.githubusercontent.com/Gogh-Co/Gogh/master/gogh.sh"
+GOGH_REF=${GOGH_REF:-fd715c810bb0ad35f630bd73fb71f5b5a1311bd6}
+BASE_URL="https://raw.githubusercontent.com/Gogh-Co/Gogh/$GOGH_REF"
+export BASE_URL
 
-GOGH_SCRIPT="$(curl -fsSL "$GOGH_URL")" || {
-    echo "gogh: failed to download $GOGH_URL" >&2
+GOGH_SCRIPT="$(curl -fsSL "$BASE_URL/gogh.sh")" || {
+    echo "gogh: failed to download $BASE_URL/gogh.sh" >&2
     exit 1
 }
 

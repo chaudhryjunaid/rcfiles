@@ -168,13 +168,16 @@ if command -v rg >/dev/null 2>&1; then
 fi
 # bat's defaults (theme, style, no pager) are in ~/.config/bat/config.
 
+# killport <port>: stop whatever is listening on the TCP port. Only the
+# listener: a plain `lsof -i :<port>` also matches clients connected to that
+# port (a browser tab on localhost:3000, anything talking to a remote :443).
 killport() {
   if [ -z "$1" ]; then
     echo "Usage: killport <port>"
     return 1
   fi
   local pids
-  pids=$(lsof -ti :"$1")
+  pids=$(lsof -ti tcp:"$1" -sTCP:LISTEN)
   if [ -z "$pids" ]; then
     echo "Nothing is listening on port $1"
     return 1
@@ -182,7 +185,7 @@ killport() {
   # SIGTERM first so servers can shut down cleanly; SIGKILL what's left.
   echo "$pids" | xargs kill
   sleep 1
-  pids=$(lsof -ti :"$1")
+  pids=$(lsof -ti tcp:"$1" -sTCP:LISTEN)
   [ -n "$pids" ] && echo "$pids" | xargs kill -9
   return 0
 }

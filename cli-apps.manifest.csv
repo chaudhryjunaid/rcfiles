@@ -8,6 +8,7 @@ Dev and cloud,pkg-config,http://pkgconf.org/,compile and link flags for librarie
 Dev and cloud,pip and venv,https://pip.pypa.io,for the system Python; uv (mise) covers the rest,apt: python3-pip python3-venv,python3-pip python3-venv,python3-pip
 Dev and cloud,diff_cover,https://pypi.org/project/diff_cover/,"coverage and lint reports for only the lines a diff changes, diff-cover",pip install --user diff_cover,,
 Dev and cloud,google-cloud-cli,https://docs.cloud.google.com/sdk/gcloud,"Google Cloud's command-line tools, gcloud","apt, from packages.cloud.google.com's repo: google-cloud-cli",,
+Dev and cloud,Antigravity CLI,https://antigravity.google,"Google's coding agent, agy",installer into ~/.local/bin,,
 Containers and VMs,Docker Engine,https://docs.docker.com/engine/install/ubuntu/,"docker, with the buildx and compose plugins","apt, from Docker's repo: docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",,
 Files and data,FFmpeg,https://ffmpeg.org,audio/video converter,apt: ffmpeg,ffmpeg,ffmpeg-free
 Files and data,aria2,https://aria2.github.io,"multi-connection downloader, aria2c",apt: aria2,aria2,aria2

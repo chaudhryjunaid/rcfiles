@@ -54,10 +54,19 @@ step() {
     fi
 }
 
+# The update_* functions run inside step's `if`, where set -e is off: each
+# one checks its commands itself, so a failure makes the step fail.
+
 # git_pull_dir <dir>: fast-forward a plugin clone, if it's there.
 git_pull_dir() {
+    local out
     [ -d "$1/.git" ] || return 0
-    info "$(basename "$1"): $(git -C "$1" pull --ff-only --quiet 2>&1 && git -C "$1" log -1 --format='%h %cr')"
+    if out=$(git -C "$1" pull --ff-only --quiet 2>&1); then
+        info "$(basename "$1"): $(git -C "$1" log -1 --format='%h %cr')"
+    else
+        warn "$(basename "$1"): $out"
+        return 1
+    fi
 }
 
 update_repo() {
@@ -72,14 +81,15 @@ update_mise() {
 }
 
 update_shell_plugins() {
+    local dir rc=0
     if [ -f "$HOME/sh/antidote/antidote.zsh" ] && command -v zsh >/dev/null 2>&1; then
-        zsh -c 'source ~/sh/antidote/antidote.zsh && antidote update'
+        zsh -c 'source ~/sh/antidote/antidote.zsh && antidote update' || rc=1
     fi
-    git_pull_dir "$HOME/sh/liquidprompt"
-    local dir
+    git_pull_dir "$HOME/sh/liquidprompt" || rc=1
     for dir in "$HOME"/.config/tmux/plugins/*/; do
-        git_pull_dir "${dir%/}"
+        git_pull_dir "${dir%/}" || rc=1
     done
+    return "$rc"
 }
 
 update_nvim() {
@@ -89,7 +99,7 @@ update_nvim() {
     }
     # Lazy sync: install missing, update to the newest commits, clean removed
     # ones, and write the new commits to lazy-lock.json.
-    nvim --headless "+Lazy! sync" +qa
+    nvim --headless "+Lazy! sync" +qa || return
     nvim --headless "+lua require('nvim-treesitter').update():wait(600000)" +qa
 }
 

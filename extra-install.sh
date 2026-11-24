@@ -5,7 +5,7 @@
 # manifests' ubuntu or fedora column (this distro's own repos) with apt or
 # dnf, and the rows whose install column is "snap: <name> [--classic]" or
 # "flatpak: <app id>" (from Flathub, added if missing) when snap or flatpak
-# is there. The rest (a vendor repo, a .deb, a GNOME extension, an
+# is there (flatpak also when this run installs it: packages go first). The rest (a vendor repo, a .deb, a GNOME extension, an
 # installer) are listed with their install column, to do by hand. Apps
 # already installed as a snap or Flatpak are skipped. Optional: install.sh
 # doesn't run it. Safe to re-run.
@@ -87,6 +87,9 @@ EOF
 # Apps to install: distro packages (todo_apps/todo_pkgs), snaps ("name|args")
 # and Flatpaks ("name|app id").
 todo_apps=() todo_pkgs=() snaps=() flatpaks=() by_hand=() as_other=()
+# Flatpak rows while flatpak isn't installed: installed after it if one of
+# the packages below is flatpak, else listed to do by hand.
+no_flatpak=()
 present=0
 while IFS=$'\x1f' read -r name pkgs install; do
     [ -n "$name" ] || continue
@@ -104,14 +107,14 @@ while IFS=$'\x1f' read -r name pkgs install; do
                 fi
                 ;;
             flatpak:*)
-                if has flatpak; then
-                    if [ -n "${elsewhere[$what]:-}" ]; then
-                        present=$((present + 1))
-                    else
-                        flatpaks+=("$name|$what")
-                    fi
-                    continue
+                if ! has flatpak; then
+                    no_flatpak+=("$name|$what")
+                elif [ -n "${elsewhere[$what]:-}" ]; then
+                    present=$((present + 1))
+                else
+                    flatpaks+=("$name|$what")
                 fi
+                continue
                 ;;
         esac
         by_hand+=("$name${install:+ ($install)}")
@@ -136,6 +139,14 @@ while IFS=$'\x1f' read -r name pkgs install; do
     todo_apps+=("$name")
     todo_pkgs+=("${missing[*]}")
 done <<<"$rows"
+
+if [ "${#no_flatpak[@]}" -gt 0 ]; then
+    if [[ " ${todo_pkgs[*]} " == *" flatpak "* ]]; then
+        flatpaks+=("${no_flatpak[@]}")
+    else
+        for app in "${no_flatpak[@]}"; do by_hand+=("${app%%|*} (flatpak: ${app#*|})"); done
+    fi
+fi
 
 total=$((${#todo_apps[@]} + ${#snaps[@]} + ${#flatpaks[@]}))
 log "Apps from the manifests ($DISTRO)"
@@ -163,20 +174,8 @@ if [ "$DRY_RUN" -eq 1 ]; then
     exit 0
 fi
 
+# Distro packages first: flatpak may be one of them.
 failed=()
-for app in "${snaps[@]}"; do
-    log "Installing ${app%%|*} (snap)"
-    read -ra args <<<"${app#*|}"
-    $SUDO snap install "${args[@]}" || failed+=("${app%%|*}")
-done
-if [ "${#flatpaks[@]}" -gt 0 ]; then
-    log "Installing ${#flatpaks[@]} Flatpak(s) from Flathub"
-    $SUDO flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-    for app in "${flatpaks[@]}"; do
-        $SUDO flatpak install -y --noninteractive flathub "${app#*|}" || failed+=("${app%%|*}")
-    done
-fi
-
 if [ "${#todo_apps[@]}" -gt 0 ]; then
     if [ "$DISTRO" = ubuntu ]; then
         log "Updating apt package lists"
@@ -201,6 +200,26 @@ if [ "${#todo_apps[@]}" -gt 0 ]; then
                 pkg_install "${pkg_list[@]}" || failed+=("${todo_apps[i]}")
             done
         fi
+    fi
+fi
+
+for app in "${snaps[@]}"; do
+    log "Installing ${app%%|*} (snap)"
+    read -ra args <<<"${app#*|}"
+    $SUDO snap install "${args[@]}" || failed+=("${app%%|*}")
+done
+if [ "${#flatpaks[@]}" -gt 0 ]; then
+    log "Installing ${#flatpaks[@]} Flatpak(s) from Flathub"
+    if ! has flatpak; then
+        warn "flatpak isn't installed"
+        for app in "${flatpaks[@]}"; do failed+=("${app%%|*}"); done
+    elif ! $SUDO flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; then
+        warn "couldn't add the Flathub remote"
+        for app in "${flatpaks[@]}"; do failed+=("${app%%|*}"); done
+    else
+        for app in "${flatpaks[@]}"; do
+            $SUDO flatpak install -y --noninteractive flathub "${app#*|}" || failed+=("${app%%|*}")
+        done
     fi
 fi
 
