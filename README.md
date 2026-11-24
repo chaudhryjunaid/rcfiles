@@ -28,7 +28,7 @@ setup/ubuntu.sh          # system packages and mise, via apt
 setup/fedora.sh          #   ...or via dnf
 setup/common.sh          # antidote, liquidprompt, rustup, mise tools, zsh, hidden launchers
 ./link.sh                # symlink the dotfiles into $HOME (--dry-run, --unlink)
-setup/git-identity.sh    # write your git name/email to ~/.gitconfig
+setup/git-identity.sh    # write your git name/email and SSH signing key to ~/.gitconfig
 ```
 Day to day, from the clone:
 ```
@@ -246,7 +246,9 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - `setup/ubuntu.sh`, `setup/fedora.sh` — system packages and mise for each
   distro; `setup/common.sh` — the distro-independent rest; `setup/lib.sh`
   holds their shared helpers
-- `setup/git-identity.sh` — write your git name/email to `~/.gitconfig`
+- `setup/git-identity.sh` — write your git name/email to `~/.gitconfig`,
+  and sign commits and tags with your SSH key (`~/.ssh/id_ed25519.pub`, or
+  `SIGNING_KEY`)
 - `setup/install-fonts.sh` — optional: search for a font by name (packages,
   Nerd Fonts, Google Fonts, a local folder) and install the ones you pick into
   `~/.local/share/fonts` (packages system-wide)
@@ -288,6 +290,15 @@ liquidprompt are cloned from GitHub into `~/sh`.
   `git lfs install` or git GUIs write, which keeps those out of the repo.
   (Older setups linked `~/.gitconfig` into the repo and kept the identity in
   `~/.gitconfig.local`; `link.sh` moves that file to `~/.gitconfig`.)
+- Commits and tags are signed with an SSH key: the tracked git config sets
+  `gpg.format = ssh`, and `setup/git-identity.sh` sets `user.signingKey`,
+  turns on `commit.gpgSign`/`tag.gpgSign` in `~/.gitconfig` and adds the key
+  to the untracked `~/.config/git/allowed_signers` (so `git log
+  --show-signature` verifies your commits). GitHub shows them as Verified
+  once the key is added there as a signing key: `gh ssh-key add
+  ~/.ssh/id_ed25519.pub --type signing` (the gh token needs
+  `gh auth refresh -s admin:ssh_signing_key`). `./doctor.sh` warns while
+  commits aren't signed.
 - The prompt is liquidprompt, configured by `~/.config/liquidpromptrc`.
 - nvim plugins install automatically on first launch via lazy.nvim, at the
   commits in `lazy-lock.json`. `:Lazy update` upgrades them and rewrites the

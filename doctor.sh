@@ -91,6 +91,16 @@ if [ -n "$(git config --global user.name)" ] && [ -n "$(git config --global user
 else
     bad "no git identity; run setup/git-identity.sh"
 fi
+signing_key=$(git config --global user.signingKey || true)
+if [ "$(git config --global commit.gpgSign)" != true ]; then
+    warn "commits aren't signed; run setup/git-identity.sh to sign with your SSH key"
+elif [ -z "$signing_key" ]; then
+    bad "commit.gpgSign is on but no user.signingKey is set; run setup/git-identity.sh"
+elif [ ! -f "${signing_key/#\~/$HOME}" ]; then
+    bad "signing key $signing_key not found; run setup/git-identity.sh"
+else
+    ok "commits signed with $signing_key"
+fi
 if [ "$(git -C "$REPO" config core.hooksPath)" = hooks ]; then
     ok "this checkout's pre-commit hook is on"
 else
