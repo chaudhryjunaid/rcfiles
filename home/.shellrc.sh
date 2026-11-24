@@ -22,6 +22,11 @@ export COMPOSE_MENU=false
 
 export NODE_REPL_HISTORY=~/.node_history
 export NODE_REPL_HISTORY_SIZE='32768'
+# npm: no funding or update-notifier messages. Env vars, not a tracked
+# ~/.npmrc, so `npm login` tokens never land in this repo; per-machine npm
+# settings go in an untracked ~/.npmrc.
+export NPM_CONFIG_FUND=false
+export NPM_CONFIG_UPDATE_NOTIFIER=false
 
 # Go: keep GOPATH out of ~ (XDG layout). `go install` puts binaries in
 # $GOPATH/bin; the module cache is re-downloadable, so it lives under ~/.cache
