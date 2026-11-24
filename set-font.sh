@@ -11,6 +11,8 @@
 #
 # Scripted (run.sh uses this):  ./set-font.sh APP|all FONT SIZE
 #   FONT must be the exact family name, as fc-list prints it.
+# Current settings:              ./set-font.sh --show
+#   prints "<app><TAB><family><TAB><size>" per app (doctor.sh reads it).
 #
 # The configs are symlinked into $HOME, so this changes the live config too,
 # and signals running kitty and Ghostty instances to reload it (Alacritty and
@@ -22,7 +24,7 @@ REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 APPS=(kitty alacritty ghostty sublime)
 
 print_help() {
-    sed -n '3,17p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '3,19p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 die() {
@@ -235,6 +237,12 @@ apps=()
 case "${1:-}" in
     -h | --help)
         print_help
+        exit 0
+        ;;
+    --show)
+        for app in "${APPS[@]}"; do
+            printf '%s\t%s\n' "$app" "$("current_$app" "$REPO/$(config_for "$app")")"
+        done
         exit 0
         ;;
     "")

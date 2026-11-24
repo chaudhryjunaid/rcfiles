@@ -30,6 +30,14 @@ setup/common.sh          # antidote, liquidprompt, rustup, mise tools, zsh
 ./link.sh                # symlink the dotfiles into $HOME (--dry-run, --unlink)
 setup/git-identity.sh    # write your git name/email to ~/.gitconfig
 ```
+Day to day, from the clone:
+```
+./update.sh              # update the checkout, mise tools, plugins, parsers, fonts, tldr
+./doctor.sh              # read-only health check: ✓ / ! / ✗ per item, with the fix
+./cleanup.sh             # free disk space (asks per item; --dry-run, --yes)
+./manifest-diff.sh       # manifests vs what's installed, both ways
+```
+
 Use `./install.sh --skip-deps` to only relink and set the identity; that
 works on any system. `--skip-identity` skips the identity prompt (it's only
 asked while `~/.gitconfig` has no identity). The tracked git config sets
@@ -210,6 +218,22 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - `run.sh` — bootstrap from GitHub: clone/update the repo, `install.sh`,
   fonts, `set-font.sh` (see setup above)
 - `install.sh` — one-shot setup (deps → link → identity)
+- `update.sh` — update everything: `git pull` + `link.sh`, mise and its
+  `latest` tools, antidote, liquidprompt, the tmux plugins, nvim plugins
+  (rewriting `lazy-lock.json`; it lists what changed, to commit) and
+  treesitter parsers, fonts, tldr pages. `--no-pull`, `--no-fonts`
+- `doctor.sh` — read-only health check: links, login shell and plugins,
+  git identity and hook, tools (and `mise ls --missing`), default editor,
+  nvim (startup errors, plugins, treesitter highlight queries), fonts (the
+  ensure-fonts set and each app's font). Exits 1 if anything is broken
+- `cleanup.sh` — free space from what's re-downloadable: unused mise
+  versions, removed nvim plugins, Go/npm/uv/pip caches, `~/.rcfiles-backup`
+  folders over 30 days old, Docker build cache and dangling images (never
+  volumes or tagged images). Shows sizes and asks per item
+- `manifest-diff.sh` — the manifests vs this machine: rows not installed
+  here, and desktop apps installed here (Flatpak, snap, AppImage,
+  `~/.local/share/applications`, packages added after the OS install) that
+  no row mentions. Matches by name, so check odd ones by hand
 - `link.sh` — symlink the dotfiles; existing files are moved to
   `~/.rcfiles-backup/<timestamp>/`, dangling links into the repo are pruned
 - `setup/ubuntu.sh`, `setup/fedora.sh` — system packages and mise for each
@@ -236,7 +260,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
   Ghostty and Sublime Text configs. Run with no arguments: pick the app from
   a numbered menu, the font in fzf (every installed family; Enter or Tab to
   choose), then type the size. Scripted form: `./set-font.sh APP|all FONT
-  SIZE`, with the exact family name
+  SIZE`, with the exact family name; `--show` prints each app's current
+  font
 
 # Notes
 - `~/.zshrc` and `~/.bashrc` both source `~/.shellrc.sh`. `~/.profile`
