@@ -209,8 +209,6 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - `home/.shellrc.sh` — env, aliases and functions shared by bash and zsh
 - `home/.inputrc` — readline (bash): case-insensitive completion, matches
   listed on the first Tab, Up/Down search history by the typed prefix
-- `home/.config/ripgrep/config` — smart case and hidden files for `rg`
-  typed at the prompt (via an alias; scripts and tools keep rg's defaults)
 - `home/.config/bat/config` — bat's theme, style and no pager
 - `home/.config/fontconfig/conf.d/60-hide-noto-scripts.conf` — hides
   Ubuntu's ~200 per-script Noto fonts from every font list (and from

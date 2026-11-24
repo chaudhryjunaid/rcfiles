@@ -70,22 +70,12 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 
 alias c='clear'
-alias r='reset'
 alias ports='ss -tulpn'
 alias myip='curl ifconfig.me'
 
 alias please='sudo'
 alias kssh="kitten ssh"
 
-# rg typed at the prompt uses ~/.config/ripgrep/config (smart case, hidden
-# files). Set per command, not exported, so tools that run rg keep its defaults.
-if command -v rg >/dev/null 2>&1; then
-  alias rg='RIPGREP_CONFIG_PATH=$HOME/.config/ripgrep/config rg'
-  alias rgi='rg -i'
-fi
-# fd typed at the prompt includes dotfiles (.env, .github/), like rg above;
-# fzf's Alt-C and scripts run fd unaliased.
-command -v fd >/dev/null 2>&1 && alias fd='fd --hidden --exclude .git'
 # bat's defaults (theme, style, no pager) are in ~/.config/bat/config.
 
 # killport <port>: stop whatever is listening on the TCP port. Only the
