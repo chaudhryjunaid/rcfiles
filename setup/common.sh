@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # setup/common.sh — the distro-independent part of the setup: git-lfs's
-# filters, antidote, liquidprompt, rustup, the mise tools, zsh as the login
+# filters, antidote, liquidprompt, rustup, the mise tools (and gh's and
+# btop's settings), zsh as the login
 # shell, and hiding terminal programs' launchers from the app grid. Run it after setup/<distro>.sh has installed the system
 # packages and mise. Safe to re-run.
 #
@@ -56,6 +57,25 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # pointed at directly since link.sh may not have run yet.
 log "Installing tools with mise"
 MISE_GLOBAL_CONFIG_FILE="$REPO/home/.config/mise/config.toml" mise install --yes
+
+# Settings for tools that rewrite their own config files, so the files
+# aren't tracked: gh clones and checks out over SSH, like the rest of the git
+# setup; btop gets vim keys (hjkl) and the One Dark theme (the theme file is
+# tracked: home/.config/btop/themes). Re-running resets these three, nothing
+# else.
+log "Setting gh and btop options"
+MISE_GLOBAL_CONFIG_FILE="$REPO/home/.config/mise/config.toml" mise exec -- \
+    gh config set git_protocol ssh || warn "couldn't set gh's git_protocol"
+btop_conf=${XDG_CONFIG_HOME:-$HOME/.config}/btop/btop.conf
+mkdir -p "$(dirname "$btop_conf")"
+for setting in 'color_theme = "onedark"' 'vim_keys = true'; do
+    key=${setting%% =*}
+    if grep -q "^$key *=" "$btop_conf" 2>/dev/null; then
+        sed -i "s|^$key *=.*|$setting|" "$btop_conf"
+    else
+        echo "$setting" >>"$btop_conf"
+    fi
+done
 
 # Make zsh the default login shell, by a path /etc/shells lists: on Fedora,
 # where sbin is merged into bin, `command -v zsh` can answer /usr/sbin/zsh.

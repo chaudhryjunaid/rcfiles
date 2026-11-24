@@ -51,10 +51,14 @@ command -v rg >/dev/null 2>&1 && export FZF_DEFAULT_COMMAND='rg --files --hidden
 [ -n "${FZF_DEFAULT_COMMAND:-}" ] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 # Alt-C: fd skips what .gitignore lists (venvs, build output), unlike fzf's walker.
 command -v fd >/dev/null 2>&1 && export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
-export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border'
-# Previews: file contents for Ctrl-T, a directory tree for Alt-C.
+# --cycle wraps from the last match to the first, --info=inline-right puts
+# the match count on the prompt line, Ctrl-/ shows or hides the preview.
+export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border --cycle --info=inline-right --bind=ctrl-/:toggle-preview'
+# Previews: file contents for Ctrl-T, a directory tree for Alt-C, and for
+# Ctrl-R the whole command, wrapped (hidden until Ctrl-/; for long commands).
 command -v bat >/dev/null 2>&1 && export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range=:300 {}'"
 command -v eza >/dev/null 2>&1 && export FZF_ALT_C_OPTS="--preview 'eza --tree --level=2 --color=always {}'"
+export FZF_CTRL_R_OPTS="--preview 'echo {2..}' --preview-window=up:3:hidden:wrap"
 
 # git aliases (a curated subset of the oh-my-zsh `git` plugin, vendored so we
 # don't need a framework just for these).
@@ -130,16 +134,20 @@ gbda() {
 
 alias ls='ls --color=auto'
 # Use eza for the ls shortcuts when available, else fall back to plain ls.
+# --icons=auto and --hyperlink (clickable names in kitty and Ghostty) apply
+# only on a terminal, not when piped.
 if command -v eza >/dev/null 2>&1; then
-  alias l='eza -1 --group-directories-first'
-  alias ll='eza -lh --group-directories-first --git'
-  alias la='eza -lah --group-directories-first --git'
-  alias lt='eza --tree --level=2 --group-directories-first'
+  alias l='eza -1 --group-directories-first --icons=auto --hyperlink'
+  alias ll='eza -lh --group-directories-first --git --icons=auto --hyperlink'
+  alias la='eza -lah --group-directories-first --git --icons=auto --hyperlink'
+  alias lt='eza --tree --level=2 --group-directories-first --icons=auto --hyperlink'
 else
   alias ll='ls -lh'
   alias la='ls -lah'
 fi
 alias grep='grep --color=auto'
+alias diff='diff --color=auto'
+alias ip='ip -color=auto'
 # -I asks once, and only for more than 3 files or a recursive delete.
 alias rm='rm -I'
 alias cp='cp -i'
@@ -169,6 +177,9 @@ if command -v rg >/dev/null 2>&1; then
   alias rg='RIPGREP_CONFIG_PATH=$HOME/.config/ripgrep/config rg'
   alias rgi='rg -i'
 fi
+# fd typed at the prompt includes dotfiles (.env, .github/), like rg above;
+# fzf's Alt-C and scripts run fd unaliased.
+command -v fd >/dev/null 2>&1 && alias fd='fd --hidden --exclude .git'
 # bat's defaults (theme, style, no pager) are in ~/.config/bat/config.
 
 # killport <port>: stop whatever is listening on the TCP port. Only the
