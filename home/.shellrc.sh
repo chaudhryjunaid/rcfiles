@@ -13,8 +13,11 @@ alias nv='nvim'
 alias nvi='nvim'
 
 # -F quits if the text fits one screen (less >= 530 needs no -X for that),
-# -R passes colors through, -i makes search smart-case.
-export LESS="-FRi"
+# -R passes colors through, -i makes search smart-case, --mouse scrolls with
+# the wheel (shift+drag to select text while less is open), --incsearch
+# highlights matches as you type, -j.3 puts a match a third of the way down
+# rather than on the top line. Also applies to man (MANPAGER) and delta.
+export LESS="-FRi --mouse --incsearch -j.3"
 export PAGER='less'
 export MANPAGER="less -R --use-color -Dd+r -Du+b"
 # disable annoying docker menu at the bottom
