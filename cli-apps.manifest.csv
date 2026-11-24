@@ -28,5 +28,5 @@ Hardware info and testing,vainfo,https://github.com/intel/libva-utils,video acce
 Network and sharing,cifs-utils,https://wiki.samba.org/index.php/LinuxCIFS_utils,"mount Windows/Samba shares, mount.cifs",apt: cifs-utils,cifs-utils,cifs-utils
 Network and sharing,smbclient,https://www.samba.org,FTP-like client for SMB shares,apt: smbclient,smbclient,samba-client
 Network and sharing,Waypipe,https://gitlab.freedesktop.org/mstoeckl/waypipe/,run Wayland apps over SSH,apt: waypipe,waypipe,waypipe
-Network and sharing,traceroute,https://traceroute.sourceforge.net/,"show the network path to a host, traceroute",apt: traceroute,traceroute,
+Network and sharing,traceroute,https://traceroute.sourceforge.net/,"show the network path to a host, traceroute",apt: traceroute,traceroute,traceroute
 System,Flatpak,https://flatpak.org,runs the Flathub apps in gui-apps.manifest.csv,apt: flatpak,flatpak,flatpak

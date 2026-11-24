@@ -1,11 +1,14 @@
 #!/bin/bash
 
 # extra-install.sh — install the apps in cli-apps.manifest.csv and
-# gui-apps.manifest.csv that this distro's own repos have: the packages in the
-# manifests' ubuntu or fedora column, with apt or dnf. Apps with that column
-# empty need a vendor repo, a .deb, a snap, Flathub or an installer, so they're
-# only listed, to install by hand. Apps already installed as a snap or Flatpak
-# are skipped. Optional: install.sh doesn't run it. Safe to re-run.
+# gui-apps.manifest.csv that can be installed unattended: the packages in the
+# manifests' ubuntu or fedora column (this distro's own repos) with apt or
+# dnf, and the rows whose install column is "snap: <name> [--classic]" or
+# "flatpak: <app id>" (from Flathub, added if missing) when snap or flatpak
+# is there. The rest (a vendor repo, a .deb, a GNOME extension, an
+# installer) are listed with their install column, to do by hand. Apps
+# already installed as a snap or Flatpak are skipped. Optional: install.sh
+# doesn't run it. Safe to re-run.
 #
 # Usage: ./extra-install.sh [--dry-run] [--cli-only]
 
@@ -22,7 +25,7 @@ for arg in "$@"; do
         -n | --dry-run) DRY_RUN=1 ;;
         --cli-only) MANIFESTS=("$REPO/cli-apps.manifest.csv") ;;
         -h | --help)
-            sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'
+            sed -n '3,13p' "$0" | sed 's/^# \{0,1\}//'
             exit 0
             ;;
         *)
@@ -47,6 +50,7 @@ case "$DISTRO" in
         pkg_install() { $SUDO dnf install -y "$@"; }
         ;;
 esac
+has() { command -v "$1" >/dev/null 2>&1; }
 
 # join <array...>: print the arguments separated by ", ".
 join() {
@@ -55,18 +59,19 @@ join() {
     echo "${out%, }"
 }
 
-# Snaps and Flatpaks installed here, by name (a Flatpak by the last part of
-# its ID), so an app that's installed that way isn't installed twice.
+# Snaps and Flatpaks installed here, by name (a Flatpak by its ID and by the
+# last part of it), so an app that's installed that way isn't installed twice.
 declare -A elsewhere=()
 while read -r name; do
     [ -n "$name" ] && elsewhere[$name]=1
 done < <({
     snap list 2>/dev/null | awk 'NR > 1 { print $1 }'
     flatpak list --app --columns=application 2>/dev/null |
-        awk -F. '{ print tolower($NF) }'
+        awk -F. '{ print; print tolower($NF) }'
 } || true)
 
-# Each manifest row as "name<TAB>packages for this distro".
+# Each manifest row as "name, packages for this distro, install", separated
+# by \x1f (not a tab: read would merge a tab around an empty field).
 rows=$(
     python3 -I - "$DISTRO" "${MANIFESTS[@]}" <<'EOF'
 import csv, sys
@@ -74,16 +79,42 @@ distro, *paths = sys.argv[1:]
 for path in paths:
     with open(path, newline='', encoding='utf-8') as f:
         for row in csv.DictReader(f):
-            print(row['name'], ' '.join(row[distro].split()), sep='\t')
+            print(row['name'], ' '.join(row[distro].split()),
+                  ' '.join(row.get('install', '').split()), sep='\x1f')
 EOF
 )
 
-todo_apps=() todo_pkgs=() by_hand=() as_other=()
+# Apps to install: distro packages (todo_apps/todo_pkgs), snaps ("name|args")
+# and Flatpaks ("name|app id").
+todo_apps=() todo_pkgs=() snaps=() flatpaks=() by_hand=() as_other=()
 present=0
-while IFS=$'\t' read -r name pkgs; do
+while IFS=$'\x1f' read -r name pkgs install; do
     [ -n "$name" ] || continue
     if [ -z "$pkgs" ]; then
-        by_hand+=("$name")
+        what=${install#*: }
+        case "$install" in
+            snap:*)
+                if has snap; then
+                    if [ -n "${elsewhere[${what%% *}]:-}" ]; then
+                        present=$((present + 1))
+                    else
+                        snaps+=("$name|$what")
+                    fi
+                    continue
+                fi
+                ;;
+            flatpak:*)
+                if has flatpak; then
+                    if [ -n "${elsewhere[$what]:-}" ]; then
+                        present=$((present + 1))
+                    else
+                        flatpaks+=("$name|$what")
+                    fi
+                    continue
+                fi
+                ;;
+        esac
+        by_hand+=("$name${install:+ ($install)}")
         continue
     fi
     read -ra pkg_list <<<"$pkgs"
@@ -106,20 +137,24 @@ while IFS=$'\t' read -r name pkgs; do
     todo_pkgs+=("${missing[*]}")
 done <<<"$rows"
 
+total=$((${#todo_apps[@]} + ${#snaps[@]} + ${#flatpaks[@]}))
 log "Apps from the manifests ($DISTRO)"
 info "already installed: $present"
 if [ "${#as_other[@]}" -gt 0 ]; then
     info "installed as a snap or Flatpak, so skipped: $(join "${as_other[@]}")"
 fi
 if [ "${#by_hand[@]}" -gt 0 ]; then
-    info "not in the $DISTRO repos, to install by hand: $(join "${by_hand[@]}")"
+    info "to install by hand: ${#by_hand[@]}"
+    for app in "${by_hand[@]}"; do info "    $app"; done
 fi
-info "to install: ${#todo_apps[@]}"
+info "to install: $total"
 for i in "${!todo_apps[@]}"; do
-    info "    ${todo_apps[i]} (${todo_pkgs[i]})"
+    info "    ${todo_apps[i]} ($DISTRO: ${todo_pkgs[i]})"
 done
+for app in "${snaps[@]}"; do info "    ${app%%|*} (snap: ${app#*|})"; done
+for app in "${flatpaks[@]}"; do info "    ${app%%|*} (flatpak: ${app#*|})"; done
 
-if [ "${#todo_apps[@]}" -eq 0 ]; then
+if [ "$total" -eq 0 ]; then
     log "Nothing to install."
     exit 0
 fi
@@ -128,34 +163,47 @@ if [ "$DRY_RUN" -eq 1 ]; then
     exit 0
 fi
 
-if [ "$DISTRO" = ubuntu ]; then
-    log "Updating apt package lists"
-    $SUDO apt-get update -y
-fi
-
-all=()
-for pkgs in "${todo_pkgs[@]}"; do
-    read -ra pkg_list <<<"$pkgs"
-    all+=("${pkg_list[@]}")
-done
-log "Installing ${#all[@]} package$([ "${#all[@]}" -eq 1 ] || echo s)"
-if pkg_install "${all[@]}"; then
-    exit 0
-fi
-
-# One package that's missing or conflicts fails the whole batch, so retry app
-# by app to install the rest.
 failed=()
-if [ "${#todo_apps[@]}" -eq 1 ]; then
-    failed=("${todo_apps[0]}")
-else
-    warn "installing them together failed; trying one app at a time"
-    for i in "${!todo_apps[@]}"; do
-        read -ra pkg_list <<<"${todo_pkgs[i]}"
-        log "Installing ${todo_apps[i]}"
-        pkg_install "${pkg_list[@]}" || failed+=("${todo_apps[i]}")
+for app in "${snaps[@]}"; do
+    log "Installing ${app%%|*} (snap)"
+    read -ra args <<<"${app#*|}"
+    $SUDO snap install "${args[@]}" || failed+=("${app%%|*}")
+done
+if [ "${#flatpaks[@]}" -gt 0 ]; then
+    log "Installing ${#flatpaks[@]} Flatpak(s) from Flathub"
+    $SUDO flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    for app in "${flatpaks[@]}"; do
+        $SUDO flatpak install -y --noninteractive flathub "${app#*|}" || failed+=("${app%%|*}")
     done
 fi
+
+if [ "${#todo_apps[@]}" -gt 0 ]; then
+    if [ "$DISTRO" = ubuntu ]; then
+        log "Updating apt package lists"
+        $SUDO apt-get update -y
+    fi
+    all=()
+    for pkgs in "${todo_pkgs[@]}"; do
+        read -ra pkg_list <<<"$pkgs"
+        all+=("${pkg_list[@]}")
+    done
+    log "Installing ${#all[@]} package$([ "${#all[@]}" -eq 1 ] || echo s)"
+    if ! pkg_install "${all[@]}"; then
+        # One package that's missing or conflicts fails the whole batch, so
+        # retry app by app to install the rest.
+        if [ "${#todo_apps[@]}" -eq 1 ]; then
+            failed+=("${todo_apps[0]}")
+        else
+            warn "installing them together failed; trying one app at a time"
+            for i in "${!todo_apps[@]}"; do
+                read -ra pkg_list <<<"${todo_pkgs[i]}"
+                log "Installing ${todo_apps[i]}"
+                pkg_install "${pkg_list[@]}" || failed+=("${todo_apps[i]}")
+            done
+        fi
+    fi
+fi
+
 if [ "${#failed[@]}" -gt 0 ]; then
     warn "couldn't install: $(join "${failed[@]}")"
     exit 1

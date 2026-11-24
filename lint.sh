@@ -101,7 +101,7 @@ for path, columns in [
     ("cli-apps.manifest.csv",
      ["category", "name", "homepage", "description", "install", "ubuntu", "fedora"]),
     ("gui-apps.manifest.csv",
-     ["category", "name", "homepage", "description", "ubuntu", "fedora"]),
+     ["category", "name", "homepage", "description", "install", "ubuntu", "fedora"]),
 ]:
     try:
         with open(path, newline="", encoding="utf-8") as f:

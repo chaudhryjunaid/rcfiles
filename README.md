@@ -58,22 +58,26 @@ keys or tokens. Run `./lint.sh` by hand any time; skip the hook once with
 
 GUI apps aren't installed by the setup scripts. `gui-apps.manifest.csv` lists
 the ones I use on a GNOME desktop (a snapshot of my main machine, kept
-current with `./manifest-update.sh`), with columns
-`category,name,homepage,description,ubuntu,fedora`.
-Apps that ship with a stock GNOME desktop (Firefox, ...) are left out.
-`cli-apps.manifest.csv` does the same for command-line tools that aren't in a
-stock Ubuntu desktop and that the setup scripts and mise config don't
-install, with an extra `install` column for how each one got onto that
-machine (Ubuntu 26.10): `apt: <packages>`, a vendor repo, `.deb`, snap,
-release binary or installer script.
+current with `./manifest-update.sh`). Apps that ship with a stock GNOME
+desktop (Firefox, ...) are left out. `cli-apps.manifest.csv` does the same
+for command-line tools that aren't in a stock Ubuntu desktop and that the
+setup scripts and mise config don't install. Both have the columns
+`category,name,homepage,description,install,ubuntu,fedora`, where `install`
+says how the app got onto that machine (Ubuntu 26.10): `apt: <packages>`,
+`apt, from <host>'s repo: <packages>`, `.deb from the homepage: <package>`,
+`snap: <name> [--classic]`, `flatpak: <app id>`, `extension: <uuid>` (a
+GNOME extension from extensions.gnome.org), `Chrome: Install page as app`,
+or a release binary or installer script. `./manifest-update.sh` fills it in.
 
 The `ubuntu` and `fedora` columns name each app's packages in that distro's
 own repos (Fedora's often differ, e.g. `lm_sensors`, `vim-enhanced`), and are
 empty when it has none. `./extra-install.sh [--dry-run] [--cli-only]`
-installs those with apt or dnf (skipping apps already installed as a snap or
-Flatpak), then lists the rest, to install the way each homepage recommends:
-Flathub, Snap, the vendor's apt/rpm repo or package, or an AppImage (AppImages
-need FUSE 2: `libfuse2t64` on Ubuntu, `fuse-libs` on Fedora).
+installs those with apt or dnf, and the `snap:` and `flatpak:` rows with
+snap and Flatpak (adding Flathub if needed), skipping apps already installed
+either way. It lists the rest with their `install` column, to install by
+hand: a vendor's apt/rpm repo or package, a GNOME extension (Extension
+Manager), an installer, or an AppImage (AppImages need FUSE 2:
+`libfuse2t64` on Ubuntu, `fuse-libs` on Fedora).
 
 Fonts aren't installed by `install.sh` either. The optional
 `setup/install-fonts.sh [FOLDER]` asks for a name and searches the distro's
@@ -259,7 +263,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - `cli-apps.manifest.csv` — CLI tools the setup scripts don't install, to
   install by hand
 - `extra-install.sh` — optional: install the apps from both manifests that
-  the distro's own repos have (their `ubuntu`/`fedora` column)
+  the distro's own repos have (their `ubuntu`/`fedora` column), and the
+  snaps and Flatpaks (their `install` column); list the rest
 - `lint.sh` — shellcheck and shfmt the scripts and rc files (formatting:
   `shfmt -w` with the flags in `lint.sh`; `.editorconfig` matches), parse
   the app configs, check the manifests and repo hygiene (both tools come

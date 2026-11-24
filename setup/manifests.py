@@ -35,7 +35,7 @@ import subprocess
 import sys
 from urllib.parse import quote, urlparse
 
-GUI_COLUMNS = ["category", "name", "homepage", "description", "ubuntu", "fedora"]
+GUI_COLUMNS = ["category", "name", "homepage", "description", "install", "ubuntu", "fedora"]
 CLI_COLUMNS = ["category", "name", "homepage", "description", "install", "ubuntu", "fedora"]
 
 HOME = os.path.expanduser("~")
@@ -54,7 +54,7 @@ RUSTUP_BINS = {"cargo", "cargo-clippy", "cargo-fmt", "cargo-miri", "clippy-drive
                "rust-analyzer", "rustc", "rustdoc", "rustfmt", "rust-gdb", "rust-gdbgui",
                "rust-lldb", "rustup"}
 # Installed by the setup scripts (outside their package arrays).
-SETUP_EXTRA = {"mise", "flatpak"}
+SETUP_EXTRA = {"mise"}
 
 # Desktop entry Categories -> manifest category, first match wins.
 GUI_CATEGORIES = [
@@ -243,6 +243,7 @@ class Machine:
                 continue
             if m.get("name"):
                 self.extensions.append({"path": meta, "name": m["name"], "url": m.get("url", ""),
+                                        "uuid": m.get("uuid") or os.path.basename(os.path.dirname(meta)),
                                         "description": m.get("description", "").split("\n")[0],
                                         "user": meta.startswith(HOME)})
 
@@ -407,9 +408,17 @@ def row_packages(row):
     in its install column ("apt, from Docker's repo: docker-ce ...")."""
     pkgs = set(row.get("ubuntu", "").split()) | set(row.get("fedora", "").split())
     install = row.get("install", "")
-    if ":" in install and not install.startswith("installer"):
+    if re.match(r"^(apt|dnf|\.deb|\.rpm)\b", install) and ":" in install:
         pkgs |= set(re.findall(r"[a-z0-9][a-z0-9.+-]+", install.rsplit(":", 1)[1]))
     return pkgs
+
+
+def row_install(row):
+    """(kind, name) from a row's install column for the ones setup can
+    install: ("snap", "<name> [--classic]"), ("flatpak", "<app id>"),
+    ("extension", "<uuid>"); else (None, "")."""
+    m = re.match(r"^(snap|flatpak|extension):\s*(.+)$", row.get("install", "").strip())
+    return (m.group(1), m.group(2).strip()) if m else (None, "")
 
 
 def row_commands(row):
@@ -446,10 +455,19 @@ def candidates(m):
                 return cat
         return UNCATEGORIZED
 
-    def add_gui(name, homepage, description, source, pkgs=(), category=UNCATEGORIZED, pkg_value=""):
+    def pkg_install(pkg, origin):
+        """How a distro package got here, for the install column."""
+        if origin == "distro":
+            return f"{pm}: {pkg}"
+        if origin == "local":
+            return f".{'deb' if m.distro == 'ubuntu' else 'rpm'} from the homepage: {pkg}"
+        return f"{pm}, from {origin[7:]}'s repo: {pkg}"
+
+    def add_gui(name, homepage, description, source, install="", pkgs=(),
+                category=UNCATEGORIZED, pkg_value=""):
         gui.append({"category": category, "name": name, "homepage": homepage,
-                    "description": tidy(description), "ubuntu": "", "fedora": "",
-                    pkg_col: pkg_value, "_kind": "GUI", "_source": source,
+                    "description": tidy(description), "install": install, "ubuntu": "",
+                    "fedora": "", pkg_col: pkg_value, "_kind": "GUI", "_source": source,
                     "_pkgs": set(pkgs), "_cmds": set()})
 
     # Flatpaks.
@@ -463,7 +481,7 @@ def candidates(m):
         entry = next((e for e in m.desktop if e["base"] == app_id), None)
         summary = summary or (entry["comment"] if entry else "")
         add_gui(name, homepage or f"https://flathub.org/apps/{app_id}",
-                f"{tidy(summary) or name} (Flathub)", "Flatpak",
+                tidy(summary) or name, "Flatpak", install=f"flatpak: {app_id}",
                 category=gui_category(entry["categories"] if entry else set()))
 
     # Snaps with a launcher, other than the ones Ubuntu seeds.
@@ -475,8 +493,9 @@ def candidates(m):
         if name in m.seeded or name not in m.snaps:
             continue
         homepage, summary = m.snap_info(name)
-        add_gui(e["name"], homepage, f"{tidy(summary or e['comment']) or e['name']} (snap)",
-                "snap", category=gui_category(e["categories"]))
+        classic = " --classic" if "classic" in m.snaps[name] else ""
+        add_gui(e["name"], homepage, tidy(summary or e["comment"]) or e["name"],
+                "snap", install=f"snap: {name}{classic}", category=gui_category(e["categories"]))
 
     # Distro packages with a launcher (or a Shell extension), installed by hand.
     # Packages whose launchers are all hidden still count as GUI, not CLI.
@@ -499,8 +518,8 @@ def candidates(m):
         info = m.pkginfo.get(pkg, {})
         distro = origins.get(pkg) == "distro"
         add_gui(e["name"], info.get("homepage", ""), e["comment"] or info.get("summary", ""),
-                f"{pm}: {pkg}", pkgs=[pkg], category=gui_category(e["categories"]),
-                pkg_value=pkg if distro else "")
+                f"{pm}: {pkg}", install=pkg_install(pkg, origins.get(pkg, "distro")), pkgs=[pkg],
+                category=gui_category(e["categories"]), pkg_value=pkg if distro else "")
     for ext in m.extensions:
         pkg = ext_owners.get(ext["path"])
         if ext["user"] or (pkg in by_hand and pkg not in seen):
@@ -510,6 +529,7 @@ def candidates(m):
             homepage = ext["url"] or (m.pkginfo.get(pkg, {}).get("homepage", "") if pkg else "")
             add_gui(ext["name"], homepage or "https://extensions.gnome.org",
                     ext["description"], f"{pm}: {pkg}" if pkg else "GNOME extension",
+                    install=pkg_install(pkg, origins.get(pkg, "distro")) if pkg else f"extension: {ext['uuid']}",
                     pkgs=[pkg] if pkg else [], category="GNOME extensions",
                     pkg_value=pkg if distro else "")
 
@@ -527,13 +547,13 @@ def candidates(m):
         is_appimage = ".appimage" in e["exec"].lower()
         if is_appimage:
             appimage_names.add(os.path.basename(e["exec"].split()[0]))
-        add_gui(e["name"], "", f"{tidy(e['comment']) or e['name']}" + (" (AppImage)" if is_appimage else ""),
+        add_gui(e["name"], "", tidy(e["comment"]) or e["name"],
                 "AppImage" if is_appimage else "~/.local/share/applications",
-                category=gui_category(e["categories"]))
+                install="AppImage" if is_appimage else "", category=gui_category(e["categories"]))
     for path in m.appimages:
         if os.path.basename(path) not in appimage_names:
             name = re.split(r"[-_.]", os.path.basename(path))[0]
-            add_gui(name, "", f"{name} (AppImage)", "AppImage")
+            add_gui(name, "", name, "AppImage", install="AppImage")
 
     # ---- CLI -------------------------------------------------------------------
     def add_cli(name, homepage, description, install, source, pkgs=(), cmds=(),
@@ -558,16 +578,10 @@ def candidates(m):
     for pkg in sorted(cli_pkgs):
         info = m.pkginfo[pkg]
         origin = cli_origins.get(pkg, "distro")
-        if origin == "distro":
-            install = f"{pm}: {pkg}"
-            fallback = (f"https://packages.ubuntu.com/{pkg}" if m.distro == "ubuntu"
-                        else f"https://packages.fedoraproject.org/pkgs/{pkg}/")
-        elif origin == "local":
-            install = f".{'deb' if m.distro == 'ubuntu' else 'rpm'} from the homepage: {pkg}"
-            fallback = ""
-        else:
-            install = f"{pm}, from {origin[7:]}'s repo: {pkg}"
-            fallback = ""
+        install = pkg_install(pkg, origin)
+        fallback = "" if origin != "distro" else (
+            f"https://packages.ubuntu.com/{pkg}" if m.distro == "ubuntu"
+            else f"https://packages.fedoraproject.org/pkgs/{pkg}/")
         add_cli(pkg, info["homepage"] or fallback, info["summary"], install, f"{pm}: {pkg}",
                 pkgs=[pkg], category=CLI_SECTIONS.get(info["section"], UNCATEGORIZED),
                 pkg_value=pkg if origin == "distro" else "")
@@ -660,7 +674,7 @@ def candidates(m):
 
 # ---- matching ------------------------------------------------------------------
 def match(rows, cands, m):
-    """(found rows, uncovered candidates, {candidate name: row name})."""
+    """(found rows, uncovered candidates, {id(row): the candidate it covers})."""
     pkg_to_row = {}
     origin_to_row = {}
     for row in rows:
@@ -701,7 +715,7 @@ def match(rows, cands, m):
             uncovered.append(c)
         else:
             hit.add(id(row))
-            covered_by[c["name"]] = row["name"]
+            covered_by.setdefault(id(row), c)
 
     def found(row):
         if id(row) in hit:
@@ -711,6 +725,14 @@ def match(rows, cands, m):
             return True
         vendor = row_packages(row) - set(row.get("ubuntu", "").split()) - set(row.get("fedora", "").split())
         if vendor and all(p in m.packages for p in vendor):
+            return True
+        kind, what = row_install(row)
+        if kind == "snap" and what.split()[0] in m.snaps:
+            return True
+        if kind == "flatpak" and what in m.flatpaks:
+            return True
+        if kind == "extension" and any(os.path.basename(os.path.dirname(e["path"])) == what
+                                       for e in m.extensions):
             return True
         if norm(row["name"]) in m.names:
             return True
@@ -748,7 +770,7 @@ def main():
         if norm(c["name"]) not in names:
             names.add(norm(c["name"]))
             cands.append(c)
-    found_rows, new, _ = match(rows, cands, m)
+    found_rows, new, covers = match(rows, cands, m)
     found_ids = {id(r) for r in found_rows}
     missing = [r for r in rows if id(r) not in found_ids]
 
@@ -764,6 +786,13 @@ def main():
         return 0
 
     keep = [r for r in rows if not prune or id(r) in found_ids]
+    # Rows with no install column yet get it from what's installed here.
+    filled = []
+    for r in keep:
+        c = covers.get(id(r))
+        if not r.get("install") and c is not None and c.get("install"):
+            r["install"] = c["install"]
+            filled.append(r)
     new_gui = [c for c in new if c["_kind"] == "GUI"]
     new_cli = [c for c in new if c["_kind"] == "CLI"]
     out_gui = merge([r for r in keep if r["_kind"] == "GUI"], new_gui)
@@ -772,6 +801,10 @@ def main():
     print(f"==> Added ({len(new)})")
     for c in sorted(new, key=lambda c: (c["_kind"], c["name"].lower())):
         print(f"    {c['_kind']}  {c['name']:<28} ({c['_source']})")
+    if filled:
+        print(f"\n==> Install column filled in ({len(filled)})")
+        for r in filled:
+            print(f"    {r['_kind']}  {r['name']:<28} {r['install']}")
     label = "Removed, not found here" if prune else "Kept, though not found here (--prune drops them)"
     print(f"\n==> {label} ({len(missing)})")
     for r in sorted(missing, key=lambda r: (r["_kind"], r["name"].lower())):
