@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # setup/common.sh — the distro-independent part of the setup: git-lfs's
-# filters, antidote, liquidprompt, rustup, the mise tools, and zsh as the
-# login shell. Run it after setup/<distro>.sh has installed the system
+# filters, antidote, liquidprompt, rustup, the mise tools, zsh as the login
+# shell, and hiding terminal programs' launchers from the app grid. Run it after setup/<distro>.sh has installed the system
 # packages and mise. Safe to re-run.
 #
 # Normally run via ../install.sh.
@@ -68,3 +68,21 @@ case "$(getent passwd "$(id -un)" | cut -d: -f7)" in
             warn "could not change shell; run: chsh -s $ZSH_BIN"
         ;;
 esac
+
+# Hide launchers that only open a terminal program from the app grid: vim
+# and nvim (you start them from a shell), info and texdoctk (dependencies of
+# ubuntu-standard and texlive). A copy in ~/.local/share/applications with
+# NoDisplay=true overrides the system one; delete the copy to bring it back.
+# A copy that's already there is left alone.
+HIDE_LAUNCHERS=(vim nvim info texdoctk)
+apps_dir=${XDG_DATA_HOME:-$HOME/.local/share}/applications
+log "Hiding terminal-program launchers"
+for name in "${HIDE_LAUNCHERS[@]}"; do
+    src=/usr/share/applications/$name.desktop
+    dest=$apps_dir/$name.desktop
+    if [ -f "$src" ] && [ ! -e "$dest" ]; then
+        mkdir -p "$apps_dir"
+        sed '/^\[Desktop Entry\]/a NoDisplay=true' "$src" >"$dest"
+        info "hid $name"
+    fi
+done

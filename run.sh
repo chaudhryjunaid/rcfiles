@@ -3,8 +3,8 @@
 # run.sh — set up a machine straight from GitHub: clone this repo (or update
 # the clone), run install.sh, install the programming fonts
 # (setup/ensure-fonts.sh: JetBrainsMono Nerd Font and nine others), then, on
-# the first run only (a fresh clone), set kitty, Alacritty, Ghostty and
-# Sublime Text to JetBrainsMono Nerd Font (set-font.sh). Later runs leave the font settings alone, since set-font.sh
+# the first run only (a fresh clone), set kitty, Ghostty and Sublime
+# Text to JetBrainsMono Nerd Font (set-font.sh). Later runs leave the font settings alone, since set-font.sh
 # edits tracked files and a machine's own pick shouldn't be reset. Safe to
 # re-run.
 #

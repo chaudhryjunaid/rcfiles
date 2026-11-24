@@ -3,8 +3,8 @@
 # set-font.sh — set the font family and size in the app configs under home/.
 #
 # Interactive (no arguments):
-#   1. pick the app from a numbered menu (kitty, Alacritty, Ghostty,
-#      Sublime Text, or all of them)
+#   1. pick the app from a numbered menu (kitty, Ghostty, Sublime Text,
+#      or all of them)
 #   2. pick the font in fzf from every font family installed on this system
 #      (type to filter, Enter or Tab to choose; the preview lists its styles)
 #   3. type the size (Enter keeps the current one)
@@ -15,13 +15,13 @@
 #   prints "<app><TAB><family><TAB><size>" per app (doctor.sh reads it).
 #
 # The configs are symlinked into $HOME, so this changes the live config too,
-# and signals running kitty and Ghostty instances to reload it (Alacritty and
-# Sublime Text reload on their own).
+# and signals running kitty and Ghostty instances to reload it (Sublime Text
+# reloads on its own).
 
 set -euo pipefail
 
 REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
-APPS=(kitty alacritty ghostty sublime)
+APPS=(kitty ghostty sublime)
 
 print_help() {
     sed -n '3,19p' "$0" | sed 's/^# \{0,1\}//'
@@ -35,7 +35,6 @@ die() {
 config_for() {
     case "$1" in
         kitty) echo "home/.config/kitty/kitty.conf" ;;
-        alacritty) echo "home/.config/alacritty/alacritty.toml" ;;
         ghostty) echo "home/.config/ghostty/config.ghostty" ;;
         sublime) echo "home/.config/sublime-text/Packages/User/Preferences.sublime-settings" ;;
     esac
@@ -44,7 +43,6 @@ config_for() {
 label_for() {
     case "$1" in
         kitty) echo "kitty" ;;
-        alacritty) echo "Alacritty" ;;
         ghostty) echo "Ghostty" ;;
         sublime) echo "Sublime Text" ;;
     esac
@@ -54,12 +52,6 @@ label_for() {
 current_kitty() {
     awk '/^font_family[ \t]/ { sub(/^font_family[ \t]+/, ""); f = $0 }
          /^font_size[ \t]/   { sub(/^font_size[ \t]+/, "");   s = $0 }
-         END { print f "\t" s }' "$1"
-}
-current_alacritty() {
-    awk '/^[ \t]*\[/ { section = $0; gsub(/[ \t]/, "", section) }
-         section == "[font]" && /^[ \t]*size[ \t]*=/ { sub(/^[^=]*=[ \t]*/, ""); s = $0 }
-         section == "[font.normal]" && /^[ \t]*family[ \t]*=/ { sub(/^[^=]*=[ \t]*/, ""); gsub(/"/, ""); f = $0 }
          END { print f "\t" s }' "$1"
 }
 current_ghostty() {
@@ -73,7 +65,7 @@ current_sublime() {
          END { print f "\t" s }' "$1"
 }
 
-# 16 -> 16.0, matching how kitty and alacritty sizes are written.
+# 16 -> 16.0, matching how kitty sizes are written.
 as_float() {
     case "$1" in *.*) echo "$1" ;; *) echo "$1.0" ;; esac
 }
@@ -87,23 +79,6 @@ edit_kitty() {
     FONT_NAME=$FONT FONT_SIZE=$(as_float "$SIZE") awk '
         /^font_family[ \t]/ { match($0, /^font_family[ \t]+/); $0 = substr($0, 1, RLENGTH) ENVIRON["FONT_NAME"]; f++ }
         /^font_size[ \t]/   { match($0, /^font_size[ \t]+/);   $0 = substr($0, 1, RLENGTH) ENVIRON["FONT_SIZE"]; s++ }
-        { print }
-        END { exit !(f && s) }
-    ' "$1"
-}
-
-# size lives in [font]; family is repeated in [font.normal], [font.bold], ...
-edit_alacritty() {
-    FONT_NAME=$FONT FONT_SIZE=$(as_float "$SIZE") awk '
-        /^[ \t]*\[/ { section = $0; sub(/^[ \t]*/, "", section); sub(/[ \t]*(#.*)?$/, "", section) }
-        section == "[font]" && /^[ \t]*size[ \t]*=/ {
-            match($0, /^[ \t]*size[ \t]*=[ \t]*/)
-            $0 = substr($0, 1, RLENGTH) ENVIRON["FONT_SIZE"]; s++
-        }
-        section ~ /^\[font\.(normal|bold|italic|bold_italic)\]$/ && /^[ \t]*family[ \t]*=/ {
-            match($0, /^[ \t]*family[ \t]*=[ \t]*/)
-            $0 = substr($0, 1, RLENGTH) "\"" ENVIRON["FONT_NAME"] "\""; f++
-        }
         { print }
         END { exit !(f && s) }
     ' "$1"
@@ -263,7 +238,7 @@ case "${1:-}" in
         [ "$#" -eq 3 ] || die "Usage: ./set-font.sh APP|all FONT SIZE  (apps: ${APPS[*]}), or no arguments for the menus"
         case "$1" in
             all) apps=("${APPS[@]}") ;;
-            kitty | alacritty | ghostty | sublime) apps=("$1") ;;
+            kitty | ghostty | sublime) apps=("$1") ;;
             *) die "Unknown app: $1 (apps: ${APPS[*]}, or all)" ;;
         esac
         FONT=$2

@@ -9,6 +9,8 @@
 #   - ~/.rcfiles-backup folders older than 30 days (left by link.sh)
 #   - Docker's build cache and dangling (untagged) images. Volumes, and
 #     tagged images, are never touched: they can hold data.
+#   - old snap revisions, which snapd keeps disabled after each refresh
+#     (for snap revert); removing them needs sudo
 #
 # Usage: ./cleanup.sh [--dry-run | --yes]
 
@@ -24,7 +26,7 @@ for arg in "$@"; do
         -n | --dry-run) MODE=dry ;;
         -y | --yes) MODE=yes ;;
         -h | --help)
-            sed -n '3,14p' "$0" | sed 's/^# \{0,1\}//'
+            sed -n '3,16p' "$0" | sed 's/^# \{0,1\}//'
             exit 0
             ;;
         *)
@@ -135,6 +137,26 @@ if has docker && docker info >/dev/null 2>&1; then
     offer "build cache (rebuilt on the next docker build)" "${build:-0}" docker builder prune --force
 else
     info "docker not available"
+fi
+
+log "Snaps"
+if has snap; then
+    # "<name> <rev>" for each disabled revision.
+    mapfile -t old_snaps < <(snap list --all 2>/dev/null | awk 'NR > 1 && $NF ~ /disabled/ { print $1, $3 }')
+    if [ "${#old_snaps[@]}" -gt 0 ]; then
+        files=()
+        for s in "${old_snaps[@]}"; do files+=("/var/lib/snapd/snaps/${s% *}_${s#* }.snap"); done
+        remove_old_snaps() {
+            local s rc=0
+            for s in "${old_snaps[@]}"; do
+                $SUDO snap remove "${s% *}" --revision="${s#* }" || rc=1
+            done
+            return "$rc"
+        }
+        offer "${#old_snaps[@]} old snap revision(s): $(printf '%s ' "${old_snaps[@]% *}")" "$(size "${files[@]}")" remove_old_snaps
+    fi
+else
+    info "snap not available"
 fi
 
 echo

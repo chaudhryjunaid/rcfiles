@@ -77,9 +77,7 @@ try:
 except ImportError:   # Python < 3.11
     print("    skip: TOML (needs Python 3.11+)")
 else:
-    for path in ["home/.config/mise/config.toml",
-                 "home/.config/alacritty/alacritty.toml",
-                 "home/.config/alacritty/gogh.toml"]:
+    for path in ["home/.config/mise/config.toml"]:
         try:
             with open(path, "rb") as f:
                 tomllib.load(f)

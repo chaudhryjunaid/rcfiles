@@ -26,7 +26,7 @@ and usable on its own:
 ```
 setup/ubuntu.sh          # system packages and mise, via apt
 setup/fedora.sh          #   ...or via dnf
-setup/common.sh          # antidote, liquidprompt, rustup, mise tools, zsh
+setup/common.sh          # antidote, liquidprompt, rustup, mise tools, zsh, hidden launchers
 ./link.sh                # symlink the dotfiles into $HOME (--dry-run, --unlink)
 setup/git-identity.sh    # write your git name/email to ~/.gitconfig
 ```
@@ -113,9 +113,11 @@ Terminals use `mise activate`; login files (`~/.profile`, `~/.zprofile`)
 also put mise's shims on PATH so desktop-launched apps (editors, git GUIs)
 find the same tools.
 Only things mise can't or shouldn't own come from apt/dnf: zsh, git (with
-git-crypt and git-lfs), tmux, build tools and clipboard tools,
-plus tmuxinator on Ubuntu (Fedora doesn't package it). `setup/common.sh`
-registers git-lfs's filters system-wide, in `/etc/gitconfig`. antidote and
+git-crypt and git-lfs), tmux, build tools and clipboard tools.
+`setup/common.sh` registers git-lfs's filters system-wide, in
+`/etc/gitconfig`, and hides the vim, nvim, info and texdoctk launchers from
+the app grid (a `NoDisplay=true` copy of each in
+`~/.local/share/applications`; delete the copy to bring one back). antidote and
 liquidprompt are cloned from GitHub into `~/sh`.
 
 ## Required
@@ -142,7 +144,7 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - **ripgrep** (`rg`) — fzf's file source and nvim's `:Rg`
 - **zoxide** — smarter `cd`; adds `z`/`zi` (jump by frecency / fzf-pick)
 - a **Nerd Font** — for the glyphs in the tmux status bar and nvim's lualine;
-  kitty, Alacritty, Ghostty and Sublime Text use `set-font.sh`'s font
+  kitty, Ghostty and Sublime Text use `set-font.sh`'s font
   (change it with `./set-font.sh`). Not installed by the setup scripts
   (`setup/install-fonts.sh` finds and installs them)
 
@@ -179,8 +181,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
   manager): sessions are saved every 15 minutes to
   `~/.local/state/tmux/resurrect` and restored when the tmux server starts;
   `` `Ctrl-s `` saves now, `` `Ctrl-r `` restores
-- a clipboard tool for copy-mode: **wl-clipboard** (Wayland) or **xclip** /
-  **xsel** (X11)
+- a clipboard tool for copy-mode: **wl-clipboard** (Wayland) or **xclip**
+  (X11)
 
 ## Optional
 - **kitty** — terminal emulator; config is linked to `~/.config/kitty/kitty.conf`
@@ -191,17 +193,11 @@ liquidprompt are cloned from GitHub into `~/sh`.
   in `themes/`; bundles its own Nerd Font symbols, so any font works); check it with
   `ghostty +validate-config`; not installed by the setup script (see
   `gui-apps.manifest.csv`)
-- **Alacritty** — terminal emulator; config is linked to
-  `~/.config/alacritty/alacritty.toml` (colors imported from `gogh.toml`
-  next to it) and expects the **JetBrainsMono Nerd Font**; not installed by
-  the setup script (see `gui-apps.manifest.csv`)
 - **Sublime Text** — settings are linked to
   `~/.config/sublime-text/Packages/User/Preferences.sublime-settings` and
   expect the **JetBrainsMono Nerd Font**; not installed by the setup
   script (see `gui-apps.manifest.csv`)
 - **duf** — friendlier `df`; run it as `duf` (`df` is not aliased)
-- **tmuxinator** — tmux session manager (apt on Ubuntu; on Fedora,
-  `gem install tmuxinator`)
 
 # Layout
 - `home/` — mirrors `$HOME`: every file is symlinked to the same relative path
@@ -231,7 +227,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
 - `cleanup.sh` — free space from what's re-downloadable: unused mise
   versions, removed nvim plugins, Go/npm/uv/pip caches, `~/.rcfiles-backup`
   folders over 30 days old, Docker build cache and dangling images (never
-  volumes or tagged images). Shows sizes and asks per item
+  volumes or tagged images), old (disabled) snap revisions. Shows sizes and
+  asks per item
 - `manifest-diff.sh` — the manifests vs this machine: rows not installed
   here, and apps installed here that no row covers: GUI (Flatpak, snap,
   AppImage, GNOME extension, `~/.local/share/applications`, packages with a
@@ -266,8 +263,8 @@ liquidprompt are cloned from GitHub into `~/sh`.
   the app configs, check the manifests and repo hygiene (both tools come
   from mise)
 - `hooks/pre-commit` — runs `lint.sh` on the staged files before each commit
-- `set-font.sh` — set the font family and size in the kitty, Alacritty,
-  Ghostty and Sublime Text configs. Run with no arguments: pick the app from
+- `set-font.sh` — set the font family and size in the kitty, Ghostty and
+  Sublime Text configs. Run with no arguments: pick the app from
   a numbered menu, the font in fzf (every installed family; Enter or Tab to
   choose), then type the size. Scripted form: `./set-font.sh APP|all FONT
   SIZE`, with the exact family name; `--show` prints each app's current

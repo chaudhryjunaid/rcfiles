@@ -2,7 +2,7 @@
 
 # setup/ubuntu.sh — install the system packages these dotfiles need on a
 # modern Ubuntu (24.04+/26.x) system, including Ubuntu under WSL, and mise
-# (into ~/.local/bin, with its installer). Safe to re-run; optional packages are best-effort.
+# (into ~/.local/bin, with its installer). Safe to re-run.
 # setup/common.sh does the distro-independent rest.
 #
 # Normally run via ../install.sh.
@@ -24,7 +24,7 @@ CORE_PKGS=(
     git-crypt git-lfs
     build-essential # C compiler for nvim-treesitter parsers and cargo
     tmux
-    wl-clipboard xclip xsel
+    wl-clipboard xclip
     neovim # system editor (root, sudo, visudo); you get mise's nvim
 )
 log "Installing core packages"
@@ -41,17 +41,6 @@ for name in editor vi vim; do
     fi
 done
 log "Default editor: nvim"
-
-# Optional packages — install each best-effort so a missing one doesn't abort.
-OPTIONAL_PKGS=(tmuxinator)
-log "Installing optional packages (best-effort)"
-for pkg in "${OPTIONAL_PKGS[@]}"; do
-    if $SUDO apt-get install -y "$pkg" >/dev/null 2>&1; then
-        info "installed: $pkg"
-    else
-        warn "'$pkg' unavailable via apt — install manually if you want it"
-    fi
-done
 
 # mise (tool version manager), with its installer into ~/.local/bin (on PATH
 # via .profile and .shellrc.sh, which also run `mise activate`); update it

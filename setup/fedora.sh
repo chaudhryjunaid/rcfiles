@@ -22,7 +22,7 @@ CORE_PKGS=(
     util-linux       # chsh, missing from minimal installs
     gcc gcc-c++ make # C compiler for nvim-treesitter parsers and cargo
     tmux
-    wl-clipboard xclip xsel
+    wl-clipboard xclip
     neovim # system editor (root, sudo -i); you get mise's nvim
 )
 log "Installing core packages"
@@ -54,5 +54,3 @@ else
         $SUDO tee /etc/yum.repos.d/mise.repo >/dev/null
     $SUDO dnf install -y mise
 fi
-
-info "tmuxinator isn't packaged for Fedora; 'gem install tmuxinator' if you want it"
