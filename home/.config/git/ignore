@@ -1,3 +1,6 @@
+# Global gitignore: git reads ~/.config/git/ignore by default (no
+# core.excludesFile needed). Symlinked there by link.sh.
+
 # Folder view configuration files
 .DS_Store
 Desktop.ini
