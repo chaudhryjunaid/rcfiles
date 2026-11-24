@@ -134,6 +134,13 @@ else
     skip "python3 not installed"
 fi
 
+echo "==> python"
+if has python3; then
+    python3 -I -c 'import ast, sys; ast.parse(open(sys.argv[1]).read(), sys.argv[1])' setup/manifests.py || status=1
+else
+    skip "python3 not installed"
+fi
+
 echo "==> app configs"
 if has tmux; then
     # Parse only (-n); a throwaway server that exits right after.

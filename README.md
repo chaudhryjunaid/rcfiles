@@ -36,6 +36,7 @@ Day to day, from the clone:
 ./doctor.sh              # read-only health check: ✓ / ! / ✗ per item, with the fix
 ./cleanup.sh             # free disk space (asks per item; --dry-run, --yes)
 ./manifest-diff.sh       # manifests vs what's installed, both ways
+./manifest-update.sh     # add rows for what's installed here (--prune, --dry-run)
 ```
 
 Use `./install.sh --skip-deps` to only relink and set the identity; that
@@ -56,8 +57,9 @@ keys or tokens. Run `./lint.sh` by hand any time; skip the hook once with
 `git commit --no-verify`.
 
 GUI apps aren't installed by the setup scripts. `gui-apps.manifest.csv` lists
-the ones I use on a GNOME desktop (a snapshot of my main machine taken
-2026-10-16), with columns `category,name,homepage,description,ubuntu,fedora`.
+the ones I use on a GNOME desktop (a snapshot of my main machine, kept
+current with `./manifest-update.sh`), with columns
+`category,name,homepage,description,ubuntu,fedora`.
 Apps that ship with a stock GNOME desktop (Firefox, ...) are left out.
 `cli-apps.manifest.csv` does the same for command-line tools that aren't in a
 stock Ubuntu desktop and that the setup scripts and mise config don't
@@ -232,9 +234,17 @@ liquidprompt are cloned from GitHub into `~/sh`.
   folders over 30 days old, Docker build cache and dangling images (never
   volumes or tagged images). Shows sizes and asks per item
 - `manifest-diff.sh` — the manifests vs this machine: rows not installed
-  here, and desktop apps installed here (Flatpak, snap, AppImage,
-  `~/.local/share/applications`, packages added after the OS install) that
-  no row mentions. Matches by name, so check odd ones by hand
+  here, and apps installed here that no row covers: GUI (Flatpak, snap,
+  AppImage, GNOME extension, `~/.local/share/applications`, packages with a
+  launcher added after the OS install) and CLI (packages added by hand after
+  the OS install, snaps, cargo/go/npm/uv/pip --user tools, `/usr/local/bin`,
+  `~/.local/bin`). Matches by package, then name, so check odd ones by hand
+- `manifest-update.sh` — write the manifests from this machine: existing
+  rows stay as they are, uncovered apps get a row filled in from their
+  package/snap/Flatpak/extension metadata (it lists the ones that still need
+  a homepage, description or category by hand). `--prune` also drops rows
+  not found here; `--dry-run` writes nothing. Review with `git diff`
+- `setup/manifests.py` — the detection and matching behind both
 - `link.sh` — symlink the dotfiles; existing files are moved to
   `~/.rcfiles-backup/<timestamp>/`, dangling links into the repo are pruned
 - `setup/ubuntu.sh`, `setup/fedora.sh` — system packages and mise for each

@@ -12,15 +12,19 @@ Editors and dev tools,Postman,https://www.postman.com,API client (snap),,
 Editors and dev tools,MongoDB Compass,https://www.mongodb.com/products/tools/compass,MongoDB client,,
 Editors and dev tools,Prettify,https://prettify.tools,"JSON/YAML/CSV/XML/Mermaid viewer and editor, installed from Chrome with ""Install page as app""",,
 Editors and dev tools,SmoothCSV,https://smoothcsv.com,CSV editor,,
+Editors and dev tools,TablePlus,https://tableplus.com,database management,,
 Writing and documents,Obsidian,https://obsidian.md,Markdown notes (snap),,
 Writing and documents,Typora,https://typora.io,Markdown editor,,
 Writing and documents,ONLYOFFICE Desktop Editors,https://www.onlyoffice.com/desktop,office suite (snap),,
 Writing and documents,Foliate,https://johnfactotum.github.io/foliate/,e-book reader,foliate,foliate
+Writing and documents,Stirling-PDF,https://github.com/Stirling-Tools/Stirling-PDF,locally hosted web application that allows you to perform various operations on PDF files,,
+Writing and documents,Super Productivity,https://github.com/super-productivity/super-productivity,"to-do list and time tracker with timeboxing, Pomodoro and Jira/GitHub sync (snap)",,
 Media,VLC,https://www.videolan.org/vlc/,media player,vlc,vlc
 Communication,Slack,https://slack.com,team chat (snap),,
 Communication,Thunderbird,https://www.thunderbird.net,email client (snap; Ubuntu's apt package installs the snap),thunderbird,thunderbird
 Communication,WhatsApp Web,https://web.whatsapp.com,"messaging, installed from Chrome with ""Install page as app""",,
 "Sync, backup and downloads",Transmission,https://transmissionbt.com,BitTorrent client,transmission-gtk,transmission-gtk
+"Sync, backup and downloads",Dropbox,https://www.dropbox.com/,sync your files across computers and to the web,,
 System,GNOME Boxes,https://apps.gnome.org/Boxes/,virtual machines,gnome-boxes,gnome-boxes
 System,GNOME Tweaks,https://gitlab.gnome.org/GNOME/gnome-tweaks,extra GNOME settings,gnome-tweaks,gnome-tweaks
 System,Extension Manager,https://github.com/mjakeman/extension-manager,installs the GNOME extensions below,gnome-shell-extension-manager,
@@ -28,4 +32,11 @@ System,Gear Lever,https://gearlever.mijorus.it,adds AppImages (kept in ~/AppImag
 System,Mission Center,https://flathub.org/apps/io.missioncenter.MissionCenter,task manager and system monitor,,
 System,CPU-X,https://github.com/TheTumultuousUnicornOfDarkness/CPU-X,"CPU, motherboard and memory details",cpu-x,cpu-x
 System,HardInfo2,https://github.com/hardinfo2/hardinfo2,system information and benchmarks,hardinfo2,hardinfo2
+System,Bitwarden,https://www.bitwarden.com/,a secure and free password manager for all of your devices (Flathub),,
 GNOME extensions,Vitals,https://extensions.gnome.org/extension/1460/vitals/,system stats in the top bar,,
+GNOME extensions,Clipboard Indicator,https://github.com/Tudmotu/gnome-shell-extension-clipboard-indicator,"the most popular clipboard manager for GNOME, with over 1M downloads",,
+GNOME extensions,Just Perfection,https://gitlab.gnome.org/jrahmatzadeh/just-perfection,"tweak Tool to Customize GNOME Shell, Change the Behavior and Disable UI Elements",,
+GNOME extensions,Places Status Indicator,https://gitlab.gnome.org/GNOME/gnome-shell-extensions,add a menu for quickly navigating places in the system,gnome-shell-extension-places-menu,
+Uncategorized,Bazaar,https://usebazaar.org/,discover and install apps (Flathub),,
+Uncategorized,Flatseal,https://github.com/tchx84/flatseal,manage Flatpak permissions (Flathub),,
+Uncategorized,Insync,http://www.insynchq.com,launch Insync,,

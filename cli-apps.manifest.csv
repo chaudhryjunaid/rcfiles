@@ -7,6 +7,7 @@ Dev and cloud,Autoconf,https://www.gnu.org/software/autoconf/,configure script g
 Dev and cloud,Automake,https://www.gnu.org/software/automake/,Makefile generator,apt: automake,automake,automake
 Dev and cloud,pkg-config,http://pkgconf.org/,compile and link flags for libraries,apt: pkg-config,pkg-config,pkgconf-pkg-config
 Dev and cloud,pip and venv,https://pip.pypa.io,for the system Python; uv (mise) covers the rest,apt: python3-pip python3-venv,python3-pip python3-venv,python3-pip
+Dev and cloud,diff_cover,https://pypi.org/project/diff_cover/,run coverage and linting reports on diffs,pip install --user diff_cover,,
 Containers and VMs,Docker Engine,https://docs.docker.com/engine/install/ubuntu/,"docker, with the buildx and compose plugins","apt, from Docker's repo: docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",,
 Containers and VMs,ctop,https://ctop.sh,top for containers,release binary in /usr/local/bin,,
 Containers and VMs,QEMU,https://www.qemu.org,"VM emulator and qemu-img, with UEFI and TPM for guests",apt: qemu-system-x86 qemu-utils ovmf swtpm,qemu-system-x86 qemu-utils ovmf swtpm,qemu-system-x86 qemu-img edk2-ovmf swtpm
@@ -43,7 +44,9 @@ Hardware info and testing,stress-ng,https://github.com/ColinIanKing/stress-ng,CP
 Network and sharing,cifs-utils,https://wiki.samba.org/index.php/LinuxCIFS_utils,"mount Windows/Samba shares, mount.cifs",apt: cifs-utils,cifs-utils,cifs-utils
 Network and sharing,smbclient,https://www.samba.org,FTP-like client for SMB shares,apt: smbclient,smbclient,samba-client
 Network and sharing,Waypipe,https://gitlab.freedesktop.org/mstoeckl/waypipe/,run Wayland apps over SSH,apt: waypipe,waypipe,waypipe
+Network and sharing,traceroute,https://traceroute.sourceforge.net/,traces the route taken by packets over an IPv4/IPv6 network,apt: traceroute,traceroute,
 System,Flatpak,https://flatpak.org,runs the Flathub apps in gui-apps.manifest.csv,apt: flatpak,flatpak,flatpak
 System,fnt,https://github.com/alexmyczko/fnt,font downloader and manager,apt: fnt,fnt,
 Fun and misc,CMatrix,https://github.com/abishekvashok/cmatrix,The Matrix rain,apt: cmatrix,cmatrix,cmatrix
 Fun and misc,pipes.sh,https://github.com/pipeseroni/pipes.sh,animated pipes screensaver,apt: pipes-sh,pipes-sh,
+Uncategorized,google-cloud-cli,https://docs.cloud.google.com/sdk/gcloud,utilities for the Google Cloud Platform,"apt, from packages.cloud.google.com's repo: google-cloud-cli",,
